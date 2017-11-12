@@ -1,0 +1,729 @@
+{
+	"id": "8222060b-3457-ab05-d62d-5dfc636c846a",
+	"name": "tc-notification-server-api",
+	"description": "",
+	"order": [
+		"c22d4575-a6da-673b-54aa-ccb4d41c5fd2",
+		"3b04a077-28f9-046e-dcd2-5bd32dba2437",
+		"5e44b10c-c025-6495-7270-e08327957bcf",
+		"115fd1ac-eaed-c323-c7c2-a115d4e401ab",
+		"a27ac0ff-001b-85d8-4d2e-241d4ef6a2b7",
+		"50a6f58e-483e-53fd-5a92-6c83cfd960b6"
+	],
+	"folders": [
+		{
+			"name": "failure",
+			"description": "",
+			"collectionId": "8222060b-3457-ab05-d62d-5dfc636c846a",
+			"order": [
+				"9d0a8156-50d2-ffbe-8a64-d76211012fe2",
+				"71174157-3901-401a-42b0-918032308adc",
+				"dedef10b-0dea-f2f3-550f-558344bd3c4f",
+				"f1462f6b-8e0d-9719-1c64-bdda81bb3533",
+				"946ad1ae-c1e2-bc5a-2aab-5620af7837e0",
+				"cb0ff0c6-c277-f138-d900-2a19aa0c1976",
+				"8e06f1d7-2d77-db06-e46c-bfbbe472e461"
+			],
+			"owner": 0,
+			"folders_order": [],
+			"id": "1ca18368-6533-2f65-b6f7-65f731edb06c"
+		}
+	],
+	"folders_order": [
+		"1ca18368-6533-2f65-b6f7-65f731edb06c"
+	],
+	"timestamp": 1507789221862,
+	"owner": 0,
+	"public": false,
+	"requests": [
+		{
+			"id": "115fd1ac-eaed-c323-c7c2-a115d4e401ab",
+			"headers": "//Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": false
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{TOKEN}}",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "{{URL}}/notifications/read",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "PUT",
+			"data": [],
+			"dataMode": "raw",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1509793307190,
+			"name": "markAllRead",
+			"description": "",
+			"collectionId": "8222060b-3457-ab05-d62d-5dfc636c846a",
+			"responses": [],
+			"rawModeData": ""
+		},
+		{
+			"id": "3b04a077-28f9-046e-dcd2-5bd32dba2437",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{TOKEN}}",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "{{URL}}/notifications?offset=0&limit=20&type=notifications.connect.project.updated",
+			"queryParams": [
+				{
+					"key": "offset",
+					"value": "0",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "limit",
+					"value": "20",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "type",
+					"value": "notifications.connect.project.updated",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "read",
+					"value": "false",
+					"equals": true,
+					"description": "",
+					"enabled": false
+				}
+			],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": [],
+			"dataMode": "raw",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1509791065950,
+			"name": "listNotifications",
+			"description": "",
+			"collectionId": "8222060b-3457-ab05-d62d-5dfc636c846a",
+			"responses": [],
+			"rawModeData": ""
+		},
+		{
+			"id": "50a6f58e-483e-53fd-5a92-6c83cfd960b6",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{TOKEN}}",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "{{URL}}/notificationsettings",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "PUT",
+			"data": [],
+			"dataMode": "raw",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1509794397038,
+			"name": "updateSettings",
+			"description": "",
+			"collectionId": "8222060b-3457-ab05-d62d-5dfc636c846a",
+			"responses": [],
+			"rawModeData": "[\n\t{\n\t\t\"topic\": \"notifications.connect.project.created\",\n\t\t\"deliveryMethod\": \"email\",\n\t\t\"value\": \"on\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.project.created\",\n\t\t\"deliveryMethod\": \"sms\",\n\t\t\"value\": \"off\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.project.created\",\n\t\t\"deliveryMethod\": \"web\",\n\t\t\"value\": \"off\"\n\t},\n\t{\n\t\t\"topic\": \"notifications.connect.message.posted\",\n\t\t\"deliveryMethod\": \"email\",\n\t\t\"value\": \"off\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.message.posted\",\n\t\t\"deliveryMethod\": \"sms\",\n\t\t\"value\": \"on\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.message.posted\",\n\t\t\"deliveryMethod\": \"web\",\n\t\t\"value\": \"on\"\n\t}\n]"
+		},
+		{
+			"id": "5e44b10c-c025-6495-7270-e08327957bcf",
+			"headers": "//Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": false
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{TOKEN}}",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "{{URL}}/notifications/1/read",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "PUT",
+			"data": [],
+			"dataMode": "raw",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1509786004930,
+			"name": "markAsRead",
+			"description": "",
+			"collectionId": "8222060b-3457-ab05-d62d-5dfc636c846a",
+			"responses": [],
+			"rawModeData": ""
+		},
+		{
+			"id": "71174157-3901-401a-42b0-918032308adc",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{TOKEN}}",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "{{URL}}/notifications?offset=0&limit=abc&type=notifications.connect.project.updated",
+			"folder": "1ca18368-6533-2f65-b6f7-65f731edb06c",
+			"queryParams": [
+				{
+					"key": "offset",
+					"value": "0",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "limit",
+					"value": "abc",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "type",
+					"value": "notifications.connect.project.updated",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "read",
+					"value": "false",
+					"equals": true,
+					"description": "",
+					"enabled": false
+				}
+			],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": [],
+			"dataMode": "raw",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1509801518188,
+			"name": "listNotifications - invalid limit",
+			"description": "",
+			"collectionId": "8222060b-3457-ab05-d62d-5dfc636c846a",
+			"responses": [],
+			"rawModeData": ""
+		},
+		{
+			"id": "8e06f1d7-2d77-db06-e46c-bfbbe472e461",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{TOKEN}}",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "{{URL}}/notificationsettings",
+			"folder": "1ca18368-6533-2f65-b6f7-65f731edb06c",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "PUT",
+			"data": [],
+			"dataMode": "raw",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1509801716547,
+			"name": "updateSettings - invalid body",
+			"description": "",
+			"collectionId": "8222060b-3457-ab05-d62d-5dfc636c846a",
+			"responses": [],
+			"rawModeData": "[\n\t{\n\t\t\"wrong\": \"notifications.connect.project.created\",\n\t\t\"deliveryMethod\": 123,\n\t\t\"value\": \"on\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.project.created\",\n\t\t\"deliveryMethod\": \"sms\",\n\t\t\"value\": \"off\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.project.created\",\n\t\t\"deliveryMethod\": \"web\",\n\t\t\"value\": \"off\"\n\t},\n\t{\n\t\t\"topic\": \"notifications.connect.message.posted\",\n\t\t\"deliveryMethod\": \"email\",\n\t\t\"value\": \"off\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.message.posted\",\n\t\t\"deliveryMethod\": \"sms\",\n\t\t\"value\": \"on\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.message.posted\",\n\t\t\"deliveryMethod\": \"web\",\n\t\t\"value\": \"on\"\n\t}\n]"
+		},
+		{
+			"id": "946ad1ae-c1e2-bc5a-2aab-5620af7837e0",
+			"headers": "//Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": false
+				}
+			],
+			"url": "{{URL}}/notifications/read",
+			"folder": "1ca18368-6533-2f65-b6f7-65f731edb06c",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "PUT",
+			"data": [],
+			"dataMode": "raw",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1509801636468,
+			"name": "markAllRead - missing token",
+			"description": "",
+			"collectionId": "8222060b-3457-ab05-d62d-5dfc636c846a",
+			"responses": [],
+			"rawModeData": ""
+		},
+		{
+			"id": "9d0a8156-50d2-ffbe-8a64-d76211012fe2",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{TOKEN}}",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "{{URL}}/notifications?offset=-1&limit=20&type=notifications.connect.project.updated",
+			"folder": "1ca18368-6533-2f65-b6f7-65f731edb06c",
+			"queryParams": [
+				{
+					"key": "offset",
+					"value": "-1",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "limit",
+					"value": "20",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "type",
+					"value": "notifications.connect.project.updated",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "read",
+					"value": "false",
+					"equals": true,
+					"description": "",
+					"enabled": false
+				}
+			],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": [],
+			"dataMode": "raw",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1509801475461,
+			"name": "listNotifications - invalid offset",
+			"description": "",
+			"collectionId": "8222060b-3457-ab05-d62d-5dfc636c846a",
+			"responses": [],
+			"rawModeData": ""
+		},
+		{
+			"id": "a27ac0ff-001b-85d8-4d2e-241d4ef6a2b7",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{TOKEN}}",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "{{URL}}/notificationsettings",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": [],
+			"dataMode": "raw",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1509793503637,
+			"name": "getSettings",
+			"description": "",
+			"collectionId": "8222060b-3457-ab05-d62d-5dfc636c846a",
+			"responses": [],
+			"rawModeData": ""
+		},
+		{
+			"id": "c22d4575-a6da-673b-54aa-ccb4d41c5fd2",
+			"headers": "Content-Type: application/json\nauthorization: Bearer {{TC_ADMIN_TOKEN}}\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "authorization",
+					"value": "Bearer {{TC_ADMIN_TOKEN}}",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "https://api.topcoder-dev.com/v4/projects/1936",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1509766333902,
+			"name": "TC API - get project",
+			"description": "",
+			"collectionId": "8222060b-3457-ab05-d62d-5dfc636c846a",
+			"responses": [
+				{
+					"status": "",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"time": 760,
+					"headers": [
+						{
+							"name": "access-control-allow-credentials",
+							"key": "access-control-allow-credentials",
+							"value": "true",
+							"description": "Indicates whether or not the response to the request can be exposed when the credentials flag is true. When used as part of a response to a preflight request, this indicates whether or not the actual request can be made using credentials."
+						},
+						{
+							"name": "access-control-allow-headers",
+							"key": "access-control-allow-headers",
+							"value": "Authorization,Content-Type,Accept,Origin,User-Agent,DNT,Cache-Control,X-Mx-ReqToken,Keep-Alive,X-Requested-With,If-Modified-Since",
+							"description": "Used in response to a preflight request to indicate which HTTP headers can be used when making the actual request."
+						},
+						{
+							"name": "access-control-allow-methods",
+							"key": "access-control-allow-methods",
+							"value": "GET, POST, OPTIONS, DELETE, PUT, PATCH",
+							"description": "Specifies the method or methods allowed when accessing the resource. This is used in response to a preflight request."
+						},
+						{
+							"name": "connection",
+							"key": "connection",
+							"value": "keep-alive",
+							"description": "Options that are desired for the connection"
+						},
+						{
+							"name": "content-encoding",
+							"key": "content-encoding",
+							"value": "gzip",
+							"description": "The type of encoding used on the data."
+						},
+						{
+							"name": "content-length",
+							"key": "content-length",
+							"value": "491",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"name": "content-type",
+							"key": "content-type",
+							"value": "application/json; charset=utf-8",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "date",
+							"key": "date",
+							"value": "Thu, 02 Nov 2017 04:28:20 GMT",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"name": "etag",
+							"key": "etag",
+							"value": "W/\"3a6-4pbtTNq19Shn10rc0k+HRsoAyMw\"",
+							"description": "An identifier for a specific version of a resource, often a message digest"
+						},
+						{
+							"name": "server",
+							"key": "server",
+							"value": "nginx/1.9.7",
+							"description": "A name for the server"
+						},
+						{
+							"name": "x-powered-by",
+							"key": "x-powered-by",
+							"value": "Express",
+							"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+						},
+						{
+							"name": "x-request-id",
+							"key": "x-request-id",
+							"value": "95744bd2-2830-4014-8885-7182a6225953",
+							"description": "Custom header"
+						}
+					],
+					"cookies": [],
+					"mime": "",
+					"text": "{\"id\":\"95744bd2-2830-4014-8885-7182a6225953\",\"version\":\"v4\",\"result\":{\"success\":true,\"status\":200,\"content\":{\"id\":1936,\"directProjectId\":12147,\"billingAccountId\":null,\"name\":\"Test-prj\",\"description\":\"Test description\",\"external\":null,\"bookmarks\":[],\"estimatedPrice\":null,\"actualPrice\":null,\"terms\":[],\"type\":\"app_dev\",\"status\":\"draft\",\"details\":{\"products\":[\"api_dev\"],\"appDefinition\":{\"primaryTarget\":\"desktop\",\"goal\":{\"value\":\"Goal\"},\"users\":{\"value\":\"Developers\"},\"notes\":\"Notes\"},\"utm\":{},\"hideDiscussions\":true},\"challengeEligibility\":[],\"cancelReason\":null,\"createdAt\":\"2017-11-01T15:45:51.000Z\",\"updatedAt\":\"2017-11-01T15:45:51.000Z\",\"createdBy\":305384,\"updatedBy\":305384,\"members\":[{\"id\":2997,\"userId\":305384,\"role\":\"customer\",\"isPrimary\":true,\"createdAt\":\"2017-11-01T15:45:51.000Z\",\"updatedAt\":\"2017-11-01T15:45:51.000Z\",\"createdBy\":305384,\"updatedBy\":305384,\"projectId\":1936}],\"attachments\":[]},\"metadata\":{\"totalCount\":1}}}",
+					"language": "json",
+					"rawDataType": "text",
+					"previewType": "text",
+					"searchResultScrolledTo": -1,
+					"forceNoPretty": false,
+					"write": true,
+					"empty": false,
+					"failed": false,
+					"name": "test111",
+					"id": "888ce32a-35b6-14c3-07a9-0a47d2ddbd71",
+					"request": {
+						"url": "http://api.topcoder-dev.com/v4/projects/1936",
+						"pathVariables": {},
+						"pathVariableData": [],
+						"queryParams": [],
+						"headerData": [
+							{
+								"key": "authorization",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJUb3Bjb2RlciBVc2VyIiwiYWRtaW5pc3RyYXRvciJdLCJpc3MiOiJodHRwczovL2FwaS50b3Bjb2Rlci1kZXYuY29tIiwiaGFuZGxlIjoic3VzZXIxIiwiZXhwIjoxNTA5NTk3MjM4LCJ1c2VySWQiOiI0MDE1MzkzOCIsImlhdCI6MTUwOTU5NjYzOCwiZW1haWwiOiJtdHdvbWV5QGJlYWtzdGFyLmNvbSIsImp0aSI6ImZmNWY3YWEzLWE0MDktNDE4Ny1hYTBjLWZhZDVmMjI1YTE0NyJ9.WcDvq6bS2R1CMl1YWFzyiSjo0C801RNNS6ACqVRWqWw",
+								"description": "",
+								"enabled": true,
+								"warning": ""
+							}
+						],
+						"headers": "authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJUb3Bjb2RlciBVc2VyIiwiYWRtaW5pc3RyYXRvciJdLCJpc3MiOiJodHRwczovL2FwaS50b3Bjb2Rlci1kZXYuY29tIiwiaGFuZGxlIjoic3VzZXIxIiwiZXhwIjoxNTA5NTk3MjM4LCJ1c2VySWQiOiI0MDE1MzkzOCIsImlhdCI6MTUwOTU5NjYzOCwiZW1haWwiOiJtdHdvbWV5QGJlYWtzdGFyLmNvbSIsImp0aSI6ImZmNWY3YWEzLWE0MDktNDE4Ny1hYTBjLWZhZDVmMjI1YTE0NyJ9.WcDvq6bS2R1CMl1YWFzyiSjo0C801RNNS6ACqVRWqWw\n",
+						"data": "",
+						"method": "GET",
+						"dataMode": "raw"
+					}
+				}
+			],
+			"rawModeData": ""
+		},
+		{
+			"id": "cb0ff0c6-c277-f138-d900-2a19aa0c1976",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer invalid\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer invalid",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "{{URL}}/notificationsettings",
+			"folder": "1ca18368-6533-2f65-b6f7-65f731edb06c",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": [],
+			"dataMode": "raw",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1509801668820,
+			"name": "getSettings - invalid token",
+			"description": "",
+			"collectionId": "8222060b-3457-ab05-d62d-5dfc636c846a",
+			"responses": [],
+			"rawModeData": ""
+		},
+		{
+			"id": "dedef10b-0dea-f2f3-550f-558344bd3c4f",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{TOKEN}}",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "{{URL}}/notifications?offset=0&limit=20&type=notifications.connect.project.updated&read=yes",
+			"folder": "1ca18368-6533-2f65-b6f7-65f731edb06c",
+			"queryParams": [
+				{
+					"key": "offset",
+					"value": "0",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "limit",
+					"value": "20",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "type",
+					"value": "notifications.connect.project.updated",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "read",
+					"value": "yes",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				}
+			],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": [],
+			"dataMode": "raw",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1509801563428,
+			"name": "listNotifications - invalid read filter",
+			"description": "",
+			"collectionId": "8222060b-3457-ab05-d62d-5dfc636c846a",
+			"responses": [],
+			"rawModeData": ""
+		},
+		{
+			"id": "f1462f6b-8e0d-9719-1c64-bdda81bb3533",
+			"headers": "//Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": false
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{TOKEN}}",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "{{URL}}/notifications/1111111/read",
+			"folder": "1ca18368-6533-2f65-b6f7-65f731edb06c",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "PUT",
+			"data": [],
+			"dataMode": "raw",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1509801601644,
+			"name": "markAsRead - not found",
+			"description": "",
+			"collectionId": "8222060b-3457-ab05-d62d-5dfc636c846a",
+			"responses": [],
+			"rawModeData": ""
+		}
+	]
+}

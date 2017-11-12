@@ -1,0 +1,235 @@
+swagger: "2.0"
+info:
+  title: "TOPCODER NOTIFICATIONS SERIES - NOTIFICATIONS SERVER"
+  description: "TOPCODER NOTIFICATIONS SERIES - NOTIFICATIONS SERVER"
+  version: "1.0.0"
+host: "localhost:3000"
+schemes:
+- "http"
+securityDefinitions:
+  jwt:
+    type: apiKey
+    name: Authorization
+    in: header
+    description: JWT Authentication. Provide API Key in the form 'Bearer &lt;token&gt;'.
+
+paths:
+  /notifications:
+    get:
+      description:
+        list notifications
+      produces:
+        - application/json
+      security:
+        - jwt: []
+      parameters:
+        - name: offset
+          in: query
+          description: The offset
+          required: false
+          type: integer
+          format: int32
+        - name: limit
+          in: query
+          description: The limit
+          required: false
+          type: integer
+          format: int32
+        - name: type
+          in: query
+          description: The type
+          required: false
+          type: string
+        - name: read
+          in: query
+          description: The read flag, either 'true' or 'false'
+          required: false
+          type: string
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              items:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      format: int64
+                      description: the notification id
+                    userId:
+                      type: integer
+                      format: int64
+                      description: user id
+                    type:
+                      type: string
+                      description: notification type
+                    read:
+                      type: boolean
+                      description: read flag
+                    contents:
+                      type: object
+                      description: the event message in JSON format
+                    createdAt:
+                      type: string
+                      description: created at date string
+                    updatedAt:
+                      type: string
+                      description: updated at date string
+              offset:
+                type: integer
+                format: int32
+                description: the offset
+              limit:
+                type: integer
+                format: int32
+                description: the limit
+              totalCount:
+                type: integer
+                format: int32
+                description: the total count
+        401:
+          description: "Authentication failed."
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal server error."
+          schema:
+            $ref: "#/definitions/Error"
+  /notifications/{id}/read:
+    put:
+      description:
+        mark a notification as read
+      security:
+        - jwt: []
+      parameters:
+        - in: path
+          name: id
+          description: notification id
+          required: true
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: OK, the notification is marked as read
+        400:
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/Error"
+        401:
+          description: "authentication failed"
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Action not allowed."
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "Notification is not found"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal server error."
+          schema:
+            $ref: "#/definitions/Error"
+  /notifications/read:
+    put:
+      description:
+        mark all notifications as read
+      security:
+        - jwt: []
+      responses:
+        200:
+          description: OK, all notifications are marked as read
+        401:
+          description: "authentication failed"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal server error."
+          schema:
+            $ref: "#/definitions/Error"
+  /notificationsettings:
+    get:
+      description:
+        get notification settings
+      produces:
+        - application/json
+      security:
+        - jwt: []
+      responses:
+        200:
+          description: OK. Each key is topic name, value is object of deliveryMethod - value mappings for the topic
+          schema:
+            type: object
+        401:
+          description: "Authentication failed."
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal server error."
+          schema:
+            $ref: "#/definitions/Error"
+    put:
+      description:
+        update notification settings
+      consumes:
+        - application/json
+      security:
+        - jwt: []
+      parameters:
+        - in: body
+          name: body
+          description: notification settings
+          required: true
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                topic:
+                  type: string
+                  description: the topic
+                deliveryMethod:
+                  type: string
+                  description: the delivery method
+                value:
+                  type: string
+                  description: the value for the delivery method
+      responses:
+        200:
+          description: OK
+        400:
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/Error"
+        401:
+          description: "authentication failed"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal server error."
+          schema:
+            $ref: "#/definitions/Error"
+
+definitions:
+  Error:
+    properties:
+      error:
+        type: string
+      details:
+        type: array
+        items:
+          type: object
+          properties:
+            message:
+              type: string
+            path:
+              type: string
+            type:
+              type: string
+            context:
+              type: object

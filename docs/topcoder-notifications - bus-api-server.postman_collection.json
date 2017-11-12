@@ -1,0 +1,547 @@
+{
+	"id": "8458981b-b05d-cf0c-c7f5-a84078daf13b",
+	"name": "topcoder-notifications > bus-api-server",
+	"description": "",
+	"order": [],
+	"folders": [
+		{
+			"id": "b8498818-1227-ec35-a1b9-3aba1b005b8a",
+			"name": "GET /topics",
+			"description": "",
+			"order": [
+				"9deea96c-e3c8-6057-b27a-e4130e843ee0",
+				"50be293d-fe16-f18c-1ee0-5f4b54a46646",
+				"cfb70a4a-bc16-4772-be4e-798af2abc078",
+				"48ac9be1-ccd5-5098-75a9-c5be7d2c3ba5",
+				"71a45c2a-374a-2e47-3d9c-74211c359404",
+				"a24ca1bc-fb68-f491-b0a0-342aa48dbb9c"
+			],
+			"folders_order": [],
+			"owner": 0,
+			"collectionId": "8458981b-b05d-cf0c-c7f5-a84078daf13b"
+		},
+		{
+			"id": "35a69b8f-e95a-892e-ac14-e38f36c45447",
+			"name": "POST /events",
+			"description": "",
+			"order": [
+				"42338602-f449-f6af-ef7e-90c33febd18d",
+				"f578ff2e-b55f-7bcf-4fa0-c0d6a74e766b",
+				"6414ccbf-77a1-8acd-069e-ab64ca3f4bda",
+				"be9eef10-710b-a43d-fa3d-9823fab230a3",
+				"97a52496-31e4-9baa-ee40-598032f901dd",
+				"fa05ac5f-7ca2-d9d3-ec7e-0d5989359121",
+				"124bf144-c170-91d9-8b0c-fc37e7930008",
+				"5e36790f-1338-346c-7558-0b6255363c83",
+				"b85dcad8-7d71-2d9a-47bb-19c9313ce415",
+				"b8ed25b0-5637-c1e0-b62a-ea7286508921",
+				"b6e6d110-a7ed-dc92-0141-0a2b89c3003e"
+			],
+			"folders_order": [],
+			"owner": 0,
+			"collectionId": "8458981b-b05d-cf0c-c7f5-a84078daf13b"
+		}
+	],
+	"folders_order": [
+		"35a69b8f-e95a-892e-ac14-e38f36c45447",
+		"b8498818-1227-ec35-a1b9-3aba1b005b8a"
+	],
+	"timestamp": 0,
+	"owner": 0,
+	"public": false,
+	"requests": [
+		{
+			"id": "124bf144-c170-91d9-8b0c-fc37e7930008",
+			"name": "Post event - 401 - No token",
+			"description": "",
+			"collectionId": "8458981b-b05d-cf0c-c7f5-a84078daf13b",
+			"method": "POST",
+			"headers": "Content-Type: application/json\n// Authorization: Bearer {{VALID_TOKEN}}",
+			"dataMode": "raw",
+			"data": [],
+			"rawModeData": "{\n  \"type\": \"H908EVFNB5.test.unknown\",\n  \"message\": \"{ \\\"test\\\": \\\"test-value\\\" }\"\n}",
+			"tests": "tests[\"Status code is 401\"] = responseCode.code === 401;",
+			"preRequestScript": "",
+			"url": "{{URL}}/events",
+			"responses": [],
+			"pathVariableData": [],
+			"queryParams": [],
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": ""
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{VALID_TOKEN}}",
+					"description": "",
+					"enabled": false
+				}
+			],
+			"collection_id": "8458981b-b05d-cf0c-c7f5-a84078daf13b",
+			"folder": "35a69b8f-e95a-892e-ac14-e38f36c45447"
+		},
+		{
+			"id": "42338602-f449-f6af-ef7e-90c33febd18d",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer {{VALID_TOKEN}}\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{VALID_TOKEN}}",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "{{URL}}/events",
+			"folder": "35a69b8f-e95a-892e-ac14-e38f36c45447",
+			"queryParams": [],
+			"preRequestScript": "",
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"tests": "tests[\"Status code is 204\"] = responseCode.code === 204;\n",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1509774023111,
+			"name": "Post Connect event",
+			"description": "",
+			"collectionId": "8458981b-b05d-cf0c-c7f5-a84078daf13b",
+			"responses": [],
+			"rawModeData": "{\n  \"type\": \"connect.project.updated\",\n  \"message\": \"{ \\\"projectId\\\": 1936, \\\"otherData\\\": \\\"peace\\\" }\"\n}"
+		},
+		{
+			"id": "48ac9be1-ccd5-5098-75a9-c5be7d2c3ba5",
+			"name": "Get topics - 401 - Expired",
+			"description": "",
+			"collectionId": "8458981b-b05d-cf0c-c7f5-a84078daf13b",
+			"method": "GET",
+			"headers": "Authorization: Bearer {{EXPIRED_TOKEN}}",
+			"data": [],
+			"rawModeData": "",
+			"tests": "tests[\"Status code is 401\"] = responseCode.code === 401;",
+			"preRequestScript": "",
+			"url": "{{URL}}/topics",
+			"responses": [],
+			"pathVariableData": [],
+			"queryParams": [],
+			"headerData": [
+				{
+					"key": "Authorization",
+					"value": "Bearer {{EXPIRED_TOKEN}}",
+					"description": ""
+				}
+			],
+			"collection_id": "8458981b-b05d-cf0c-c7f5-a84078daf13b",
+			"folder": "b8498818-1227-ec35-a1b9-3aba1b005b8a"
+		},
+		{
+			"id": "50be293d-fe16-f18c-1ee0-5f4b54a46646",
+			"name": "Get topics - 401 - No token",
+			"description": "",
+			"collectionId": "8458981b-b05d-cf0c-c7f5-a84078daf13b",
+			"method": "GET",
+			"headers": "",
+			"data": [],
+			"rawModeData": "",
+			"tests": "tests[\"Status code is 401\"] = responseCode.code === 401;",
+			"preRequestScript": "",
+			"url": "{{URL}}/topics",
+			"responses": [],
+			"pathVariableData": [],
+			"queryParams": [],
+			"headerData": [],
+			"collection_id": "8458981b-b05d-cf0c-c7f5-a84078daf13b",
+			"folder": "b8498818-1227-ec35-a1b9-3aba1b005b8a"
+		},
+		{
+			"id": "5e36790f-1338-346c-7558-0b6255363c83",
+			"name": "Post event - 401 - Invalid",
+			"description": "",
+			"collectionId": "8458981b-b05d-cf0c-c7f5-a84078daf13b",
+			"method": "POST",
+			"headers": "Content-Type: application/json\n// Authorization: Bearer invalid",
+			"dataMode": "raw",
+			"data": [],
+			"rawModeData": "{\n  \"type\": \"H908EVFNB5.test.unknown\",\n  \"message\": \"{ \\\"test\\\": \\\"test-value\\\" }\"\n}",
+			"tests": "tests[\"Status code is 401\"] = responseCode.code === 401;",
+			"preRequestScript": "",
+			"url": "{{URL}}/events",
+			"responses": [],
+			"pathVariableData": [],
+			"queryParams": [],
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": ""
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer invalid",
+					"description": "",
+					"enabled": false
+				}
+			],
+			"collection_id": "8458981b-b05d-cf0c-c7f5-a84078daf13b",
+			"folder": "35a69b8f-e95a-892e-ac14-e38f36c45447"
+		},
+		{
+			"id": "6414ccbf-77a1-8acd-069e-ab64ca3f4bda",
+			"name": "Post event - 400 - invalid type",
+			"description": "",
+			"collectionId": "8458981b-b05d-cf0c-c7f5-a84078daf13b",
+			"method": "POST",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer {{VALID_TOKEN}}",
+			"dataMode": "raw",
+			"data": [],
+			"rawModeData": "{\n  \"type\": \"H908EVFNB5.test..a\",\n  \"message\": \"{ \\\"test\\\": \\\"test-value\\\" }\"\n}",
+			"tests": "tests[\"Status code is 400\"] = responseCode.code === 400;",
+			"preRequestScript": "",
+			"url": "{{URL}}/events",
+			"responses": [],
+			"pathVariableData": [],
+			"queryParams": [],
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": ""
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{VALID_TOKEN}}",
+					"description": ""
+				}
+			],
+			"collection_id": "8458981b-b05d-cf0c-c7f5-a84078daf13b",
+			"folder": "35a69b8f-e95a-892e-ac14-e38f36c45447"
+		},
+		{
+			"id": "71a45c2a-374a-2e47-3d9c-74211c359404",
+			"name": "Get topics - 401 - Wrong secret",
+			"description": "",
+			"collectionId": "8458981b-b05d-cf0c-c7f5-a84078daf13b",
+			"method": "GET",
+			"headers": "Authorization: Bearer {{WRONG_SECRET_TOKEN}}",
+			"data": [],
+			"rawModeData": "",
+			"tests": "tests[\"Status code is 401\"] = responseCode.code === 401;",
+			"preRequestScript": "",
+			"url": "{{URL}}/topics",
+			"responses": [],
+			"pathVariableData": [],
+			"queryParams": [],
+			"headerData": [
+				{
+					"key": "Authorization",
+					"value": "Bearer {{WRONG_SECRET_TOKEN}}",
+					"description": ""
+				}
+			],
+			"collection_id": "8458981b-b05d-cf0c-c7f5-a84078daf13b",
+			"folder": "b8498818-1227-ec35-a1b9-3aba1b005b8a"
+		},
+		{
+			"id": "97a52496-31e4-9baa-ee40-598032f901dd",
+			"name": "Post event - 400 - invalid message",
+			"description": "",
+			"collectionId": "8458981b-b05d-cf0c-c7f5-a84078daf13b",
+			"method": "POST",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer {{VALID_TOKEN}}",
+			"dataMode": "raw",
+			"data": [],
+			"rawModeData": "{\n  \"type\": \"H908EVFNB5.test.a\",\n  \"message\": \"{ invalid json }\"\n}",
+			"tests": "tests[\"Status code is 400\"] = responseCode.code === 400;",
+			"preRequestScript": "",
+			"url": "{{URL}}/events",
+			"responses": [],
+			"pathVariableData": [],
+			"queryParams": [],
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": ""
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{VALID_TOKEN}}",
+					"description": ""
+				}
+			],
+			"collection_id": "8458981b-b05d-cf0c-c7f5-a84078daf13b",
+			"folder": "35a69b8f-e95a-892e-ac14-e38f36c45447"
+		},
+		{
+			"id": "9deea96c-e3c8-6057-b27a-e4130e843ee0",
+			"name": "Get topics - 200",
+			"description": "",
+			"collectionId": "8458981b-b05d-cf0c-c7f5-a84078daf13b",
+			"method": "GET",
+			"headers": "Authorization: Bearer {{VALID_TOKEN}}",
+			"data": [],
+			"rawModeData": "",
+			"url": "{{URL}}/topics",
+			"responses": [],
+			"pathVariableData": [],
+			"queryParams": [],
+			"headerData": [
+				{
+					"key": "Authorization",
+					"value": "Bearer {{VALID_TOKEN}}",
+					"description": ""
+				}
+			],
+			"collection_id": "8458981b-b05d-cf0c-c7f5-a84078daf13b",
+			"folder": "b8498818-1227-ec35-a1b9-3aba1b005b8a"
+		},
+		{
+			"id": "a24ca1bc-fb68-f491-b0a0-342aa48dbb9c",
+			"name": "Get topics - 403 - Service not allowed",
+			"description": "",
+			"collectionId": "8458981b-b05d-cf0c-c7f5-a84078daf13b",
+			"method": "GET",
+			"headers": "Authorization: Bearer {{UNKNOWN_SERVICE_TOKEN}}",
+			"data": [],
+			"rawModeData": "",
+			"tests": "tests[\"Status code is 403\"] = responseCode.code === 403;",
+			"preRequestScript": "",
+			"url": "{{URL}}/topics",
+			"responses": [],
+			"pathVariableData": [],
+			"queryParams": [],
+			"headerData": [
+				{
+					"key": "Authorization",
+					"value": "Bearer {{UNKNOWN_SERVICE_TOKEN}}",
+					"description": ""
+				}
+			],
+			"collection_id": "8458981b-b05d-cf0c-c7f5-a84078daf13b",
+			"folder": "b8498818-1227-ec35-a1b9-3aba1b005b8a"
+		},
+		{
+			"id": "b6e6d110-a7ed-dc92-0141-0a2b89c3003e",
+			"name": "Post event - 403 - Service not allowed",
+			"description": "",
+			"collectionId": "8458981b-b05d-cf0c-c7f5-a84078daf13b",
+			"method": "POST",
+			"headers": "Content-Type: application/json\n// Authorization: Bearer {{UNKNOWN_SERVICE_TOKEN}}",
+			"dataMode": "raw",
+			"data": [],
+			"rawModeData": "{\n  \"type\": \"H908EVFNB5.test.unknown\",\n  \"message\": \"{ \\\"test\\\": \\\"test-value\\\" }\"\n}",
+			"tests": "tests[\"Status code is 403\"] = responseCode.code === 403;",
+			"preRequestScript": "",
+			"url": "{{URL}}/events",
+			"responses": [],
+			"pathVariableData": [],
+			"queryParams": [],
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": ""
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{UNKNOWN_SERVICE_TOKEN}}",
+					"description": "",
+					"enabled": false
+				}
+			],
+			"collection_id": "8458981b-b05d-cf0c-c7f5-a84078daf13b",
+			"folder": "35a69b8f-e95a-892e-ac14-e38f36c45447"
+		},
+		{
+			"id": "b85dcad8-7d71-2d9a-47bb-19c9313ce415",
+			"name": "Post event - 401 - Expired",
+			"description": "",
+			"collectionId": "8458981b-b05d-cf0c-c7f5-a84078daf13b",
+			"method": "POST",
+			"headers": "Content-Type: application/json\n// Authorization: Bearer {{EXPIRED_TOKEN}}",
+			"dataMode": "raw",
+			"data": [],
+			"rawModeData": "{\n  \"type\": \"H908EVFNB5.test.unknown\",\n  \"message\": \"{ \\\"test\\\": \\\"test-value\\\" }\"\n}",
+			"tests": "tests[\"Status code is 401\"] = responseCode.code === 401;",
+			"preRequestScript": "",
+			"url": "{{URL}}/events",
+			"responses": [],
+			"pathVariableData": [],
+			"queryParams": [],
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": ""
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{EXPIRED_TOKEN}}",
+					"description": "",
+					"enabled": false
+				}
+			],
+			"collection_id": "8458981b-b05d-cf0c-c7f5-a84078daf13b",
+			"folder": "35a69b8f-e95a-892e-ac14-e38f36c45447"
+		},
+		{
+			"id": "b8ed25b0-5637-c1e0-b62a-ea7286508921",
+			"name": "Post event - 401 - Wrong secret",
+			"description": "",
+			"collectionId": "8458981b-b05d-cf0c-c7f5-a84078daf13b",
+			"method": "POST",
+			"headers": "Content-Type: application/json\n// Authorization: Bearer {{WRONG_SECRET_TOKEN}}",
+			"dataMode": "raw",
+			"data": [],
+			"rawModeData": "{\n  \"type\": \"H908EVFNB5.test.unknown\",\n  \"message\": \"{ \\\"test\\\": \\\"test-value\\\" }\"\n}",
+			"tests": "tests[\"Status code is 401\"] = responseCode.code === 401;",
+			"preRequestScript": "",
+			"url": "{{URL}}/events",
+			"responses": [],
+			"pathVariableData": [],
+			"queryParams": [],
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": ""
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{WRONG_SECRET_TOKEN}}",
+					"description": "",
+					"enabled": false
+				}
+			],
+			"collection_id": "8458981b-b05d-cf0c-c7f5-a84078daf13b",
+			"folder": "35a69b8f-e95a-892e-ac14-e38f36c45447"
+		},
+		{
+			"id": "be9eef10-710b-a43d-fa3d-9823fab230a3",
+			"name": "Post event - 400 - missing message",
+			"description": "",
+			"collectionId": "8458981b-b05d-cf0c-c7f5-a84078daf13b",
+			"method": "POST",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer {{VALID_TOKEN}}",
+			"dataMode": "raw",
+			"data": [],
+			"rawModeData": "{\n  \"type\": \"H908EVFNB5.test.a\"\n}",
+			"tests": "tests[\"Status code is 400\"] = responseCode.code === 400;",
+			"preRequestScript": "",
+			"url": "{{URL}}/events",
+			"responses": [],
+			"pathVariableData": [],
+			"queryParams": [],
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": ""
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{VALID_TOKEN}}",
+					"description": ""
+				}
+			],
+			"collection_id": "8458981b-b05d-cf0c-c7f5-a84078daf13b",
+			"folder": "35a69b8f-e95a-892e-ac14-e38f36c45447"
+		},
+		{
+			"id": "cfb70a4a-bc16-4772-be4e-798af2abc078",
+			"name": "Get topics - 401 - Invalid",
+			"description": "",
+			"collectionId": "8458981b-b05d-cf0c-c7f5-a84078daf13b",
+			"method": "GET",
+			"headers": "Authorization: Bearer invalid",
+			"data": [],
+			"rawModeData": "",
+			"tests": "tests[\"Status code is 401\"] = responseCode.code === 401;",
+			"preRequestScript": "",
+			"url": "{{URL}}/topics",
+			"responses": [],
+			"pathVariableData": [],
+			"queryParams": [],
+			"headerData": [
+				{
+					"key": "Authorization",
+					"value": "Bearer invalid",
+					"description": ""
+				}
+			],
+			"collection_id": "8458981b-b05d-cf0c-c7f5-a84078daf13b",
+			"folder": "b8498818-1227-ec35-a1b9-3aba1b005b8a"
+		},
+		{
+			"id": "f578ff2e-b55f-7bcf-4fa0-c0d6a74e766b",
+			"name": "Post event - 204",
+			"description": "",
+			"collectionId": "8458981b-b05d-cf0c-c7f5-a84078daf13b",
+			"method": "POST",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer {{VALID_TOKEN}}",
+			"dataMode": "raw",
+			"data": [],
+			"rawModeData": "{\n  \"type\": \"{{VALID_MESSAGE_TYPE}}\",\n  \"message\": \"{ \\\"test\\\": \\\"test-value\\\" }\"\n}",
+			"tests": "tests[\"Status code is 204\"] = responseCode.code === 204;\n",
+			"preRequestScript": "",
+			"url": "{{URL}}/events",
+			"responses": [],
+			"pathVariableData": [],
+			"queryParams": [],
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": ""
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{VALID_TOKEN}}",
+					"description": ""
+				}
+			],
+			"collection_id": "8458981b-b05d-cf0c-c7f5-a84078daf13b",
+			"folder": "35a69b8f-e95a-892e-ac14-e38f36c45447"
+		},
+		{
+			"id": "fa05ac5f-7ca2-d9d3-ec7e-0d5989359121",
+			"name": "Post event - 400 - unknown type",
+			"description": "",
+			"collectionId": "8458981b-b05d-cf0c-c7f5-a84078daf13b",
+			"method": "POST",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer {{VALID_TOKEN}}",
+			"dataMode": "raw",
+			"data": [],
+			"rawModeData": "{\n  \"type\": \"H908EVFNB5.test.unknown\",\n  \"message\": \"{ \\\"test\\\": \\\"test-value\\\" }\"\n}",
+			"tests": "tests[\"Status code is 400\"] = responseCode.code === 400;",
+			"preRequestScript": "",
+			"url": "{{URL}}/events",
+			"responses": [],
+			"pathVariableData": [],
+			"queryParams": [],
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": ""
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{VALID_TOKEN}}",
+					"description": ""
+				}
+			],
+			"collection_id": "8458981b-b05d-cf0c-c7f5-a84078daf13b",
+			"folder": "35a69b8f-e95a-892e-ac14-e38f36c45447"
+		}
+	]
+}
