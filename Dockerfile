@@ -10,7 +10,6 @@ COPY . .
 
 RUN npm install
 RUN npm test
-RUN npm run build
 
 ENV NODE_ENV=$NODE_ENV
 
