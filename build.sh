@@ -7,9 +7,16 @@ set -eo pipefail
 
 NODE_ENV=$1
 
+ENV=$1
+AWS_REGION=$(eval "echo \$${ENV}_AWS_REGION")
+AWS_ACCESS_KEY_ID=$(eval "echo \$${ENV}_AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY=$(eval "echo \$${ENV}_AWS_SECRET_ACCESS_KEY")
+AWS_ACCOUNT_ID=$(eval "echo \$${ENV}_AWS_ACCOUNT_ID")
+AWS_REPOSITORY=$(eval "echo \$${ENV}_AWS_REPOSITORY") 
+
 # Builds Docker image of the app.
-#TAG=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/community-app:$CIRCLE_SHA1
-TAG=community-app:$CIRCLE_SHA1
+TAG=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/tc-notifications:$CIRCLE_SHA1
+#TAG=community-app:$CIRCLE_SHA1
 docker build -t $TAG \
   --build-arg NODE_ENV=$NODE_ENV .
 
@@ -28,7 +35,7 @@ then
   UPDATE_CACHE=$(cmp package-lock.json old-package-lock.json)
   set -eo pipefail
 else
-  # If "node_modules" does not exist, then cache must be created.
+   If "node_modules" does not exist, then cache must be created.
   UPDATE_CACHE=1
 fi
 

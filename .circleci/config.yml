@@ -20,7 +20,7 @@ jobs:
       # Build of Docker image.
       - run:
           name: Build of Docker image
-          command: ./build.sh development
+          command: ./build.sh DEV
 
       # Caching node modules.
       - save_cache:
@@ -28,6 +28,10 @@ jobs:
           paths:
             - node_modules
 
+
+      # Deployment.
+      - deploy:
+ 	  command: aws --version && ./deploy.sh DEV $CIRCLE_SHA1
 workflows:
   version: 2
   build:
