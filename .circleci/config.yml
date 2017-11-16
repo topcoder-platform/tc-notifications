@@ -30,7 +30,7 @@ jobs:
 
       # Deployment.
       - deploy:
- 	        command: aws --version && ./deploy.sh DEV $CIRCLE_SHA1
+          command: aws --version && ./deploy.sh DEV $CIRCLE_SHA1
     
 workflows:
   version: 2
