@@ -13,7 +13,10 @@ Configuration for the notification server is at `config/default.js`.
 The following parameters can be set in config files or in env variables:
 - LOG_LEVEL: the log level
 - PORT: the notification server port
-- JWT_SECRET: JWT secret
+- authSecret: TC auth secret
+- authDomain: TC auth domain
+- validIssuers: TC auth valid issuers
+- jwksUri: TC auth JWKS URI
 - DATABASE_URL: URI to PostgreSQL database
 - DATABASE_OPTIONS: database connection options
 - KAFKA_URL: comma separated Kafka hosts
@@ -60,7 +63,7 @@ In case it expires, you may get a new token in this way:
 
 - use Chrome to browse connect.topcoder-dev.com
 - open developer tools, click the Network tab
-- log in with suser1 / Topcoder123
+- log in with suser1 / Topcoder123, or mess / appirio123
 - once logged in, open some project, for example https://connect.topcoder-dev.com/projects/1936 and in the network inspector
   look for the call to the project api and get the token from the auth header, see
   http://pokit.org/get/img/68cdd34f3d205d6d9bd8bddb07bdc216.jpg
@@ -71,7 +74,7 @@ In case it expires, you may get a new token in this way:
 - install dependencies `npm i`
 - run code lint check `npm run lint`
 - start connect notification server `npm start`
-- the app is running at `http://localhost:3000`, it also starts Kafka consumer to listen for events and save unroll-ed notifications to db
+- the app is running at `http://localhost:4000`, it also starts Kafka consumer to listen for events and save unroll-ed notifications to db
 
 
 ## Heroku deployment
@@ -94,7 +97,9 @@ In case it expires, you may get a new token in this way:
 ## Verification
 
 - start the app following above sections
-- in Postman, using the bus API collection and environment, run the `POST /events` / `Post Connect event` test,
+- note that if you use the Heroku app, the app may be in sleep after some long idle time, you need to call any Postman test, e.g. the
+  listNotifications test, so that the app wakes up, during wake up, the Heroku PostgreSQL database will be cleared and re-initialized
+- in Postman, using the bus API collection and environment, run the `POST /events` / `Post event - XXX` tests,
   you may run it multiple times to create multiple events in Kafka,
   then you may watch the console output in the app, it should show info about handling the events
 - in Postman, using the notification server API collection and environment, run the tests

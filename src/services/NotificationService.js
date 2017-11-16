@@ -18,7 +18,7 @@ const DEFAULT_LIMIT = 10;
  * @returns {Object} the search result
  */
 function* listNotifications(query, userId) {
-  const filter = { where: { userId }, offset: query.offset, limit: query.limit };
+  const filter = { where: { userId }, offset: query.offset, limit: query.limit, order: [['createdAt', 'DESC']] };
   if (query.type) {
     filter.where.type = query.type;
   }
@@ -56,24 +56,32 @@ listNotifications.schema = {
 };
 
 /**
- * Mark a notification as read.
- * @param {Number} notificationId the notification id
+ * Mark notification(s) as read.
+ * @param {Number} id the notification id or '-' separated ids
  * @param {Number} userId the user id
  */
-function* markAsRead(notificationId, userId) {
-  const entity = yield models.Notification.findOne({ where: { id: notificationId, read:false } });
-  if (!entity) {
-    throw new errors.NotFoundError(`Cannot find Notification where id = ${notificationId}`);
+function* markAsRead(id, userId) {
+  const ids = _.map(id.split('-'), (str) => {
+    const idInt = Number(str);
+    if (!_.isInteger(idInt)) {
+      throw new errors.BadRequestError(`Notification id should be integer: ${str}`);
+    }
+    return idInt;
+  });
+  const entities = yield models.Notification.findAll({ where: { id: { $in: ids }, read: false } });
+  if (!entities || entities.length === 0) {
+    throw new errors.NotFoundError(`Cannot find un-read Notification where id = ${id}`);
   }
-  if (Number(entity.userId) !== userId) {
-    throw new errors.ForbiddenError(`Cannot access Notification where id = ${notificationId}`);
-  }
-  entity.read = true;
-  yield entity.save();
+  _.each(entities, (entity) => {
+    if (Number(entity.userId) !== userId) {
+      throw new errors.ForbiddenError(`Cannot access Notification where id = ${entity.id}`);
+    }
+  });
+  yield models.Notification.update({ read: true }, { where: { id: { $in: ids }, read: false } });
 }
 
 markAsRead.schema = {
-  notificationId: Joi.number().required(),
+  id: Joi.string().required(),
   userId: Joi.number().required(),
 };
 

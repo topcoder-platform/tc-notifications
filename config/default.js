@@ -4,9 +4,12 @@
 
 module.exports = {
   LOG_LEVEL: process.env.LOG_LEVEL || 'info',
-  PORT: process.env.PORT || 3000,
+  PORT: process.env.PORT || 4000,
 
-  JWT_SECRET: process.env.JWT_SECRET || 'hjijfvbw859',
+  authSecret: process.env.authSecret || 'secret',
+  authDomain: process.env.authDomain || 'topcoder-dev.com',
+  validIssuers: process.env.validIssuers || '["https://topcoder-newauth.auth0.com/","https://api.topcoder-dev.com"]',
+  jwksUri: process.env.jwksUri || '',
 
   DATABASE_URL: process.env.DATABASE_URL || 'postgres://postgres:123456@localhost:5432/notification',
   DATABASE_OPTIONS: {
