@@ -83,23 +83,14 @@ make_task_def(){
 						{
 								"name": "ENV",
 								"value": "%s"
-						},
-						{
-								"name": "PROVIDER",
-								"value": "%s"
-						}						
+						}
 				],
 				"portMappings": [
 						{
 								"hostPort": 0,
-								"containerPort": 8000,
+								"containerPort": 3000,
 								"protocol": "tcp"
-						},
-						{
-								"hostPort": 0,
-								"containerPort": 8001,
-								"protocol": "tcp"
-						}						
+						}
 				],
 				"logConfiguration": {
 						"logDriver": "awslogs",
@@ -112,7 +103,7 @@ make_task_def(){
 		}
 	]'
 	
-	task_def=$(printf "$task_template" $AWS_ECS_CONTAINER_NAME $AWS_ACCOUNT_ID $AWS_REGION $AWS_REPOSITORY $TAG $ENV $PROVIDER $AWS_ECS_CLUSTER $AWS_REGION $AWS_ECS_CLUSTER $ENV)
+	task_def=$(printf "$task_template" $AWS_ECS_CONTAINER_NAME $AWS_ACCOUNT_ID $AWS_REGION $AWS_REPOSITORY $TAG $ENV $AWS_ECS_CLUSTER $AWS_REGION $AWS_ECS_CLUSTER $ENV)
 }
 
 register_definition() {
@@ -146,5 +137,5 @@ check_service_status() {
 
 configure_aws_cli
 push_ecr_image
-#deploy_cluster
-#check_service_status
+deploy_cluster
+check_service_status
