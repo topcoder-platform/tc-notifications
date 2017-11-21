@@ -22,10 +22,6 @@ DB_DATABASE=$(eval "echo \$${ENV}_DB_DATABASE")
 DB_CONNSTRING=postgres://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_DATABASE;
  echo "DB connection string : $DB_CONNSTRING"
 
-#Post docker Create
-echo $DB_CONNSTRING > .env
-docker cp .env app:/opt/app/
-
 # Builds Docker image of the app.
 TAG=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/tc-notifications:$CIRCLE_SHA1
 #TAG=community-app:$CIRCLE_SHA1
@@ -34,6 +30,9 @@ docker build -t $TAG \
 
 # Copies "node_modules" from the created image, if necessary for caching.
 docker create --name app $TAG
+
+echo $DB_CONNSTRING > .env
+docker cp .env app:/opt/app/
 
 if [ -d node_modules ]
 then
