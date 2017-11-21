@@ -13,6 +13,18 @@ AWS_ACCESS_KEY_ID=$(eval "echo \$${ENV}_AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY=$(eval "echo \$${ENV}_AWS_SECRET_ACCESS_KEY")
 AWS_ACCOUNT_ID=$(eval "echo \$${ENV}_AWS_ACCOUNT_ID")
 AWS_REPOSITORY=$(eval "echo \$${ENV}_AWS_REPOSITORY") 
+# Added for postgres DB 
+DB_USER=$(eval "echo \$${ENV}_DB_USER")
+DB_PASSWORD=$(eval "echo \$${ENV}_DB_PASSWORD")
+DB_HOST=$(eval "echo \$${ENV}_DB_HOST")
+DB_PORT=$(eval "echo \$${ENV}_DB_PORT")
+DB_DATABASE=$(eval "echo \$${ENV}_DB_DATABASE")
+DB_CONNSTRING=postgres://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_DATABASE;
+ echo "DB connection string : $DB_CONNSTRING"
+
+#Post docker Create
+echo $DB_CONNSTRING > .env
+docker cp .env app:/opt/app/
 
 # Builds Docker image of the app.
 TAG=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/tc-notifications:$CIRCLE_SHA1
