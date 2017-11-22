@@ -2,7 +2,7 @@
  * This is entry point of the TopCoder notification server module.
  */
 'use strict';
-
+var dotenv = require('dotenv').config({path: '/opt/app/.env'});
 const config = require('config');
 const _ = require('lodash');
 const errors = require('./src/common/errors');
