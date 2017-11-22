@@ -31,10 +31,14 @@ docker build -t $TAG \
 # Copies "node_modules" from the created image, if necessary for caching.
 docker create --name app $TAG
 
-echo $DB_CONNSTRING > .env
-echo "show contents of .env via cat"
-cat .env
-docker cp .env app:/opt/app/
+#echo $DB_CONNSTRING > .env
+echo $DB_CONNSTRING >> env1.txt
+echo "show contents of env1.txt via cat"
+cat env1.txt
+
+#docker cp .env app:/opt/app/
+#docker cp env1.txt app:/opt/app/
+
 
 if [ -d node_modules ]
 then
@@ -57,3 +61,6 @@ if [ "$UPDATE_CACHE" == 1 ]
 then
   docker cp app:/opt/app/node_modules .
 fi
+
+
+docker cp env1.txt app:/opt/app/
