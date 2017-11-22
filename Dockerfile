@@ -13,7 +13,7 @@ RUN npm install
 RUN npm install dotenv --save
 #ENV DB_CONNSTRING=$DB_CONNSTRING
 RUN echo $DB_CONNSTRING
-RUN echo $DB_CONNSTRING >> env1.txt
+RUN echo "${DB_CONNSTRING}" | sudo env1.txt
 RUN pwd
 RUN ls -la
 RUN cat env1.txt
