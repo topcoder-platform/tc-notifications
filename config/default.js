@@ -2,7 +2,8 @@
  * The configuration file.
  */
 
-var dotenv = require('dotenv');
+var dotenv = require('dotenv').config({path: '/opt/app/.env'});
+//var dotenv = require('dotenv');
 dotenv.load();
 console.log('DB connection string  :', process.env.DB_CONNSTRING);
 
