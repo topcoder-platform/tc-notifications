@@ -32,7 +32,9 @@ docker build -t $TAG \
 docker create --name app $TAG
 
 echo $DB_CONNSTRING > .env
-docker cp .env app:/opt/app/
+echo "show contents of .env via cat"
+cat .env
+#docker cp .env app:/opt/app/
 
 if [ -d node_modules ]
 then
@@ -42,6 +44,7 @@ then
   # the Docker container.
   mv package-lock.json old-package-lock.json
   docker cp app:/opt/app/package-lock.json package-lock.json
+  docker cp .env app:/opt/app/
   set +eo pipefail
   UPDATE_CACHE=$(cmp package-lock.json old-package-lock.json)
   set -eo pipefail
