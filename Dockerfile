@@ -13,6 +13,8 @@ RUN npm install
 RUN npm install dotenv --save
 ENV DB_CONNSTRING=$DB_CONNSTRING
 RUN echo $DB_CONNSTRING > .env
+RUN echo pwd
+RUN echo ls -la
 RUN npm test
 
 ENV NODE_ENV=$NODE_ENV
