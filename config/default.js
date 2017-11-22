@@ -2,6 +2,13 @@
  * The configuration file.
  */
 
+var fs = require('fs');
+if (fs.existsSync('/opt/app/.env')) {
+    console.log('.ENV Found file');
+} else {
+console.log('.ENV Found NOT file');
+} 
+
 var dotenv = require('dotenv').config({path: '/opt/app/.env'});
 //var dotenv = require('dotenv');
 //dotenv.load();
