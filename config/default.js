@@ -10,9 +10,10 @@ if (fs.existsSync('/opt/app/.env')) {
 //var dotenv = require('dotenv').config({path: '/opt/app/.env'});
 //var dotenv = require('dotenv');
 //dotenv.load();
-console.log('DB connection string  :', DBURL);
-
-
+console.log('DB connection string DBURL  :', DBURL);
+var dotenv = require('dotenv').config({path: '/opt/app/.env'});
+console.log('DB connection string  DB_CONNSTRING:', process.env.DB_CONNSTRING);
+var DB_CONNSTRING = process.env.DB_CONNSTRING;
 module.exports = {
   LOG_LEVEL: process.env.LOG_LEVEL || 'info',
   PORT: process.env.PORT || 3000,
@@ -20,7 +21,7 @@ module.exports = {
   JWT_SECRET: process.env.JWT_SECRET || 'hjijfvbw859',
 
   //DATABASE_URL: process.env.DATABASE_URL || 'postgres://postgres:12345678@tc-notification-new.ci8xwsszszsw.us-east-1.rds.amazonaws.com:5432/notification',
-DATABASE_URL: process.env.DATABASE_URL || DBURL,
+DATABASE_URL: process.env.DATABASE_URL || DB_CONNSTRING,
 DATABASE_OPTIONS: {
     dialect: 'postgres',
     pool: {
