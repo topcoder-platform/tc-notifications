@@ -10,7 +10,7 @@ try{
     var DBURL = fs.readFileSync('/opt/app/.env', 'utf8');
     console.log(DBURL);    
 } catch(e) {
-console.log('Error inside file read:'e.stack');
+console.log('Error inside file read:',e.stack);
 } 
 
 //var dotenv = require('dotenv').config({path: '/opt/app/.env'});
