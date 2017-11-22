@@ -1,18 +1,8 @@
 /**
  * The configuration file.
  */
-
-var fs = require('fs');
-if (fs.existsSync('/opt/app/.env')) {
-    console.log('.ENV Found file');
-}
-    var DBURL = fs.readFileSync('/opt/app/.env', 'utf8');
-//var dotenv = require('dotenv').config({path: '/opt/app/.env'});
-//var dotenv = require('dotenv');
-//dotenv.load();
-console.log('DB connection string DBURL  :', DBURL);
 var dotenv = require('dotenv').config({path: '/opt/app/.env'});
-console.log('DB connection string  DB_CONNSTRING:', process.env.DB_CONNSTRING);
+//console.log('DB connection string  DB_CONNSTRING:', process.env.DB_CONNSTRING);
 var DB_CONNSTRING = process.env.DB_CONNSTRING;
 module.exports = {
   LOG_LEVEL: process.env.LOG_LEVEL || 'info',
