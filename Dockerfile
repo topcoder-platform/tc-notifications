@@ -9,6 +9,8 @@ WORKDIR /opt/app
 COPY . .
 
 RUN npm install
+# dotenv is required for retriving postgres env
+npm install dotenv --save
 RUN npm test
 
 ENV NODE_ENV=$NODE_ENV
