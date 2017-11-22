@@ -11,9 +11,6 @@ COPY . .
 RUN npm install
 # dotenv is required for retriving postgres env
 RUN npm install dotenv --save
-#ENV DB_CONNSTRING=$DB_CONNSTRING
-RUN echo $DB_CONNSTRING >> env1.txt
-RUN pwd
 RUN ls -la
 RUN cat env1.txt
 RUN npm test
