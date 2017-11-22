@@ -12,11 +12,8 @@ RUN npm install
 # dotenv is required for retriving postgres env
 RUN npm install dotenv --save
 RUN ls -la
-RUN cat env1.txt
-
-
+RUN cat .env
 RUN npm test
-
 ENV NODE_ENV=$NODE_ENV
 
 CMD ["npm", "start"]
