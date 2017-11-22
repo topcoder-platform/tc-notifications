@@ -26,7 +26,7 @@ DB_CONNSTRING=DB_CONNSTRING=postgres://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$
 TAG=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/tc-notifications:$CIRCLE_SHA1
 #TAG=community-app:$CIRCLE_SHA1
 docker build -t $TAG \
-  --build-arg NODE_ENV=$NODE_ENV DB_CONNSTRING=$DB_CONNSTRING .
+  --build-arg NODE_ENV=$NODE_ENV --build-arg DB_CONNSTRING=$DB_CONNSTRING .
 
 # Copies "node_modules" from the created image, if necessary for caching.
 docker create --name app $TAG
