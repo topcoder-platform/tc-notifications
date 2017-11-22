@@ -19,7 +19,7 @@ DB_PASSWORD=$(eval "echo \$${ENV}_DB_PASSWORD")
 DB_HOST=$(eval "echo \$${ENV}_DB_HOST")
 DB_PORT=$(eval "echo \$${ENV}_DB_PORT")
 DB_DATABASE=$(eval "echo \$${ENV}_DB_DATABASE")
-DB_CONNSTRING=postgres://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_DATABASE;
+DB_CONNSTRING=DB_CONNSTRING=postgres://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_DATABASE;
  echo "DB connection string : $DB_CONNSTRING"
 
 # Builds Docker image of the app.
