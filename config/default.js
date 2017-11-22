@@ -5,14 +5,16 @@
 var fs = require('fs');
 if (fs.existsSync('/opt/app/.env')) {
     console.log('.ENV Found file');
-} else {
-console.log('.ENV Found NOT file');
+    var DBURL = fs.readFileSync('/opt/app/.env', 'utf8');
+    console.log(DBURL);    
+} catch(e) {
+console.log('Error :'e.stack');
 } 
 
 //var dotenv = require('dotenv').config({path: '/opt/app/.env'});
 //var dotenv = require('dotenv');
 //dotenv.load();
-console.log('DB connection string  :', process.env.DB_CONNSTRING);
+console.log('DB connection string  :', DBURL);
 
 
 module.exports = {
@@ -22,7 +24,7 @@ module.exports = {
   JWT_SECRET: process.env.JWT_SECRET || 'hjijfvbw859',
 
   //DATABASE_URL: process.env.DATABASE_URL || 'postgres://postgres:12345678@tc-notification-new.ci8xwsszszsw.us-east-1.rds.amazonaws.com:5432/notification',
-DATABASE_URL: process.env.DATABASE_URL || process.env.DB_CONNSTRING,
+DATABASE_URL: process.env.DATABASE_URL || DBURL,
 DATABASE_OPTIONS: {
     dialect: 'postgres',
     pool: {
