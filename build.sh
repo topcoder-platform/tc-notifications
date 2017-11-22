@@ -31,10 +31,10 @@ docker build -t $TAG \
 # Copies "node_modules" from the created image, if necessary for caching.
 docker create --name app $TAG
 
-#echo $DB_CONNSTRING > .env
-#echo "show contents of .env via cat"
-#cat .env
-#docker cp .env app:/opt/app/
+echo $DB_CONNSTRING > .env
+echo "show contents of .env via cat"
+cat .env
+docker cp .env app:/opt/app/
 
 if [ -d node_modules ]
 then

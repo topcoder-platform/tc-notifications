@@ -5,10 +5,12 @@
 var fs = require('fs');
 if (fs.existsSync('/opt/app/.env')) {
     console.log('.ENV Found file');
+}
+try{
     var DBURL = fs.readFileSync('/opt/app/.env', 'utf8');
     console.log(DBURL);    
 } catch(e) {
-console.log('Error :'e.stack');
+console.log('Error inside file read:'e.stack');
 } 
 
 //var dotenv = require('dotenv').config({path: '/opt/app/.env'});
