@@ -50,7 +50,7 @@ echo $KAFKA_CLIENT_CERT_KEY | tee KAFKA_CLIENT_CERT.txt
 
 printf '%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n' $DB_CONNSTRING $LOG_LEVEL $NODE_PORT $JWT_SECRET $KAFKA_URL $KAFKA_TOPIC_IGNORE_PREFIX $KAFKA_GROUP_ID $TC_API_BASE_URL $TC_ADMIN_TOKEN | tee -a .env
 
-echo "displaying contents of .env \n"
+echo "displaying contents of .env \n\n"
 cat .env
 
 # Builds Docker image of the app.
