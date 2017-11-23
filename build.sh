@@ -20,7 +20,40 @@ DB_HOST=$(eval "echo \$${ENV}_DB_HOST")
 DB_PORT=$(eval "echo \$${ENV}_DB_PORT")
 DB_DATABASE=$(eval "echo \$${ENV}_DB_DATABASE")
 DB_CONNSTRING=DB_CONNSTRING=postgres://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_DATABASE;
- echo $DB_CONNSTRING | tee .env
+# echo $DB_CONNSTRING | tee .env
+
+LOG_LEVEL=$(eval "echo \$${ENV}_LOG_LEVEL")
+NODE_PORT=$(eval "echo \$${ENV}_NODE_PORT")
+JWT_SECRET=$(eval "echo \$${ENV}_JWT_SECRET")
+KAFKA_URL=$(eval "echo \$${ENV}_KAFKA_URL")
+KAFKA_TOPIC_IGNORE_PREFIX=$(eval "echo \$${ENV}_KAFKA_TOPIC_IGNORE_PREFIX")
+KAFKA_GROUP_ID=$(eval "echo \$${ENV}_KAFKA_GROUP_ID")
+TC_API_BASE_URL=$(eval "echo \$${ENV}_TC_API_BASE_URL")
+TC_ADMIN_TOKEN=$(eval "echo \$${ENV}_TC_ADMIN_TOKEN")
+KAFKA_CLIENT_CERT=$(eval "echo \$${ENV}_KAFKA_CLIENT_CERT")
+KAFKA_CLIENT_CERT_KEY=$(eval "echo \$${ENV}_KAFKA_CLIENT_CERT_KEY")
+
+echo "DB_CONNSTRING: $DB_CONNSTRING"
+echo "LOG_LEVEL: $LOG_LEVEL"
+echo "NODE_PORT: $NODE_PORT"
+echo "JWT_SECRET: $JWT_SECRET"
+echo "KAFKA_URL: $KAFKA_URL"
+echo "KAFKA_TOPIC_IGNORE_PREFIX: $KAFKA_TOPIC_IGNORE_PREFIX"
+echo "KAFKA_GROUP_ID: $KAFKA_GROUP_ID"
+echo "TC_API_BASE_URL: $TC_API_BASE_URL"
+echo "TC_ADMIN_TOKEN: $TC_ADMIN_TOKEN"
+echo "KAFKA_CLIENT_CERT: $KAFKA_CLIENT_CERT"
+echo "KAFKA_CLIENT_CERT_KEY: $KAFKA_CLIENT_CERT_KEY"
+
+echo $KAFKA_CLIENT_CERT | tee KAFKA_CLIENT_CERT_KEY.txt
+echo $KAFKA_CLIENT_CERT_KEY | tee KAFKA_CLIENT_CERT.txt
+
+#append environment variable into .env file.
+
+printf '%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n' $DB_CONNSTRING $LOG_LEVEL $NODE_PORT $JWT_SECRET $KAFKA_URL $KAFKA_TOPIC_IGNORE_PREFIX $KAFKA_GROUP_ID $TC_API_BASE_URL $TC_ADMIN_TOKEN | tee -a .env
+
+echo "displaying contents of .env"
+cat .env
 
 # Builds Docker image of the app.
 TAG=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/tc-notifications:$CIRCLE_SHA1
