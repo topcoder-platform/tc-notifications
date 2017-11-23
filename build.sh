@@ -19,7 +19,7 @@ DB_PASSWORD=$(eval "echo \$${ENV}_DB_PASSWORD")
 DB_HOST=$(eval "echo \$${ENV}_DB_HOST")
 DB_PORT=$(eval "echo \$${ENV}_DB_PORT")
 DB_DATABASE=$(eval "echo \$${ENV}_DB_DATABASE")
-DB_CONNSTRING=DB_CONNSTRING=postgres://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_DATABASE;
+DATABASE_URL=DATABASE_URL=postgres://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_DATABASE;
 # echo $DB_CONNSTRING | tee .env
 
 LOG_LEVEL=LOG_LEVEL=$(eval "echo \$${ENV}_LOG_LEVEL")
@@ -48,7 +48,7 @@ echo $KAFKA_CLIENT_CERT_KEY | tee KAFKA_CLIENT_CERT.txt
 
 #append environment variable into .env file.
 
-printf '%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n' $DB_CONNSTRING $LOG_LEVEL $NODE_PORT $JWT_SECRET $KAFKA_URL $KAFKA_TOPIC_IGNORE_PREFIX $KAFKA_GROUP_ID $TC_API_BASE_URL $TC_ADMIN_TOKEN | tee -a .env
+printf '%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n' $DB_CONNSTRING $LOG_LEVEL $NODE_PORT $JWT_SECRET $KAFKA_URL $KAFKA_TOPIC_IGNORE_PREFIX $KAFKA_GROUP_ID "'"$TC_API_BASE_URL"'" $TC_ADMIN_TOKEN | tee -a .env
 
 echo "displaying contents of .env \n\n"
 cat .env
