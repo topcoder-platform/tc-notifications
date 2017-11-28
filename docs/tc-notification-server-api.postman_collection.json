@@ -1,78 +1,43 @@
 {
-	"id": "8222060b-3457-ab05-d62d-5dfc636c846a",
+	"id": "be0fac1b-3d54-0215-59e4-ed1be841a89e",
 	"name": "tc-notification-server-api",
 	"description": "",
 	"order": [
-		"c22d4575-a6da-673b-54aa-ccb4d41c5fd2",
-		"3b04a077-28f9-046e-dcd2-5bd32dba2437",
-		"5e44b10c-c025-6495-7270-e08327957bcf",
-		"115fd1ac-eaed-c323-c7c2-a115d4e401ab",
-		"a27ac0ff-001b-85d8-4d2e-241d4ef6a2b7",
-		"50a6f58e-483e-53fd-5a92-6c83cfd960b6"
+		"e16cc911-9393-9f47-cce4-3ef583449fba",
+		"6e2f5e53-61db-bb45-f7ae-d0fc9883f92b",
+		"919e4314-ca62-918b-e790-7e09afd4cb9b",
+		"dc85dae6-5c2c-114a-7b29-2ddbb0310c06",
+		"4d9e3771-b9d3-a186-45cd-b57b665b4647",
+		"c8ddeee1-2851-b571-08bd-95b822632e40"
 	],
 	"folders": [
 		{
 			"name": "failure",
 			"description": "",
-			"collectionId": "8222060b-3457-ab05-d62d-5dfc636c846a",
+			"collectionId": "be0fac1b-3d54-0215-59e4-ed1be841a89e",
 			"order": [
-				"9d0a8156-50d2-ffbe-8a64-d76211012fe2",
-				"71174157-3901-401a-42b0-918032308adc",
-				"dedef10b-0dea-f2f3-550f-558344bd3c4f",
-				"f1462f6b-8e0d-9719-1c64-bdda81bb3533",
-				"946ad1ae-c1e2-bc5a-2aab-5620af7837e0",
-				"cb0ff0c6-c277-f138-d900-2a19aa0c1976",
-				"8e06f1d7-2d77-db06-e46c-bfbbe472e461"
+				"36087c50-2265-6db2-7f23-d5607006bb6c",
+				"99bd0688-cdd3-9136-b64e-f1706884fced",
+				"0c7f4099-db8a-5772-9627-335600a8d70e",
+				"dac3727a-ed58-854d-73a2-ab8d5a2256bb",
+				"9c272f57-3621-7f7b-a6a9-3a26969dd4d1",
+				"f8bfa330-ac2e-f0fa-dae8-bb2bcdb3819f",
+				"0f6ffaad-aadb-8ad1-a0b1-16c4b1d87718"
 			],
 			"owner": 0,
 			"folders_order": [],
-			"id": "1ca18368-6533-2f65-b6f7-65f731edb06c"
+			"id": "c54ef790-e9db-6bac-432b-80f10e9fd76a"
 		}
 	],
 	"folders_order": [
-		"1ca18368-6533-2f65-b6f7-65f731edb06c"
+		"c54ef790-e9db-6bac-432b-80f10e9fd76a"
 	],
 	"timestamp": 1507789221862,
 	"owner": 0,
 	"public": false,
 	"requests": [
 		{
-			"id": "115fd1ac-eaed-c323-c7c2-a115d4e401ab",
-			"headers": "//Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
-			"headerData": [
-				{
-					"key": "Content-Type",
-					"value": "application/json",
-					"description": "",
-					"enabled": false
-				},
-				{
-					"key": "Authorization",
-					"value": "Bearer {{TOKEN}}",
-					"description": "",
-					"enabled": true
-				}
-			],
-			"url": "{{URL}}/notifications/read",
-			"queryParams": [],
-			"preRequestScript": null,
-			"pathVariables": {},
-			"pathVariableData": [],
-			"method": "PUT",
-			"data": [],
-			"dataMode": "raw",
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1509793307190,
-			"name": "markAllRead",
-			"description": "",
-			"collectionId": "8222060b-3457-ab05-d62d-5dfc636c846a",
-			"responses": [],
-			"rawModeData": ""
-		},
-		{
-			"id": "3b04a077-28f9-046e-dcd2-5bd32dba2437",
+			"id": "0c7f4099-db8a-5772-9627-335600a8d70e",
 			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
 			"headerData": [
 				{
@@ -88,7 +53,8 @@
 					"enabled": true
 				}
 			],
-			"url": "{{URL}}/notifications?offset=0&limit=20&type=notifications.connect.project.updated",
+			"url": "{{URL}}/notifications?offset=0&limit=20&type=notifications.connect.project.updated&read=yes",
+			"folder": "c54ef790-e9db-6bac-432b-80f10e9fd76a",
 			"queryParams": [
 				{
 					"key": "offset",
@@ -113,10 +79,10 @@
 				},
 				{
 					"key": "read",
-					"value": "false",
+					"value": "yes",
 					"equals": true,
 					"description": "",
-					"enabled": false
+					"enabled": true
 				}
 			],
 			"preRequestScript": null,
@@ -128,15 +94,16 @@
 			"tests": null,
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1509791065950,
-			"name": "listNotifications",
+			"time": 1509801563428,
+			"name": "listNotifications - invalid read filter",
 			"description": "",
-			"collectionId": "8222060b-3457-ab05-d62d-5dfc636c846a",
+			"collectionId": "be0fac1b-3d54-0215-59e4-ed1be841a89e",
 			"responses": [],
-			"rawModeData": ""
+			"rawModeData": "",
+			"collection_id": "be0fac1b-3d54-0215-59e4-ed1be841a89e"
 		},
 		{
-			"id": "50a6f58e-483e-53fd-5a92-6c83cfd960b6",
+			"id": "0f6ffaad-aadb-8ad1-a0b1-16c4b1d87718",
 			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
 			"headerData": [
 				{
@@ -153,142 +120,7 @@
 				}
 			],
 			"url": "{{URL}}/notificationsettings",
-			"queryParams": [],
-			"preRequestScript": null,
-			"pathVariables": {},
-			"pathVariableData": [],
-			"method": "PUT",
-			"data": [],
-			"dataMode": "raw",
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1509794397038,
-			"name": "updateSettings",
-			"description": "",
-			"collectionId": "8222060b-3457-ab05-d62d-5dfc636c846a",
-			"responses": [],
-			"rawModeData": "[\n\t{\n\t\t\"topic\": \"notifications.connect.project.created\",\n\t\t\"deliveryMethod\": \"email\",\n\t\t\"value\": \"on\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.project.created\",\n\t\t\"deliveryMethod\": \"sms\",\n\t\t\"value\": \"off\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.project.created\",\n\t\t\"deliveryMethod\": \"web\",\n\t\t\"value\": \"off\"\n\t},\n\t{\n\t\t\"topic\": \"notifications.connect.message.posted\",\n\t\t\"deliveryMethod\": \"email\",\n\t\t\"value\": \"off\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.message.posted\",\n\t\t\"deliveryMethod\": \"sms\",\n\t\t\"value\": \"on\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.message.posted\",\n\t\t\"deliveryMethod\": \"web\",\n\t\t\"value\": \"on\"\n\t}\n]"
-		},
-		{
-			"id": "5e44b10c-c025-6495-7270-e08327957bcf",
-			"headers": "//Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
-			"headerData": [
-				{
-					"key": "Content-Type",
-					"value": "application/json",
-					"description": "",
-					"enabled": false
-				},
-				{
-					"key": "Authorization",
-					"value": "Bearer {{TOKEN}}",
-					"description": "",
-					"enabled": true
-				}
-			],
-			"url": "{{URL}}/notifications/1/read",
-			"queryParams": [],
-			"preRequestScript": null,
-			"pathVariables": {},
-			"pathVariableData": [],
-			"method": "PUT",
-			"data": [],
-			"dataMode": "raw",
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1509786004930,
-			"name": "markAsRead",
-			"description": "",
-			"collectionId": "8222060b-3457-ab05-d62d-5dfc636c846a",
-			"responses": [],
-			"rawModeData": ""
-		},
-		{
-			"id": "71174157-3901-401a-42b0-918032308adc",
-			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
-			"headerData": [
-				{
-					"key": "Content-Type",
-					"value": "application/json",
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "Authorization",
-					"value": "Bearer {{TOKEN}}",
-					"description": "",
-					"enabled": true
-				}
-			],
-			"url": "{{URL}}/notifications?offset=0&limit=abc&type=notifications.connect.project.updated",
-			"folder": "1ca18368-6533-2f65-b6f7-65f731edb06c",
-			"queryParams": [
-				{
-					"key": "offset",
-					"value": "0",
-					"equals": true,
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "limit",
-					"value": "abc",
-					"equals": true,
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "type",
-					"value": "notifications.connect.project.updated",
-					"equals": true,
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "read",
-					"value": "false",
-					"equals": true,
-					"description": "",
-					"enabled": false
-				}
-			],
-			"preRequestScript": null,
-			"pathVariables": {},
-			"pathVariableData": [],
-			"method": "GET",
-			"data": [],
-			"dataMode": "raw",
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1509801518188,
-			"name": "listNotifications - invalid limit",
-			"description": "",
-			"collectionId": "8222060b-3457-ab05-d62d-5dfc636c846a",
-			"responses": [],
-			"rawModeData": ""
-		},
-		{
-			"id": "8e06f1d7-2d77-db06-e46c-bfbbe472e461",
-			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
-			"headerData": [
-				{
-					"key": "Content-Type",
-					"value": "application/json",
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "Authorization",
-					"value": "Bearer {{TOKEN}}",
-					"description": "",
-					"enabled": true
-				}
-			],
-			"url": "{{URL}}/notificationsettings",
-			"folder": "1ca18368-6533-2f65-b6f7-65f731edb06c",
+			"folder": "c54ef790-e9db-6bac-432b-80f10e9fd76a",
 			"queryParams": [],
 			"preRequestScript": null,
 			"pathVariables": {},
@@ -302,42 +134,13 @@
 			"time": 1509801716547,
 			"name": "updateSettings - invalid body",
 			"description": "",
-			"collectionId": "8222060b-3457-ab05-d62d-5dfc636c846a",
+			"collectionId": "be0fac1b-3d54-0215-59e4-ed1be841a89e",
 			"responses": [],
-			"rawModeData": "[\n\t{\n\t\t\"wrong\": \"notifications.connect.project.created\",\n\t\t\"deliveryMethod\": 123,\n\t\t\"value\": \"on\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.project.created\",\n\t\t\"deliveryMethod\": \"sms\",\n\t\t\"value\": \"off\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.project.created\",\n\t\t\"deliveryMethod\": \"web\",\n\t\t\"value\": \"off\"\n\t},\n\t{\n\t\t\"topic\": \"notifications.connect.message.posted\",\n\t\t\"deliveryMethod\": \"email\",\n\t\t\"value\": \"off\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.message.posted\",\n\t\t\"deliveryMethod\": \"sms\",\n\t\t\"value\": \"on\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.message.posted\",\n\t\t\"deliveryMethod\": \"web\",\n\t\t\"value\": \"on\"\n\t}\n]"
+			"rawModeData": "[\n\t{\n\t\t\"wrong\": \"notifications.connect.project.created\",\n\t\t\"deliveryMethod\": 123,\n\t\t\"value\": \"on\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.project.created\",\n\t\t\"deliveryMethod\": \"sms\",\n\t\t\"value\": \"off\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.project.created\",\n\t\t\"deliveryMethod\": \"web\",\n\t\t\"value\": \"off\"\n\t},\n\t{\n\t\t\"topic\": \"notifications.connect.message.posted\",\n\t\t\"deliveryMethod\": \"email\",\n\t\t\"value\": \"off\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.message.posted\",\n\t\t\"deliveryMethod\": \"sms\",\n\t\t\"value\": \"on\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.message.posted\",\n\t\t\"deliveryMethod\": \"web\",\n\t\t\"value\": \"on\"\n\t}\n]",
+			"collection_id": "be0fac1b-3d54-0215-59e4-ed1be841a89e"
 		},
 		{
-			"id": "946ad1ae-c1e2-bc5a-2aab-5620af7837e0",
-			"headers": "//Content-Type: application/json\n",
-			"headerData": [
-				{
-					"key": "Content-Type",
-					"value": "application/json",
-					"description": "",
-					"enabled": false
-				}
-			],
-			"url": "{{URL}}/notifications/read",
-			"folder": "1ca18368-6533-2f65-b6f7-65f731edb06c",
-			"queryParams": [],
-			"preRequestScript": null,
-			"pathVariables": {},
-			"pathVariableData": [],
-			"method": "PUT",
-			"data": [],
-			"dataMode": "raw",
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1509801636468,
-			"name": "markAllRead - missing token",
-			"description": "",
-			"collectionId": "8222060b-3457-ab05-d62d-5dfc636c846a",
-			"responses": [],
-			"rawModeData": ""
-		},
-		{
-			"id": "9d0a8156-50d2-ffbe-8a64-d76211012fe2",
+			"id": "36087c50-2265-6db2-7f23-d5607006bb6c",
 			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
 			"headerData": [
 				{
@@ -354,7 +157,7 @@
 				}
 			],
 			"url": "{{URL}}/notifications?offset=-1&limit=20&type=notifications.connect.project.updated",
-			"folder": "1ca18368-6533-2f65-b6f7-65f731edb06c",
+			"folder": "c54ef790-e9db-6bac-432b-80f10e9fd76a",
 			"queryParams": [
 				{
 					"key": "offset",
@@ -397,12 +200,13 @@
 			"time": 1509801475461,
 			"name": "listNotifications - invalid offset",
 			"description": "",
-			"collectionId": "8222060b-3457-ab05-d62d-5dfc636c846a",
+			"collectionId": "be0fac1b-3d54-0215-59e4-ed1be841a89e",
 			"responses": [],
-			"rawModeData": ""
+			"rawModeData": "",
+			"collection_id": "be0fac1b-3d54-0215-59e4-ed1be841a89e"
 		},
 		{
-			"id": "a27ac0ff-001b-85d8-4d2e-241d4ef6a2b7",
+			"id": "4d9e3771-b9d3-a186-45cd-b57b665b4647",
 			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
 			"headerData": [
 				{
@@ -432,12 +236,319 @@
 			"time": 1509793503637,
 			"name": "getSettings",
 			"description": "",
-			"collectionId": "8222060b-3457-ab05-d62d-5dfc636c846a",
+			"collectionId": "be0fac1b-3d54-0215-59e4-ed1be841a89e",
+			"responses": [],
+			"rawModeData": "",
+			"collection_id": "be0fac1b-3d54-0215-59e4-ed1be841a89e"
+		},
+		{
+			"id": "6e2f5e53-61db-bb45-f7ae-d0fc9883f92b",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{TOKEN}}",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "{{URL}}/notifications?offset=0&limit=20",
+			"queryParams": [
+				{
+					"key": "offset",
+					"value": "0",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "limit",
+					"value": "20",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "type",
+					"value": "notifications.connect.project.updated",
+					"equals": true,
+					"description": "",
+					"enabled": false
+				},
+				{
+					"key": "read",
+					"value": "false",
+					"equals": true,
+					"description": "",
+					"enabled": false
+				}
+			],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": [],
+			"dataMode": "raw",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1510707608411,
+			"name": "listNotifications",
+			"description": "",
+			"collectionId": "be0fac1b-3d54-0215-59e4-ed1be841a89e",
 			"responses": [],
 			"rawModeData": ""
 		},
 		{
-			"id": "c22d4575-a6da-673b-54aa-ccb4d41c5fd2",
+			"id": "919e4314-ca62-918b-e790-7e09afd4cb9b",
+			"headers": "//Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": false
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{TOKEN}}",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "{{URL}}/notifications/1/read",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "PUT",
+			"data": [],
+			"dataMode": "raw",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1509786004930,
+			"name": "markAsRead",
+			"description": "",
+			"collectionId": "be0fac1b-3d54-0215-59e4-ed1be841a89e",
+			"responses": [],
+			"rawModeData": "",
+			"collection_id": "be0fac1b-3d54-0215-59e4-ed1be841a89e"
+		},
+		{
+			"id": "99bd0688-cdd3-9136-b64e-f1706884fced",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{TOKEN}}",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "{{URL}}/notifications?offset=0&limit=abc&type=notifications.connect.project.updated",
+			"folder": "c54ef790-e9db-6bac-432b-80f10e9fd76a",
+			"queryParams": [
+				{
+					"key": "offset",
+					"value": "0",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "limit",
+					"value": "abc",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "type",
+					"value": "notifications.connect.project.updated",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "read",
+					"value": "false",
+					"equals": true,
+					"description": "",
+					"enabled": false
+				}
+			],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": [],
+			"dataMode": "raw",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1509801518188,
+			"name": "listNotifications - invalid limit",
+			"description": "",
+			"collectionId": "be0fac1b-3d54-0215-59e4-ed1be841a89e",
+			"responses": [],
+			"rawModeData": "",
+			"collection_id": "be0fac1b-3d54-0215-59e4-ed1be841a89e"
+		},
+		{
+			"id": "9c272f57-3621-7f7b-a6a9-3a26969dd4d1",
+			"headers": "//Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": false
+				}
+			],
+			"url": "{{URL}}/notifications/read",
+			"folder": "c54ef790-e9db-6bac-432b-80f10e9fd76a",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "PUT",
+			"data": [],
+			"dataMode": "raw",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1509801636468,
+			"name": "markAllRead - missing token",
+			"description": "",
+			"collectionId": "be0fac1b-3d54-0215-59e4-ed1be841a89e",
+			"responses": [],
+			"rawModeData": "",
+			"collection_id": "be0fac1b-3d54-0215-59e4-ed1be841a89e"
+		},
+		{
+			"id": "c8ddeee1-2851-b571-08bd-95b822632e40",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{TOKEN}}",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "{{URL}}/notificationsettings",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "PUT",
+			"data": [],
+			"dataMode": "raw",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1509794397038,
+			"name": "updateSettings",
+			"description": "",
+			"collectionId": "be0fac1b-3d54-0215-59e4-ed1be841a89e",
+			"responses": [],
+			"rawModeData": "[\n\t{\n\t\t\"topic\": \"notifications.connect.project.created\",\n\t\t\"deliveryMethod\": \"email\",\n\t\t\"value\": \"on\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.project.created\",\n\t\t\"deliveryMethod\": \"sms\",\n\t\t\"value\": \"off\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.project.created\",\n\t\t\"deliveryMethod\": \"web\",\n\t\t\"value\": \"off\"\n\t},\n\t{\n\t\t\"topic\": \"notifications.connect.message.posted\",\n\t\t\"deliveryMethod\": \"email\",\n\t\t\"value\": \"off\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.message.posted\",\n\t\t\"deliveryMethod\": \"sms\",\n\t\t\"value\": \"on\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.message.posted\",\n\t\t\"deliveryMethod\": \"web\",\n\t\t\"value\": \"on\"\n\t}\n]",
+			"collection_id": "be0fac1b-3d54-0215-59e4-ed1be841a89e"
+		},
+		{
+			"id": "dac3727a-ed58-854d-73a2-ab8d5a2256bb",
+			"headers": "//Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": false
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{TOKEN}}",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "{{URL}}/notifications/1111111/read",
+			"folder": "c54ef790-e9db-6bac-432b-80f10e9fd76a",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "PUT",
+			"data": [],
+			"dataMode": "raw",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1509801601644,
+			"name": "markAsRead - not found",
+			"description": "",
+			"collectionId": "be0fac1b-3d54-0215-59e4-ed1be841a89e",
+			"responses": [],
+			"rawModeData": "",
+			"collection_id": "be0fac1b-3d54-0215-59e4-ed1be841a89e"
+		},
+		{
+			"id": "dc85dae6-5c2c-114a-7b29-2ddbb0310c06",
+			"headers": "//Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": false
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{TOKEN}}",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "{{URL}}/notifications/read",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "PUT",
+			"data": [],
+			"dataMode": "raw",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1509793307190,
+			"name": "markAllRead",
+			"description": "",
+			"collectionId": "be0fac1b-3d54-0215-59e4-ed1be841a89e",
+			"responses": [],
+			"rawModeData": "",
+			"collection_id": "be0fac1b-3d54-0215-59e4-ed1be841a89e"
+		},
+		{
+			"id": "e16cc911-9393-9f47-cce4-3ef583449fba",
 			"headers": "Content-Type: application/json\nauthorization: Bearer {{TC_ADMIN_TOKEN}}\n",
 			"headerData": [
 				{
@@ -468,7 +579,7 @@
 			"time": 1509766333902,
 			"name": "TC API - get project",
 			"description": "",
-			"collectionId": "8222060b-3457-ab05-d62d-5dfc636c846a",
+			"collectionId": "be0fac1b-3d54-0215-59e4-ed1be841a89e",
 			"responses": [
 				{
 					"status": "",
@@ -564,7 +675,7 @@
 					"empty": false,
 					"failed": false,
 					"name": "test111",
-					"id": "888ce32a-35b6-14c3-07a9-0a47d2ddbd71",
+					"id": "24a44c8d-b9d3-e6ab-8439-62625dafbd07",
 					"request": {
 						"url": "http://api.topcoder-dev.com/v4/projects/1936",
 						"pathVariables": {},
@@ -583,13 +694,15 @@
 						"data": "",
 						"method": "GET",
 						"dataMode": "raw"
-					}
+					},
+					"owner": 0
 				}
 			],
-			"rawModeData": ""
+			"rawModeData": "",
+			"collection_id": "be0fac1b-3d54-0215-59e4-ed1be841a89e"
 		},
 		{
-			"id": "cb0ff0c6-c277-f138-d900-2a19aa0c1976",
+			"id": "f8bfa330-ac2e-f0fa-dae8-bb2bcdb3819f",
 			"headers": "Content-Type: application/json\nAuthorization: Bearer invalid\n",
 			"headerData": [
 				{
@@ -606,7 +719,7 @@
 				}
 			],
 			"url": "{{URL}}/notificationsettings",
-			"folder": "1ca18368-6533-2f65-b6f7-65f731edb06c",
+			"folder": "c54ef790-e9db-6bac-432b-80f10e9fd76a",
 			"queryParams": [],
 			"preRequestScript": null,
 			"pathVariables": {},
@@ -620,110 +733,10 @@
 			"time": 1509801668820,
 			"name": "getSettings - invalid token",
 			"description": "",
-			"collectionId": "8222060b-3457-ab05-d62d-5dfc636c846a",
+			"collectionId": "be0fac1b-3d54-0215-59e4-ed1be841a89e",
 			"responses": [],
-			"rawModeData": ""
-		},
-		{
-			"id": "dedef10b-0dea-f2f3-550f-558344bd3c4f",
-			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
-			"headerData": [
-				{
-					"key": "Content-Type",
-					"value": "application/json",
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "Authorization",
-					"value": "Bearer {{TOKEN}}",
-					"description": "",
-					"enabled": true
-				}
-			],
-			"url": "{{URL}}/notifications?offset=0&limit=20&type=notifications.connect.project.updated&read=yes",
-			"folder": "1ca18368-6533-2f65-b6f7-65f731edb06c",
-			"queryParams": [
-				{
-					"key": "offset",
-					"value": "0",
-					"equals": true,
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "limit",
-					"value": "20",
-					"equals": true,
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "type",
-					"value": "notifications.connect.project.updated",
-					"equals": true,
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "read",
-					"value": "yes",
-					"equals": true,
-					"description": "",
-					"enabled": true
-				}
-			],
-			"preRequestScript": null,
-			"pathVariables": {},
-			"pathVariableData": [],
-			"method": "GET",
-			"data": [],
-			"dataMode": "raw",
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1509801563428,
-			"name": "listNotifications - invalid read filter",
-			"description": "",
-			"collectionId": "8222060b-3457-ab05-d62d-5dfc636c846a",
-			"responses": [],
-			"rawModeData": ""
-		},
-		{
-			"id": "f1462f6b-8e0d-9719-1c64-bdda81bb3533",
-			"headers": "//Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
-			"headerData": [
-				{
-					"key": "Content-Type",
-					"value": "application/json",
-					"description": "",
-					"enabled": false
-				},
-				{
-					"key": "Authorization",
-					"value": "Bearer {{TOKEN}}",
-					"description": "",
-					"enabled": true
-				}
-			],
-			"url": "{{URL}}/notifications/1111111/read",
-			"folder": "1ca18368-6533-2f65-b6f7-65f731edb06c",
-			"queryParams": [],
-			"preRequestScript": null,
-			"pathVariables": {},
-			"pathVariableData": [],
-			"method": "PUT",
-			"data": [],
-			"dataMode": "raw",
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1509801601644,
-			"name": "markAsRead - not found",
-			"description": "",
-			"collectionId": "8222060b-3457-ab05-d62d-5dfc636c846a",
-			"responses": [],
-			"rawModeData": ""
+			"rawModeData": "",
+			"collection_id": "be0fac1b-3d54-0215-59e4-ed1be841a89e"
 		}
 	]
 }

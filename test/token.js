@@ -19,7 +19,8 @@ if (_.isNaN(userId)) {
 }
 
 // generate JWT token
-const token = jwt.sign({ userId }, config.JWT_SECRET, { expiresIn: '30 days' });
+const token = jwt.sign({ userId, iss: `https://api.${config.authDomain}` },
+  config.authSecret, { expiresIn: '30 days' });
 
 console.info(`JWT Token: ${token}`); // eslint-disable-line no-console
 process.exit();

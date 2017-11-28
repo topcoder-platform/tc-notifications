@@ -6,7 +6,7 @@
 require('./bootstrap');
 const config = require('config');
 const express = require('express');
-const expressJwt = require('express-jwt');
+const jwtAuth = require('tc-core-library-js').middleware.jwtAuthenticator;
 const _ = require('lodash');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -95,11 +95,12 @@ function start(handlers) {
         req.signature = `${def.controller}#${def.method}`;
         next();
       });
-      actions.push(expressJwt({ secret: config.JWT_SECRET }));
+      actions.push(jwtAuth());
       actions.push((req, res, next) => {
-        if (!req.user) {
-          return next(new errors.UnAuthorizedError('Authorization failed.'));
+        if (!req.authUser) {
+          return next(new errors.UnauthorizedError('Authorization failed.'));
         }
+        req.user = req.authUser;
         return next();
       });
       actions.push(method);
