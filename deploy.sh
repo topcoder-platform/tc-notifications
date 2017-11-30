@@ -30,6 +30,20 @@ AWS_ACCOUNT_ID=$(eval "echo \$${ENV}_AWS_ACCOUNT_ID")
 AWS_REPOSITORY=$(eval "echo \$${ENV}_AWS_REPOSITORY")
 AWS_ECS_CLUSTER=$(eval "echo \$${ENV}_AWS_ECS_CLUSTER")
 AWS_ECS_SERVICE=$(eval "echo \$${ENV}_AWS_ECS_SERVICE")
+
+KAFKA_CLIENT_CERT=$(eval "echo \$${ENV}_KAFKA_CLIENT_CERT")
+KAFKA_CLIENT_CERT_KEY=$(eval "echo \$${ENV}_KAFKA_CLIENT_CERT_KEY")
+KAFKA_GROUP_ID=$(eval "echo \$${ENV}_KAFKA_GROUP_ID")
+KAFKA_TOPIC_IGNORE_PREFIX=$(eval "echo \$${ENV}_KAFKA_TOPIC_IGNORE_PREFIX")
+KAFKA_URL=$(eval "echo \$${ENV}_KAFKA_URL")
+
+DB_USER=$(eval "echo \$${ENV}_DB_USER")
+DB_PASSWORD=$(eval "echo \$${ENV}_DB_PASSWORD")
+DB_HOST=$(eval "echo \$${ENV}_DB_HOST")
+DB_PORT=$(eval "echo \$${ENV}_DB_PORT")
+DB_DATABASE=$(eval "echo \$${ENV}_DB_DATABASE")
+DATABASE_URL=postgres://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_DATABASE;
+
 family=$(eval "echo \$${ENV}_AWS_ECS_TASK_FAMILY")
 AWS_ECS_CONTAINER_NAME=$(eval "echo \$${ENV}_AWS_ECS_CONTAINER_NAME")
 
@@ -83,12 +97,36 @@ make_task_def(){
 						{
 								"name": "ENV",
 								"value": "%s"
+						},
+						{
+								"name": "KAFKA_CLIENT_CERT",
+								"value": "%s"
+						},
+						{
+								"name": "KAFKA_CLIENT_CERT_KEY",
+								"value": "%s"
+						},
+						{
+								"name": "KAFKA_GROUP_ID",
+								"value": "%s"
+						},
+						{
+								"name": "KAFKA_TOPIC_IGNORE_PREFIX",
+								"value": "%s"
+						},
+						{
+								"name": "KAFKA_URL",
+								"value": "%s"
+						},
+						{
+								"name": "DATABASE_URL",
+								"value": "%s"
 						}
 				],
 				"portMappings": [
 						{
-								"hostPort": 0,
-								"containerPort": 3000,
+								"hostPort": 4000,
+								"containerPort": 4000,
 								"protocol": "tcp"
 						}
 				],
@@ -103,7 +141,7 @@ make_task_def(){
 		}
 	]'
 	
-	task_def=$(printf "$task_template" $AWS_ECS_CONTAINER_NAME $AWS_ACCOUNT_ID $AWS_REGION $AWS_REPOSITORY $TAG $ENV $AWS_ECS_CLUSTER $AWS_REGION $AWS_ECS_CLUSTER $ENV)
+	task_def=$(printf "$task_template" $AWS_ECS_CONTAINER_NAME $AWS_ACCOUNT_ID $AWS_REGION $AWS_REPOSITORY $TAG $ENV "$KAFKA_CLIENT_CERT" "$KAFKA_CLIENT_CERT_KEY" $KAFKA_GROUP_ID $KAFKA_TOPIC_IGNORE_PREFIX $KAFKA_URL $DATABASE_URL $AWS_ECS_CLUSTER $AWS_REGION $AWS_ECS_CLUSTER $ENV)
 }
 
 register_definition() {

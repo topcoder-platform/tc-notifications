@@ -35,7 +35,7 @@ module.exports = {
   // Kafka connection certificate, optional;
   // if not provided, then SSL connection is not used, direct insecure connection is used;
   // if provided, it can be either path to certificate file or certificate content
-  KAFKA_CLIENT_CERT: process.env.KAFKA_CLIENT_CERT.replace('\\n', '\n').replace(' ', '\n') ||
+  KAFKA_CLIENT_CERT: process.env.KAFKA_CLIENT_CERT ? process.env.KAFKA_CLIENT_CERT.replace('\\n', '\n') : null ||
 `-----BEGIN CERTIFICATE-----
 MIIDQzCCAiugAwIBAgIBADANBgkqhkiG9w0BAQsFADAyMTAwLgYDVQQDDCdjYS1j
 YmJiNGVkZi1mNDFhLTRjNzMtYTg5OC01NDYyMjhkNmQyNDIwHhcNMTcwOTI3MDUw
@@ -61,7 +61,7 @@ yETgcStnaVvyh64zhls3xXBm06rvpu2wwo6QHcPeekvQwxQvb63oovD8b+pFJri+
   // Kafka connection private key, optional;
   // if not provided, then SSL connection is not used, direct insecure connection is used;
   // if provided, it can be either path to private key file or private key content
-  KAFKA_CLIENT_CERT_KEY: process.env.KAFKA_CLIENT_CERT_KEY.replace('\\n', '\n').replace(' ', '\n') ||
+  KAFKA_CLIENT_CERT_KEY: process.env.KAFKA_CLIENT_CERT_KEY ? process.env.KAFKA_CLIENT_CERT_KEY.replace('\\n', '\n') : null ||
 `-----BEGIN RSA PRIVATE KEY-----
 MIIEogIBAAKCAQEAqORxX8FcPXdDT1tEqiE3+wqIMwYUDZBnntMZ3uy9fuJlAiT0
 eZcQ93nMJMdnqdkFtwYND0/7MaUkgZlC5FUos6dk+KVp5QdEau8JYYlnqVU82oic
