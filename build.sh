@@ -75,7 +75,7 @@ then
   UPDATE_CACHE=$(cmp package-lock.json old-package-lock.json)
   set -eo pipefail
 else
-   If "node_modules" does not exist, then cache must be created.
+  # If "node_modules" does not exist, then cache must be created.
   UPDATE_CACHE=1
 fi
 
