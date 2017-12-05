@@ -49,10 +49,10 @@ validIssuers=$(eval "echo \$${ENV}_VALIDISSUERS")
 
 #append environment variable into .env file.
 
-printf '%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n' $DATABASE_URL $LOG_LEVEL $NODE_PORT $JWT_SECRET $KAFKA_URL $KAFKA_TOPIC_IGNORE_PREFIX $KAFKA_GROUP_ID $TC_API_BASE_URL $TC_ADMIN_TOKEN | tee -a .env
+#printf '%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n' $DATABASE_URL $LOG_LEVEL $NODE_PORT $JWT_SECRET $KAFKA_URL $KAFKA_TOPIC_IGNORE_PREFIX $KAFKA_GROUP_ID $TC_API_BASE_URL $TC_ADMIN_TOKEN | tee -a .env
 
-echo "displaying contents of .env \n\n"
-cat .env
+#echo "displaying contents of .env \n\n"
+#cat .env
 
 # Builds Docker image of the app.
 TAG=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/tc-notifications:$CIRCLE_SHA1
