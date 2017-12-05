@@ -7,8 +7,8 @@ LABEL app="tc notify" version="1.0"
 
 WORKDIR /opt/app
 COPY . .
-ARG VALIDISSUERS
-ENV VALIDISSUERS=$VALIDISSUERS
+ARG validIssuers
+ENV validIssuers=$validIssuers
 ENV NODE_ENV=$NODE_ENV
 
 RUN npm install
