@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -eo pipefail
+set -x
 
 # more bash-friendly output for jq
 JQ="jq --raw-output --exit-status"
@@ -36,6 +37,11 @@ KAFKA_CLIENT_CERT_KEY=$(eval "echo \$${ENV}_KAFKA_CLIENT_CERT_KEY")
 KAFKA_GROUP_ID=$(eval "echo \$${ENV}_KAFKA_GROUP_ID")
 KAFKA_TOPIC_IGNORE_PREFIX=$(eval "echo \$${ENV}_KAFKA_TOPIC_IGNORE_PREFIX")
 KAFKA_URL=$(eval "echo \$${ENV}_KAFKA_URL")
+AUTHSECRET=$(eval "echo \$${ENV}_AUTHSECRET")
+AUTHDOMAIN=$(eval "echo \$${ENV}_AUTHDOMAIN")
+VALIDISSUERS=$(eval "echo \$${ENV}_VALIDISSUERS")
+JWKSURI=$(eval "echo \$${ENV}_JWKSURI")
+
 
 DB_USER=$(eval "echo \$${ENV}_DB_USER")
 DB_PASSWORD=$(eval "echo \$${ENV}_DB_PASSWORD")
@@ -121,7 +127,24 @@ make_task_def(){
 						{
 								"name": "DATABASE_URL",
 								"value": "%s"
+						},
+						{
+								"name": "authSecret",
+								"value": "%s"
+						},
+						{
+								"name": "authDomain",
+								"value": "%s"
+						},
+						{
+								"name": "validIssuers",
+								"value": "%s"
+						},
+						{
+								"name": "jwksUri",
+								"value": "%s"
 						}
+
 				],
 				"portMappings": [
 						{
@@ -141,7 +164,8 @@ make_task_def(){
 		}
 	]'
 	
-	task_def=$(printf "$task_template" $AWS_ECS_CONTAINER_NAME $AWS_ACCOUNT_ID $AWS_REGION $AWS_REPOSITORY $TAG $ENV "$KAFKA_CLIENT_CERT" "$KAFKA_CLIENT_CERT_KEY" $KAFKA_GROUP_ID $KAFKA_TOPIC_IGNORE_PREFIX $KAFKA_URL $DATABASE_URL $AWS_ECS_CLUSTER $AWS_REGION $AWS_ECS_CLUSTER $ENV)
+	#task_def=$(printf "$task_template" $AWS_ECS_CONTAINER_NAME $AWS_ACCOUNT_ID $AWS_REGION $AWS_REPOSITORY $TAG $ENV "$KAFKA_CLIENT_CERT" "$KAFKA_CLIENT_CERT_KEY" $KAFKA_GROUP_ID $KAFKA_TOPIC_IGNORE_PREFIX $KAFKA_URL $DATABASE_URL $AWS_ECS_CLUSTER $AWS_REGION $AWS_ECS_CLUSTER $ENV)
+	task_def=$(printf "$task_template" $AWS_ECS_CONTAINER_NAME $AWS_ACCOUNT_ID $AWS_REGION $AWS_REPOSITORY $TAG $ENV "$KAFKA_CLIENT_CERT" "$KAFKA_CLIENT_CERT_KEY" $KAFKA_GROUP_ID $KAFKA_TOPIC_IGNORE_PREFIX $KAFKA_URL $DATABASE_URL $AUTHSECRET "$AUTHDOMAIN" "$VALIDISSUERS" "$JWKSURI" $AWS_ECS_CLUSTER $AWS_REGION $AWS_ECS_CLUSTER $ENV)
 }
 
 register_definition() {
