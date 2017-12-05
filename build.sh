@@ -59,7 +59,8 @@ TAG=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/tc-notifications:$CIRCLE_S
 #TAG=community-app:$CIRCLE_SHA1
 docker build -t $TAG \
   --build-arg NODE_ENV=$NODE_ENV \
-  --build-arg validIssuers="$validIssuers" .
+  --build-arg validIssuers="$validIssuers" \
+  --build-arg PORT=$NODE_PORT .
 
 # Copies "node_modules" from the created image, if necessary for caching.
 docker create --name app $TAG
