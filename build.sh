@@ -32,6 +32,7 @@ TC_API_BASE_URL=TC_API_BASE_URL=$(eval "echo \$${ENV}_TC_API_BASE_URL")
 TC_ADMIN_TOKEN=TC_ADMIN_TOKEN=$(eval "echo \$${ENV}_TC_ADMIN_TOKEN")
 KAFKA_CLIENT_CERT=$(eval "echo \$${ENV}_KAFKA_CLIENT_CERT")
 KAFKA_CLIENT_CERT_KEY=$(eval "echo \$${ENV}_KAFKA_CLIENT_CERT_KEY")
+validIssuers=$(eval "echo \$${ENV}_VALIDISSUERS")
 
 # echo "DATABASE_URL: $DATABASE_URL"
 # echo "LOG_LEVEL: $LOG_LEVEL"
@@ -58,7 +59,7 @@ TAG=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/tc-notifications:$CIRCLE_S
 #TAG=community-app:$CIRCLE_SHA1
 docker build -t $TAG \
   --build-arg NODE_ENV=$NODE_ENV \
-  --build-arg VALIDISSUERS="$VALIDISSUERS" .
+  --build-arg validIssuers="$validIssuers" .
 
 # Copies "node_modules" from the created image, if necessary for caching.
 docker create --name app $TAG
