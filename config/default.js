@@ -1,6 +1,19 @@
 /**
  * The configuration file.
  */
+console.log('process.env.LOG_LEVEL:',process.env.LOG_LEVEL);
+console.log('process.env.authSecret:',process.env.authSecret);
+
+console.log('process.env.authDomain:',process.env.authDomain);
+console.log('process.env.validIssuers:',process.env.validIssuers);
+console.log('process.env.jwksUri:',process.env.jwksUri);
+console.log('process.env.PORT:',process.env.PORT);
+console.log('process.env.KAFKA_URL:',process.env.KAFKA_URL);
+console.log('process.env.DATABASE_URL:',process.env.DATABASE_URL);
+console.log('process.env.KAFKA_CLIENT_CERT:',process.env.KAFKA_CLIENT_CERT);
+console.log('process.env.KAFKA_CLIENT_CERT_KEY:',process.env.KAFKA_CLIENT_CERT_KEY);
+console.log('process.env.KAFKA_GROUP_ID:',process.env.KAFKA_GROUP_ID);
+console.log('process.env.KAFKA_TOPIC_IGNORE_PREFIX:',process.env.KAFKA_TOPIC_IGNORE_PREFIX);
 
 module.exports = {
   LOG_LEVEL: process.env.LOG_LEVEL,

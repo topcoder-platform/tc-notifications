@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 set -eo pipefail
-set -x
 
 # more bash-friendly output for jq
 JQ="jq --raw-output --exit-status"
@@ -41,6 +40,9 @@ AUTHSECRET=$(eval "echo \$${ENV}_AUTHSECRET")
 AUTHDOMAIN=$(eval "echo \$${ENV}_AUTHDOMAIN")
 VALIDISSUERS=$(eval "echo \$${ENV}_VALIDISSUERS")
 JWKSURI=$(eval "echo \$${ENV}_JWKSURI")
+TC_API_BASE_URL=$(eval "echo \$${ENV}_TC_API_BASE_URL")
+TC_ADMIN_TOKEN=$(eval "echo \$${ENV}_TC_ADMIN_TOKEN")
+LOG_LEVEL=LOG_LEVEL=$(eval "echo \$${ENV}_LOG_LEVEL")
 
 
 DB_USER=$(eval "echo \$${ENV}_DB_USER")
@@ -139,6 +141,18 @@ make_task_def(){
 						{
 								"name": "jwksUri",
 								"value": "%s"
+						},
+						{
+								"name": "TC_API_BASE_URL",
+								"value": "%s"
+						},
+						{
+								"name": "TC_ADMIN_TOKEN",
+								"value": "%s"
+						},
+						{
+								"name": "LOG_LEVEL",
+								"value": "%s"
 						}
 				],
 				"portMappings": [
@@ -160,7 +174,7 @@ make_task_def(){
 	]'
 	
 	#task_def=$(printf "$task_template" $AWS_ECS_CONTAINER_NAME $AWS_ACCOUNT_ID $AWS_REGION $AWS_REPOSITORY $TAG $ENV "$KAFKA_CLIENT_CERT" "$KAFKA_CLIENT_CERT_KEY" $KAFKA_GROUP_ID $KAFKA_TOPIC_IGNORE_PREFIX $KAFKA_URL $DATABASE_URL $AWS_ECS_CLUSTER $AWS_REGION $AWS_ECS_CLUSTER $ENV)
-	task_def=$(printf "$task_template" $AWS_ECS_CONTAINER_NAME $AWS_ACCOUNT_ID $AWS_REGION $AWS_REPOSITORY $TAG $ENV "$KAFKA_CLIENT_CERT" "$KAFKA_CLIENT_CERT_KEY" $KAFKA_GROUP_ID $KAFKA_TOPIC_IGNORE_PREFIX $KAFKA_URL $DATABASE_URL $AUTHSECRET "$AUTHDOMAIN" "$JWKSURI" $AWS_ECS_CLUSTER $AWS_REGION $AWS_ECS_CLUSTER $ENV)
+	task_def=$(printf "$task_template" $AWS_ECS_CONTAINER_NAME $AWS_ACCOUNT_ID $AWS_REGION $AWS_REPOSITORY $TAG $ENV "$KAFKA_CLIENT_CERT" "$KAFKA_CLIENT_CERT_KEY" $KAFKA_GROUP_ID $KAFKA_TOPIC_IGNORE_PREFIX $KAFKA_URL $DATABASE_URL $AUTHSECRET "$AUTHDOMAIN" "$JWKSURI" $TC_API_BASE_URL $TC_ADMIN_TOKEN $LOG_LEVEL $AWS_ECS_CLUSTER $AWS_REGION $AWS_ECS_CLUSTER $ENV)
 }
 
 register_definition() {
