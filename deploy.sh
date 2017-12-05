@@ -138,7 +138,7 @@ make_task_def(){
 						},
 						{
 								"name": "validIssuers",
-								"value": "%s"
+								"value": %s
 						},
 						{
 								"name": "jwksUri",
