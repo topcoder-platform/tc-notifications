@@ -23,7 +23,7 @@ DATABASE_URL=postgres://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_DATABASE;
 # echo $DB_CONNSTRING | tee .env
 
 LOG_LEVEL=LOG_LEVEL=$(eval "echo \$${ENV}_LOG_LEVEL")
-NODE_PORT=NODE_PORT=$(eval "echo \$${ENV}_NODE_PORT")
+PORT=NODE_PORT=$(eval "echo \$${ENV}_NODE_PORT")
 JWT_SECRET=JWT_SECRET=$(eval "echo \$${ENV}_JWT_SECRET")
 KAFKA_URL=KAFKA_URL=$(eval "echo \$${ENV}_KAFKA_URL")
 KAFKA_TOPIC_IGNORE_PREFIX=KAFKA_TOPIC_IGNORE_PREFIX=$(eval "echo \$${ENV}_KAFKA_TOPIC_IGNORE_PREFIX")
@@ -60,7 +60,7 @@ TAG=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/tc-notifications:$CIRCLE_S
 docker build -t $TAG \
   --build-arg NODE_ENV=$NODE_ENV \
   --build-arg validIssuers="$validIssuers" \
-  --build-arg PORT=$NODE_PORT .
+  --build-arg PORT=$PORT .
 
 # Copies "node_modules" from the created image, if necessary for caching.
 docker create --name app $TAG

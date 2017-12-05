@@ -8,8 +8,11 @@ LABEL app="tc notify" version="1.0"
 WORKDIR /opt/app
 COPY . .
 ARG validIssuers
+ARG PORT
 ENV validIssuers=$validIssuers
+ENV PORT=$PORT
 ENV NODE_ENV=$NODE_ENV
+
 
 RUN npm install
 # dotenv is required for retriving postgres env
