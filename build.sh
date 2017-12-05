@@ -33,18 +33,18 @@ TC_ADMIN_TOKEN=TC_ADMIN_TOKEN=$(eval "echo \$${ENV}_TC_ADMIN_TOKEN")
 KAFKA_CLIENT_CERT=$(eval "echo \$${ENV}_KAFKA_CLIENT_CERT")
 KAFKA_CLIENT_CERT_KEY=$(eval "echo \$${ENV}_KAFKA_CLIENT_CERT_KEY")
 
-echo "DATABASE_URL: $DATABASE_URL"
-echo "LOG_LEVEL: $LOG_LEVEL"
-echo "NODE_PORT: $NODE_PORT"
-echo "JWT_SECRET: $JWT_SECRET"
-echo "KAFKA_URL: $KAFKA_URL"
-echo "KAFKA_TOPIC_IGNORE_PREFIX: $KAFKA_TOPIC_IGNORE_PREFIX"
-echo "KAFKA_GROUP_ID: $KAFKA_GROUP_ID"
-echo "TC_API_BASE_URL: $TC_API_BASE_URL"
-echo "TC_ADMIN_TOKEN: $TC_ADMIN_TOKEN \n"
+# echo "DATABASE_URL: $DATABASE_URL"
+# echo "LOG_LEVEL: $LOG_LEVEL"
+# echo "NODE_PORT: $NODE_PORT"
+# echo "JWT_SECRET: $JWT_SECRET"
+# echo "KAFKA_URL: $KAFKA_URL"
+# echo "KAFKA_TOPIC_IGNORE_PREFIX: $KAFKA_TOPIC_IGNORE_PREFIX"
+# echo "KAFKA_GROUP_ID: $KAFKA_GROUP_ID"
+# echo "TC_API_BASE_URL: $TC_API_BASE_URL"
+# echo "TC_ADMIN_TOKEN: $TC_ADMIN_TOKEN \n"
 
-echo $KAFKA_CLIENT_CERT | tee KAFKA_CLIENT_CERT_KEY.txt
-echo $KAFKA_CLIENT_CERT_KEY | tee KAFKA_CLIENT_CERT.txt
+# echo $KAFKA_CLIENT_CERT | tee KAFKA_CLIENT_CERT_KEY.txt
+# echo $KAFKA_CLIENT_CERT_KEY | tee KAFKA_CLIENT_CERT.txt
 
 #append environment variable into .env file.
 
@@ -57,7 +57,8 @@ cat .env
 TAG=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/tc-notifications:$CIRCLE_SHA1
 #TAG=community-app:$CIRCLE_SHA1
 docker build -t $TAG \
-  --build-arg NODE_ENV=$NODE_ENV .
+  --build-arg NODE_ENV=$NODE_ENV \
+  --build-arg VALIDISSUERS="$VALIDISSUERS" .
 
 # Copies "node_modules" from the created image, if necessary for caching.
 docker create --name app $TAG
