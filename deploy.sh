@@ -157,7 +157,7 @@ make_task_def(){
 				],
 				"portMappings": [
 						{
-								"hostPort": 4000,
+								"hostPort": 0,
 								"containerPort": 4000,
 								"protocol": "tcp"
 						}
