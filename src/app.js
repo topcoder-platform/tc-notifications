@@ -95,14 +95,16 @@ function start(handlers) {
         req.signature = `${def.controller}#${def.method}`;
         next();
       });
-      actions.push(jwtAuth());
-      actions.push((req, res, next) => {
-        if (!req.authUser) {
-          return next(new errors.UnauthorizedError('Authorization failed.'));
-        }
-        req.user = req.authUser;
-        return next();
-      });
+      if (url !== '/health') {
+        actions.push(jwtAuth());
+        actions.push((req, res, next) => {
+          if (!req.authUser) {
+            return next(new errors.UnauthorizedError('Authorization failed.'));
+          }
+          req.user = req.authUser;
+          return next();
+        });
+      }
       actions.push(method);
       apiRouter[verb](url, helper.autoWrapExpress(actions));
     });
