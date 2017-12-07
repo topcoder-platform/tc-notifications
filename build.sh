@@ -13,36 +13,9 @@ AWS_ACCESS_KEY_ID=$(eval "echo \$${ENV}_AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY=$(eval "echo \$${ENV}_AWS_SECRET_ACCESS_KEY")
 AWS_ACCOUNT_ID=$(eval "echo \$${ENV}_AWS_ACCOUNT_ID")
 AWS_REPOSITORY=$(eval "echo \$${ENV}_AWS_REPOSITORY") 
-# Added for postgres DB 
-#DB_USER=$(eval "echo \$${ENV}_DB_USER")
-#DB_PASSWORD=$(eval "echo \$${ENV}_DB_PASSWORD")
-#DB_HOST=$(eval "echo \$${ENV}_DB_HOST")
-#DB_PORT=$(eval "echo \$${ENV}_DB_PORT")
-#DB_DATABASE=$(eval "echo \$${ENV}_DB_DATABASE")
-#DATABASE_URL=postgres://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_DATABASE;
-# echo $DB_CONNSTRING | tee .env
 
-
-
-#JWT_SECRET=JWT_SECRET=$(eval "echo \$${ENV}_JWT_SECRET")
-#KAFKA_URL=KAFKA_URL=$(eval "echo \$${ENV}_KAFKA_URL")
-#KAFKA_TOPIC_IGNORE_PREFIX=KAFKA_TOPIC_IGNORE_PREFIX=$(eval "echo \$${ENV}_KAFKA_TOPIC_IGNORE_PREFIX")
-#KAFKA_GROUP_ID=KAFKA_GROUP_ID=$(eval "echo \$${ENV}_KAFKA_GROUP_ID")
-
-#validIssuers=$(eval "echo \$${ENV}_VALIDISSUERS")
-#PORT=$(eval "echo \$${ENV}_NODE_PORT")
-
-
-#append environment variable into .env file.
-
-#printf '%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n' $DATABASE_URL $LOG_LEVEL $NODE_PORT $JWT_SECRET $KAFKA_URL $KAFKA_TOPIC_IGNORE_PREFIX $KAFKA_GROUP_ID $TC_API_BASE_URL $TC_ADMIN_TOKEN | tee -a .env
-
-#echo "displaying contents of .env \n\n"
-#cat .env
-
-# Builds Docker image of the app.
 TAG=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/tc-notifications:$CIRCLE_SHA1
-#TAG=community-app:$CIRCLE_SHA1
+
 docker build -t $TAG .
 
 # Copies "node_modules" from the created image, if necessary for caching.
