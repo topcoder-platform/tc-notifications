@@ -14,12 +14,12 @@ AWS_SECRET_ACCESS_KEY=$(eval "echo \$${ENV}_AWS_SECRET_ACCESS_KEY")
 AWS_ACCOUNT_ID=$(eval "echo \$${ENV}_AWS_ACCOUNT_ID")
 AWS_REPOSITORY=$(eval "echo \$${ENV}_AWS_REPOSITORY") 
 # Added for postgres DB 
-DB_USER=$(eval "echo \$${ENV}_DB_USER")
-DB_PASSWORD=$(eval "echo \$${ENV}_DB_PASSWORD")
-DB_HOST=$(eval "echo \$${ENV}_DB_HOST")
-DB_PORT=$(eval "echo \$${ENV}_DB_PORT")
-DB_DATABASE=$(eval "echo \$${ENV}_DB_DATABASE")
-DATABASE_URL=postgres://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_DATABASE;
+#DB_USER=$(eval "echo \$${ENV}_DB_USER")
+#DB_PASSWORD=$(eval "echo \$${ENV}_DB_PASSWORD")
+#DB_HOST=$(eval "echo \$${ENV}_DB_HOST")
+#DB_PORT=$(eval "echo \$${ENV}_DB_PORT")
+#DB_DATABASE=$(eval "echo \$${ENV}_DB_DATABASE")
+#DATABASE_URL=postgres://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_DATABASE;
 # echo $DB_CONNSTRING | tee .env
 
 
@@ -29,8 +29,8 @@ DATABASE_URL=postgres://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_DATABASE;
 #KAFKA_TOPIC_IGNORE_PREFIX=KAFKA_TOPIC_IGNORE_PREFIX=$(eval "echo \$${ENV}_KAFKA_TOPIC_IGNORE_PREFIX")
 #KAFKA_GROUP_ID=KAFKA_GROUP_ID=$(eval "echo \$${ENV}_KAFKA_GROUP_ID")
 
-validIssuers=$(eval "echo \$${ENV}_VALIDISSUERS")
-PORT=$(eval "echo \$${ENV}_NODE_PORT")
+#validIssuers=$(eval "echo \$${ENV}_VALIDISSUERS")
+#PORT=$(eval "echo \$${ENV}_NODE_PORT")
 
 
 #append environment variable into .env file.
@@ -43,10 +43,7 @@ PORT=$(eval "echo \$${ENV}_NODE_PORT")
 # Builds Docker image of the app.
 TAG=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/tc-notifications:$CIRCLE_SHA1
 #TAG=community-app:$CIRCLE_SHA1
-docker build -t $TAG \
-  --build-arg NODE_ENV=$NODE_ENV \
-  --build-arg validIssuers="$validIssuers" \
-  --build-arg PORT=$PORT .
+docker build -t $TAG .
 
 # Copies "node_modules" from the created image, if necessary for caching.
 docker create --name app $TAG

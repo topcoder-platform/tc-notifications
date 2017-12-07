@@ -11,7 +11,7 @@ ARG validIssuers
 ARG PORT
 ENV validIssuers=$validIssuers
 ENV PORT=$PORT
-ENV NODE_ENV=$NODE_ENV
+ENV NODE_ENV=$ENV
 
 
 RUN npm install

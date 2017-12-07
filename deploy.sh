@@ -7,7 +7,7 @@ JQ="jq --raw-output --exit-status"
 ENV=$1
 TAG=$2
 PROVIDER=$3
-COUNTER_LIMIT=12
+COUNTER_LIMIT=20
 # Counter limit will be caluculaed based on sleep seconds
 
 if [[ -z "$ENV" ]] ; then
@@ -38,11 +38,12 @@ KAFKA_TOPIC_IGNORE_PREFIX=$(eval "echo \$${ENV}_KAFKA_TOPIC_IGNORE_PREFIX")
 KAFKA_URL=$(eval "echo \$${ENV}_KAFKA_URL")
 AUTHSECRET=$(eval "echo \$${ENV}_AUTHSECRET")
 AUTHDOMAIN=$(eval "echo \$${ENV}_AUTHDOMAIN")
-VALIDISSUERS=$(eval "echo \$${ENV}_VALIDISSUERS")
+VALID_ISSUERS=$(eval "echo \$${ENV}_VALID_ISSUERS")
 JWKSURI=$(eval "echo \$${ENV}_JWKSURI")
 TC_API_BASE_URL=$(eval "echo \$${ENV}_TC_API_BASE_URL")
 TC_ADMIN_TOKEN=$(eval "echo \$${ENV}_TC_ADMIN_TOKEN")
-LOG_LEVEL=LOG_LEVEL=$(eval "echo \$${ENV}_LOG_LEVEL")
+LOG_LEVEL=$(eval "echo \$${ENV}_LOG_LEVEL")
+PORT=$(eval "echo \$${ENV}_PORT")
 
 
 DB_USER=$(eval "echo \$${ENV}_DB_USER")
@@ -153,6 +154,14 @@ make_task_def(){
 						{
 								"name": "LOG_LEVEL",
 								"value": "%s"
+						},
+						{
+								"name": "validIssuers",
+								"value": "%s"
+						},
+						{
+								"name": "PORT",
+								"value": "%s"
 						}
 				],
 				"portMappings": [
@@ -174,7 +183,7 @@ make_task_def(){
 	]'
 	
 	#task_def=$(printf "$task_template" $AWS_ECS_CONTAINER_NAME $AWS_ACCOUNT_ID $AWS_REGION $AWS_REPOSITORY $TAG $ENV "$KAFKA_CLIENT_CERT" "$KAFKA_CLIENT_CERT_KEY" $KAFKA_GROUP_ID $KAFKA_TOPIC_IGNORE_PREFIX $KAFKA_URL $DATABASE_URL $AWS_ECS_CLUSTER $AWS_REGION $AWS_ECS_CLUSTER $ENV)
-	task_def=$(printf "$task_template" $AWS_ECS_CONTAINER_NAME $AWS_ACCOUNT_ID $AWS_REGION $AWS_REPOSITORY $TAG $ENV "$KAFKA_CLIENT_CERT" "$KAFKA_CLIENT_CERT_KEY" $KAFKA_GROUP_ID $KAFKA_TOPIC_IGNORE_PREFIX $KAFKA_URL $DATABASE_URL $AUTHSECRET "$AUTHDOMAIN" "$JWKSURI" $TC_API_BASE_URL $TC_ADMIN_TOKEN $LOG_LEVEL $AWS_ECS_CLUSTER $AWS_REGION $AWS_ECS_CLUSTER $ENV)
+	task_def=$(printf "$task_template" $AWS_ECS_CONTAINER_NAME $AWS_ACCOUNT_ID $AWS_REGION $AWS_REPOSITORY $TAG $ENV "$KAFKA_CLIENT_CERT" "$KAFKA_CLIENT_CERT_KEY" $KAFKA_GROUP_ID $KAFKA_TOPIC_IGNORE_PREFIX $KAFKA_URL $DATABASE_URL $AUTHSECRET "$AUTHDOMAIN" "$JWKSURI" $TC_API_BASE_URL $TC_ADMIN_TOKEN $LOG_LEVEL $VALID_ISSUERS $PORT $AWS_ECS_CLUSTER $AWS_REGION $AWS_ECS_CLUSTER $ENV)
 }
 
 register_definition() {
@@ -194,12 +203,12 @@ check_service_status() {
         while [[ $servicestatus != *"steady state"* ]]
         do
            echo "Current event message : $servicestatus"
-           echo "Waiting for 15 sec to check the service status...."
-           sleep 15
+           echo "Waiting for 30 seconds to check the service status...."
+           sleep 30
            servicestatus=`aws ecs describe-services --service $AWS_ECS_SERVICE --cluster $AWS_ECS_CLUSTER | $JQ '.services[].events[0].message'`
            counter=`expr $counter + 1`
            if [[ $counter -gt $COUNTER_LIMIT ]] ; then
-                echo "Service does not reach steady state with in 180 seconds. Please check"
+                echo "Service does not reach steady state within 10 minutes. Please check"
                 exit 1
            fi
         done

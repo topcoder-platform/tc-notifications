@@ -29,4 +29,10 @@ module.exports = {
       method: 'updateSettings',
     },
   },
+  '/health': {
+    get: {
+      controller: 'HealthController',
+      method: 'health',
+    },
+  },
 };
