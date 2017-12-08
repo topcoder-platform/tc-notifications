@@ -1,6 +1,7 @@
 /**
  * The configuration file.
  */
+console.log("valid issuers",process.env.validIssuers)
 module.exports = {
   LOG_LEVEL: process.env.LOG_LEVEL,
   PORT: process.env.PORT,
