@@ -32,8 +32,15 @@ The following parameters can be set in config files or in env variables:
 
 Configuration for the connect notification server is at `connect/config.js`.
 The following parameters can be set in config files or in env variables:
-- TC_API_BASE_URL: the TopCoder API base URL
-- TC_ADMIN_TOKEN: the admin token to access TopCoder API
+- TC_API_V3_BASE_URL: the TopCoder API V3 base URL
+- TC_API_V4_BASE_URL: the TopCoder API V4 base URL
+- TC_ADMIN_TOKEN: the admin token to access TopCoder API - same for V3 and V4<br>
+  Also it has probably temporary variables of TopCoder role ids for 'Connect Manager', 'Connect Copilot' and 'administrator':
+- CONNECT_MANAGER_ROLE_ID: 8,
+- CONNECT_COPILOT_ROLE_ID: 4,
+- ADMINISTRATOR_ROLE_ID: 1<br>
+  Provided values are for development backend. For production backend they may be different.
+  These variables are currently being used to retrieve above role members using API V3 `/roles` endpoint. As soon as this endpoint is replaced with more suitable one, these variables has to be removed if no need anymore.
 
 
 Note that the above two configuration are separate because the common notification server config
@@ -57,7 +64,7 @@ You may reuse it during review.
 
 ## TC API Admin Token
 
-An admin token is needed to access TC API. This is already configured in connect/config.js and Postman notification
+An admin token is needed to access TC API. This is already configured Postman notification
 server API environment TC_ADMIN_TOKEN variable.
 In case it expires, you may get a new token in this way:
 
@@ -70,6 +77,15 @@ In case it expires, you may get a new token in this way:
 
 
 ## Local deployment
+- for local development environment you can set variables as following:
+  - `authSecret`, `authDomain`, `validIssuers` can get from [tc-project-service config](https://github.com/topcoder-platform/tc-project-service/blob/dev/config/default.json)
+  - `PORT=4000` because **connect-app** call this port by default
+  - `jwksUri` - any
+  - `KAFKA_TOPIC_IGNORE_PREFIX=joan-26673.` (with point at the end)
+  - `TC_API_V4_BASE_URL=https://api.topcoder-dev.com/v4`
+  - `TC_API_V3_BASE_URL=https://api.topcoder-dev.com/v3`
+  - `TC_ADMIN_TOKEN=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJUb3Bjb2RlciBVc2VyIiwiYWRtaW5pc3RyYXRvciJdLCJpc3MiOiJodHRwczovL2FwaS50b3Bjb2Rlci1kZXYuY29tIiwiaGFuZGxlIjoic3VzZXIxIiwiZXhwIjoxNTEzNDAxMjU4LCJ1c2VySWQiOiI0MDE1MzkzOCIsImlhdCI6MTUwOTYzNzYzOSwiZW1haWwiOiJtdHdvbWV5QGJlYWtzdGFyLmNvbSIsImp0aSI6IjIzZTE2YjA2LWM1NGItNDNkNS1iY2E2LTg0ZGJiN2JiNDA0NyJ9.REds35fdBvY7CMDGGFyT_tOD7DxGimFfVzIyEy9YA0Y` or follow section **TC API Admin Token** to obtain a new one if expired
+  - `KAFKA_URL`, `KAFKA_CLIENT_CERT` and `KAFKA_CLIENT_CERT_KEY` get from [tc-bus-api readme](https://github.com/topcoder-platform/tc-bus-api/tree/dev)
 - start local PostgreSQL db, create an empty database, update the config/default.js DATABASE_URL param to point to the db
 - install dependencies `npm i`
 - run code lint check `npm run lint`

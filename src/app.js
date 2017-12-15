@@ -47,13 +47,13 @@ function startKafkaConsumer(handlers) {
     }
     const messageJSON = JSON.parse(message);
     const handlerAsync = Promise.promisify(handler);
-    // use handler to find user ids to receive notifications
+    // use handler to create notification instances for each recipient
     return handlerAsync(topicName, messageJSON)
-      // save notification for the involved users
-      .then((userIds) => Promise.all(_.map(userIds, (userId) => models.Notification.create({
-        userId,
+      // save notifications
+      .then((notifications) => Promise.all(_.map(notifications, (notification) => models.Notification.create({
+        userId: notification.userId,
         type: topicName,
-        contents: messageJSON,
+        contents: _.extend({}, messageJSON, notification.contents),
         read: false,
       }))))
       // commit offset

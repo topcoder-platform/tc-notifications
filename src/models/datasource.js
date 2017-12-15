@@ -22,6 +22,7 @@ let sequelizeInstance = null;
  */
 function getSequelize() {
   if (!sequelizeInstance) {
+    console.log(config.DATABASE_OPTIONS);
     sequelizeInstance = new Sequelize(config.DATABASE_URL, config.DATABASE_OPTIONS);
     sequelizeInstance
       .authenticate()

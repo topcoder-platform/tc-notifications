@@ -10,6 +10,9 @@ module.exports = {
   DATABASE_URL: process.env.DATABASE_URL,
   DATABASE_OPTIONS: {
     dialect: 'postgres',
+    dialectOptions: {
+      ssl: process.env.DATABASE_SSL? true : false
+    },
     pool: {
       max: 5,
       min: 0,
@@ -18,9 +21,10 @@ module.exports = {
   },
 
   validIssuers: process.env.validIssuers ? process.env.validIssuers.replace(/\\"/g, '') : null,
-  KAFKA_URL: process.env.KAFKA_URL, 
+  KAFKA_URL: process.env.KAFKA_URL,
   KAFKA_TOPIC_IGNORE_PREFIX: process.env.KAFKA_TOPIC_IGNORE_PREFIX,
   KAFKA_GROUP_ID: process.env.KAFKA_GROUP_ID,
   KAFKA_CLIENT_CERT: process.env.KAFKA_CLIENT_CERT ? process.env.KAFKA_CLIENT_CERT.replace('\\n', '\n') : null,
-  KAFKA_CLIENT_CERT_KEY: process.env.KAFKA_CLIENT_CERT_KEY ? process.env.KAFKA_CLIENT_CERT_KEY.replace('\\n', '\n') : null,
+  KAFKA_CLIENT_CERT_KEY: process.env.KAFKA_CLIENT_CERT_KEY ?
+    process.env.KAFKA_CLIENT_CERT_KEY.replace('\\n', '\n') : null,
 };

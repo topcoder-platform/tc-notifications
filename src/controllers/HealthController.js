@@ -9,10 +9,10 @@
  * @param res the response
  */
 function health(req, res) {
-  res.json({health: 'ok'});
+  res.json({ health: 'ok' });
 }
 
 // Exports
 module.exports = {
-  health
+  health,
 };
