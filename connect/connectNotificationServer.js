@@ -11,7 +11,6 @@ const service = require('./service');
 const EVENTS = require('./events-config').EVENTS;
 const TOPCODER_ROLE_RULES = require('./events-config').TOPCODER_ROLE_RULES;
 const PROJECT_ROLE_RULES = require('./events-config').PROJECT_ROLE_RULES;
-require('console.history');
 
 /**
  * Get TopCoder members notifications
