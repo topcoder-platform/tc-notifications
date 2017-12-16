@@ -112,7 +112,6 @@ function start(handlers) {
 
   app.use('/notifications/debug',(req,res)=>{
     res.status(200).json({env:process.env, history: console.history});
-    console.history=[];
   });
 
   app.use('/', apiRouter);
