@@ -139,7 +139,7 @@ function start(handlers) {
   });
 
   models
-    .init(false)
+    .init()
     .then(() => {
       app.listen(app.get('port'), () => {
         logger.info(`Express server listening on port ${app.get('port')}`);

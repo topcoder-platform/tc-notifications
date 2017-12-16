@@ -101,7 +101,7 @@ const getNotificationsForUserId = (eventConfig, userId) => {
   }
 
   return Promise.resolve([{
-    userId: userId,
+    userId,
     contents: {
       toUserHandle: true,
     },
@@ -133,8 +133,8 @@ const handler = (topic, message, callback) => {
   service.getProject(projectId).then(project => {
     // the order in this list defines the priority of notification for the same user
     // upper in this list - higher priority
-    let promises = [];
-    let allNotifications=[];
+    const promises = [];
+    let allNotifications = [];
     if (message.userId) promises.push(getNotificationsForUserId(eventConfig, message.userId));
     promises.push(getProjectMembersNotifications(eventConfig, project));
     promises.push(getTopCoderMembersNotifications(eventConfig));
@@ -143,20 +143,18 @@ const handler = (topic, message, callback) => {
       // first found notification for one user will be send, the rest ignored
       _.uniqBy(_.flatten(notificationsPerSource), 'userId')
     )).then((notifications) => {
-      allNotifications=notifications;   
+      allNotifications = notifications;
 
-      let ids = _.uniq(notifications.map((notification) => {
-        return notification.userId;
-      }));
+      const ids = _.uniq(notifications.map((notification) => notification.userId));
       return service.getUsersById(ids);
-    }).then((users)=>{
-      _.map(allNotifications,(notification)=>{
+    }).then((users) => {
+      _.map(allNotifications, (notification) => {
         notification.projectName = project.name;
-        if (notification.userId){
-          let user = _.find(users,(user)=>{return user.userId.toString() == notification.userId});
+        if (notification.userId) {
+          const user = _.find(users, (usr) => usr.userId.toString() === notification.userId);
           notification.contents.userHandle = user.handle;
-        }        
-      })
+        }
+      });
       callback(null, allNotifications);
     }).catch((err) => {
       callback(err);

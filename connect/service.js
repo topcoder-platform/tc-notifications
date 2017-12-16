@@ -17,7 +17,6 @@ const getProject = (projectId) => request
   .set('accept', 'application/json')
   .set('authorization', `Bearer ${config.TC_ADMIN_TOKEN}`)
   .then((res) => {
-    console.log(res);
     if (!_.get(res, 'body.result.success')) {
       throw new Error(`Failed to get project details of projectq id: ${projectId}`);
     }
@@ -26,7 +25,6 @@ const getProject = (projectId) => request
 
     return project;
   }).catch((err) => {
-    console.log(err);
     const errorDetails = _.get(err, 'response.body.result.content.message');
     throw new Error(
       `Failed to get project details of project id: ${projectId}.` +
@@ -62,7 +60,7 @@ const getRoleMembers = (roleId) => request
   });
 
 const getUsersById = (ids) => {
-  let query = _.map(ids,(id)=>{return "userId:"+id}).join(' OR ');
+  const query = _.map(ids, (id) => 'userId:' + id).join(' OR ');
   return request
     .get(`${config.TC_API_V3_BASE_URL}/members/_search?fields=userId,handle,firstName,lastName&query=${query}`)
     .set('accept', 'application/json')
@@ -82,7 +80,7 @@ const getUsersById = (ids) => {
         (errorDetails ? ' Server response: ' + errorDetails : '')
       );
     });
-  }
+};
 
 module.exports = {
   getProject,

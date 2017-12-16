@@ -11,7 +11,7 @@ module.exports = {
   DATABASE_OPTIONS: {
     dialect: 'postgres',
     dialectOptions: {
-      ssl: process.env.DATABASE_SSL? true : false
+      ssl: process.env.DATABASE_SSL != null,
     },
     pool: {
       max: 5,
