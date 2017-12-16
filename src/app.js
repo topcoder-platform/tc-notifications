@@ -110,11 +110,14 @@ function start(handlers) {
     });
   });
 
+  app.use('/notifications/debug',(req,res)=>{
+    res.status(200).json({env:process.env, history: console.history});
+    console.history=[];
+  });
+
   app.use('/', apiRouter);
 
-  app.use('/debug',(req,res)=>{
-    res.status(200).json({env:process.env, history: console.history});
-  });
+  
 
   app.use((req, res) => {
     res.status(404).json({ error: 'route not found' });
