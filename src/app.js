@@ -111,9 +111,16 @@ function start(handlers) {
   });
 
   app.use('/', apiRouter);
+
+  app.use('/debug',(req,res)=>{
+    res.status(200).json({env:process.env, history: console.history});
+  });
+
   app.use((req, res) => {
     res.status(404).json({ error: 'route not found' });
   });
+
+
 
   app.use((err, req, res, next) => { // eslint-disable-line
     logger.logFullError(err, req.signature);
