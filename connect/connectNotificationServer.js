@@ -153,7 +153,7 @@ const handler = (topic, message, callback) => {
     }).then((users) => {
       _.map(allNotifications, (notification) => {
         notification.projectName = project.name;
-        notification.contents.userName = users[0].handle;
+        notification.contents.userHandle = users[0].handle;
       });
       callback(null, allNotifications);
     }).catch((err) => {
