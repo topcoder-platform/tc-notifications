@@ -5,7 +5,7 @@
 module.exports = {
   TC_API_V3_BASE_URL: process.env.TC_API_V3_BASE_URL || 'https://api.topcoder-dev.com/v3',
   TC_API_V4_BASE_URL: process.env.TC_API_V4_BASE_URL || 'https://api.topcoder-dev.com/v4',
-  TC_ADMIN_TOKEN: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJUb3Bjb2RlciBVc2VyIiwiYWRtaW5pc3RyYXRvciJdLCJpc3MiOiJodHRwczovL2FwaS50b3Bjb2Rlci1kZXYuY29tIiwiaGFuZGxlIjoic3VzZXIxIiwiZXhwIjoxNTE5MTQxNjM5LCJ1c2VySWQiOiI0MDE1MzkzOCIsImlhdCI6MTUwOTYzNzYzOSwiZW1haWwiOiJtdHdvbWV5QGJlYWtzdGFyLmNvbSIsImp0aSI6IjIzZTE2YjA2LWM1NGItNDNkNS1iY2E2LTg0ZGJiN2JiNDA0NyJ9.YXJ0piKg_pILJKqntjMA78Z2X3f5BDGWQO3lb-1MVYw",
+  TC_ADMIN_TOKEN: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJUb3Bjb2RlciBVc2VyIiwiYWRtaW5pc3RyYXRvciJdLCJpc3MiOiJodHRwczovL2FwaS50b3Bjb2Rlci1kZXYuY29tIiwiaGFuZGxlIjoic3VzZXIxIiwiZXhwIjoxNTE5MTQxNjM5LCJ1c2VySWQiOiI0MDE1MzkzOCIsImlhdCI6MTUwOTYzNzYzOSwiZW1haWwiOiJtdHdvbWV5QGJlYWtzdGFyLmNvbSIsImp0aSI6IjIzZTE2YjA2LWM1NGItNDNkNS1iY2E2LTg0ZGJiN2JiNDA0NyJ9.YXJ0piKg_pILJKqntjMA78Z2X3f5BDGWQO3lb-1MVYw',
 
   // Probably temporary variables for TopCoder role ids for 'Connect Manager', 'Connect Copilot' and 'administrator'
   // These are values for development backend. For production backend they may be different.

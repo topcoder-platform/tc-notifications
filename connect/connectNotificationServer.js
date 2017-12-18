@@ -145,15 +145,15 @@ const handler = (topic, message, callback) => {
     )).then((notifications) => {
       allNotifications = notifications;
 
-      const ids = _.uniq(notifications.map((notification) => notification.userId));
-      return service.getUsersById(ids);
+      if (message.userId) {
+        const ids = [message.userId];
+        return service.getUsersById(ids);
+      }
+      return [];
     }).then((users) => {
       _.map(allNotifications, (notification) => {
         notification.projectName = project.name;
-        if (notification.userId) {
-          const user = _.find(users, (usr) => usr.userId.toString() === notification.userId);
-          notification.contents.userHandle = user.handle;
-        }
+        notification.contents.userName = users[0].handle;
       });
       callback(null, allNotifications);
     }).catch((err) => {

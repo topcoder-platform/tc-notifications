@@ -14,9 +14,9 @@ const transports = [];
 if (!config.DISABLE_LOGGING) {
   transports.push(new (winston.transports.Console)({ level: config.LOG_LEVEL }));
   transports.push(new (winston.transports.File)({
-            filename:  'log.txt',
-            timestamp: true
-        }));
+    filename: 'log.txt',
+    timestamp: true,
+  }));
 }
 const logger = new (winston.Logger)({ transports });
 
