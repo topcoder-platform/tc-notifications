@@ -46,4 +46,4 @@ workflows:
       - "build-dev":
           filters:
             branches:
-              only: dev
+              only: debugDev
