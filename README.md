@@ -41,6 +41,7 @@ The following parameters can be set in config files or in env variables:
 - ADMINISTRATOR_ROLE_ID: 1<br>
   Provided values are for development backend. For production backend they may be different.
   These variables are currently being used to retrieve above role members using API V3 `/roles` endpoint. As soon as this endpoint is replaced with more suitable one, these variables has to be removed if no need anymore.
+- TCWEBSERVICE_ID - id of the BOT user which creates post with various events in discussions
 
 
 Note that the above two configuration are separate because the common notification server config

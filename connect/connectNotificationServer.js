@@ -5,12 +5,14 @@
 
 global.Promise = require('bluebird');
 
+const config = require('./config');
 const notificationServer = require('../index');
 const _ = require('lodash');
 const service = require('./service');
 const EVENTS = require('./events-config').EVENTS;
 const TOPCODER_ROLE_RULES = require('./events-config').TOPCODER_ROLE_RULES;
 const PROJECT_ROLE_RULES = require('./events-config').PROJECT_ROLE_RULES;
+const PROJECT_ROLE_OWNER = require('./events-config').PROJECT_ROLE_OWNER;
 
 /**
  * Get TopCoder members notifications
@@ -63,14 +65,31 @@ const getProjectMembersNotifications = (eventConfig, project) => (
     const projectMembers = _.get(project, 'members', []);
 
     eventConfig.projectRoles.forEach(projectRole => {
-      notifications = notifications.concat(
-        _.filter(projectMembers, PROJECT_ROLE_RULES[projectRole]).map((projectMember) => ({
-          userId: projectMember.userId.toString(),
-          contents: {
-            projectRole,
-          },
-        }))
-      );
+      const roleNotifications = _.filter(projectMembers, PROJECT_ROLE_RULES[projectRole]).map((projectMember) => ({
+        userId: projectMember.userId.toString(),
+        contents: {
+          projectRole,
+        },
+      }));
+
+      // SPECIAL CASE for project owners
+      // if we haven't found any project owner in project members list,
+      // then treat any first member with isPrimary flag as an owner and send notification to him
+      if (projectRole === PROJECT_ROLE_OWNER && roleNotifications.length < 1) {
+        const ownerSubstituteMember = _.find(projectMembers, { isPrimary: true });
+
+        // some member with isPrimary always suppose to exist, but check just in case
+        if (ownerSubstituteMember) {
+          roleNotifications.push({
+            userId: ownerSubstituteMember.userId.toString(),
+            contents: {
+              projectRole,
+            },
+          });
+        }
+      }
+
+      notifications = notifications.concat(roleNotifications);
     });
 
     // only one per userId
@@ -129,22 +148,35 @@ const handler = (topic, message, callback) => {
     return callback(new Error(`Event type '${topic}' is not supported.`));
   }
 
+  // filter out `notifications.connect.project.topic.created` events send by bot
+  // because they create too much clutter and duplicate info
+  if (topic === 'notifications.connect.project.topic.created' && message.userId === config.TCWEBSERVICE_ID) {
+    return callback(null, []);
+  }
 
+  // get project details
   service.getProject(projectId).then(project => {
-    // the order in this list defines the priority of notification for the same user
-    // upper in this list - higher priority
-    const promises = [];
     let allNotifications = [];
-    if (message.userId) promises.push(getNotificationsForUserId(eventConfig, message.userId));
-    promises.push(getProjectMembersNotifications(eventConfig, project));
-    promises.push(getTopCoderMembersNotifications(eventConfig));
-    Promise.all(promises
-     ).then((notificationsPerSource) => (
+
+    Promise.all([
+      // the order in this list defines the priority of notification for the SAME user
+      // upper in this list - higher priority
+      // NOTE: always add all handles here, they have to check by themselves:
+      //       - if they have to handle particular event type or skip it
+      //       - check that event has everything required or throw error
+      getNotificationsForUserId(eventConfig, message.userId),
+      getProjectMembersNotifications(eventConfig, project),
+      getTopCoderMembersNotifications(eventConfig),
+    ]).then((notificationsPerSource) => (
       // first found notification for one user will be send, the rest ignored
       _.uniqBy(_.flatten(notificationsPerSource), 'userId')
     )).then((notifications) => {
       allNotifications = notifications;
 
+      // now let's retrieve some additional data
+
+      // if message has userId such messages will likely need userHandle
+      // so let's get it
       if (message.userId) {
         const ids = [message.userId];
         return service.getUsersById(ids);
@@ -153,7 +185,10 @@ const handler = (topic, message, callback) => {
     }).then((users) => {
       _.map(allNotifications, (notification) => {
         notification.projectName = project.name;
-        notification.contents.userHandle = users[0].handle;
+        // if found a user then add user handle
+        if (users.length) {
+          notification.contents.userHandle = users[0].handle;
+        }
       });
       callback(null, allNotifications);
     }).catch((err) => {

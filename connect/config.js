@@ -5,6 +5,7 @@
 module.exports = {
   TC_API_V3_BASE_URL: process.env.TC_API_V3_BASE_URL || 'https://api.topcoder-dev.com/v3',
   TC_API_V4_BASE_URL: process.env.TC_API_V4_BASE_URL || 'https://api.topcoder-dev.com/v4',
+  // eslint-disable-next-line max-len
   TC_ADMIN_TOKEN: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJUb3Bjb2RlciBVc2VyIiwiYWRtaW5pc3RyYXRvciJdLCJpc3MiOiJodHRwczovL2FwaS50b3Bjb2Rlci1kZXYuY29tIiwiaGFuZGxlIjoic3VzZXIxIiwiZXhwIjoxNTE5MTQxNjM5LCJ1c2VySWQiOiI0MDE1MzkzOCIsImlhdCI6MTUwOTYzNzYzOSwiZW1haWwiOiJtdHdvbWV5QGJlYWtzdGFyLmNvbSIsImp0aSI6IjIzZTE2YjA2LWM1NGItNDNkNS1iY2E2LTg0ZGJiN2JiNDA0NyJ9.YXJ0piKg_pILJKqntjMA78Z2X3f5BDGWQO3lb-1MVYw',
 
   // Probably temporary variables for TopCoder role ids for 'Connect Manager', 'Connect Copilot' and 'administrator'
@@ -14,4 +15,7 @@ module.exports = {
   CONNECT_MANAGER_ROLE_ID: 8,
   CONNECT_COPILOT_ROLE_ID: 4,
   ADMINISTRATOR_ROLE_ID: 1,
+
+  // id of the BOT user which creates post with various events in discussions
+  TCWEBSERVICE_ID: process.env.TCWEBSERVICE_ID || '22838965',
 };
