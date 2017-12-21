@@ -178,7 +178,7 @@ const handler = (topic, message, callback) => {
 
   // filter out `notifications.connect.project.topic.created` events send by bot
   // because they create too much clutter and duplicate info
-  if (topic === 'notifications.connect.project.topic.created' && message.userId === config.TCWEBSERVICE_ID) {
+  if (topic === 'notifications.connect.project.topic.created' && message.userId.toString() === config.TCWEBSERVICE_ID) {
     return callback(null, []);
   }
 
