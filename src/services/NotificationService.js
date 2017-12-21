@@ -12,13 +12,88 @@ const models = require('../models');
 const DEFAULT_LIMIT = 10;
 
 /**
+ * Get notification settings.
+ * @param {Number} userId the user id
+ * @returns {Object} the notification settings
+ */
+function* getSettings(userId) {
+  const settings = yield models.NotificationSetting.findAll({ where: { userId } });
+  const result = {};
+  _.each(settings, (setting) => {
+    if (!result[setting.topic]) {
+      result[setting.topic] = {};
+    }
+    result[setting.topic][setting.deliveryMethod] = setting.value;
+  });
+  return result;
+}
+
+getSettings.schema = {
+  userId: Joi.number().required(),
+};
+
+/**
+ * Save notification setting entry. If the entry is not found, it will be created; otherwise it will be updated.
+ * @param {Object} entry the notification setting entry
+ * @param {Number} userId the user id
+ */
+function* saveSetting(entry, userId) {
+  const setting = yield models.NotificationSetting.findOne({ where: {
+    userId, topic: entry.topic, deliveryMethod: entry.deliveryMethod } });
+  if (setting) {
+    setting.value = entry.value;
+    yield setting.save();
+  } else {
+    yield models.NotificationSetting.create({
+      userId,
+      topic: entry.topic,
+      deliveryMethod: entry.deliveryMethod,
+      value: entry.value,
+    });
+  }
+}
+
+/**
+ * Update notification settings. Un-specified settings are not changed.
+ * @param {Array} data the notification settings data
+ * @param {Number} userId the user id
+ */
+function* updateSettings(data, userId) {
+  // there should be no duplicate (topic + deliveryMethod) pairs
+  const pairs = {};
+  _.each(data, (entry) => {
+    const key = `${entry.topic} | ${entry.deliveryMethod}`;
+    if (pairs[key]) {
+      throw new errors.BadRequestError(`There are duplicate data for topic: ${
+        entry.topic}, deliveryMethod: ${entry.deliveryMethod}`);
+    }
+    pairs[key] = entry;
+  });
+
+  // save each entry in parallel
+  yield _.map(data, (entry) => saveSetting(entry, userId));
+}
+
+/**
  * List notifications.
+ *
+ * This method returns only notifications for 'web'
+ * Also this method filters notifications by the user and filters out notifications,
+ * which user disabled in his settings.
+ *
  * @param {Object} query the query parameters
  * @param {Number} userId the user id
  * @returns {Object} the search result
  */
 function* listNotifications(query, userId) {
-  const filter = { where: { userId }, offset: query.offset, limit: query.limit, order: [['createdAt', 'DESC']] };
+  const settings = yield getSettings(userId);
+  // only filter out notifications types which were explicitly set to 'no' - so we return notification by default
+  const notificationTypes = _.keys(settings).filter((notificationType) => settings[notificationType].web !== 'no');
+
+  const filter = { where: {
+    userId,
+    type: { $in: notificationTypes },
+  }, offset: query.offset, limit: query.limit, order: [['createdAt', 'DESC']] };
   if (query.type) {
     filter.where.type = query.type;
   }
@@ -96,69 +171,6 @@ function* markAllRead(userId) {
 markAllRead.schema = {
   userId: Joi.number().required(),
 };
-
-/**
- * Get notification settings.
- * @param {Number} userId the user id
- * @returns {Object} the notification settings
- */
-function* getSettings(userId) {
-  const settings = yield models.NotificationSetting.findAll({ where: { userId } });
-  const result = {};
-  _.each(settings, (setting) => {
-    if (!result[setting.topic]) {
-      result[setting.topic] = {};
-    }
-    result[setting.topic][setting.deliveryMethod] = setting.value;
-  });
-  return result;
-}
-
-getSettings.schema = {
-  userId: Joi.number().required(),
-};
-
-/**
- * Save notification setting entry. If the entry is not found, it will be created; otherwise it will be updated.
- * @param {Object} entry the notification setting entry
- * @param {Number} userId the user id
- */
-function* saveSetting(entry, userId) {
-  const setting = yield models.NotificationSetting.findOne({ where: {
-    userId, topic: entry.topic, deliveryMethod: entry.deliveryMethod } });
-  if (setting) {
-    setting.value = entry.value;
-    yield setting.save();
-  } else {
-    yield models.NotificationSetting.create({
-      userId,
-      topic: entry.topic,
-      deliveryMethod: entry.deliveryMethod,
-      value: entry.value,
-    });
-  }
-}
-
-/**
- * Update notification settings. Un-specified settings are not changed.
- * @param {Array} data the notification settings data
- * @param {Number} userId the user id
- */
-function* updateSettings(data, userId) {
-  // there should be no duplicate (topic + deliveryMethod) pairs
-  const pairs = {};
-  _.each(data, (entry) => {
-    const key = `${entry.topic} | ${entry.deliveryMethod}`;
-    if (pairs[key]) {
-      throw new errors.BadRequestError(`There are duplicate data for topic: ${
-        entry.topic}, deliveryMethod: ${entry.deliveryMethod}`);
-    }
-    pairs[key] = entry;
-  });
-
-  // save each entry in parallel
-  yield _.map(data, (entry) => saveSetting(entry, userId));
-}
 
 updateSettings.schema = {
   data: Joi.array().min(1).items(Joi.object().keys({
