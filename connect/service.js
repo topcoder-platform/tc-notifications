@@ -18,7 +18,7 @@ const getProject = (projectId) => request
   .set('authorization', `Bearer ${config.TC_ADMIN_TOKEN}`)
   .then((res) => {
     if (!_.get(res, 'body.result.success')) {
-      throw new Error(`Failed to get project details of projectq id: ${projectId}`);
+      throw new Error(`Failed to get project details of project id: ${projectId}`);
     }
 
     const project = _.get(res, 'body.result.content');
@@ -59,6 +59,13 @@ const getRoleMembers = (roleId) => request
     );
   });
 
+/**
+ * Get users details by ids
+ *
+ * @param  {Array} ids list of user ids
+ *
+ * @return {Promise}   resolves to the list of user details
+ */
 const getUsersById = (ids) => {
   const query = _.map(ids, (id) => 'userId:' + id).join(' OR ');
   return request
@@ -82,8 +89,42 @@ const getUsersById = (ids) => {
     });
 };
 
+/**
+ * Get topic details
+ *
+ * @param  {String} topicId topic id
+ *
+ * @return {Promise}          promise resolved to topic details
+ */
+const getTopic = (topicId) => request
+  .get(`${config.TC_API_V4_BASE_URL}/topics/${topicId}`)
+  .set('accept', 'application/json')
+  .set('authorization', `Bearer ${config.TC_ADMIN_TOKEN}`)
+  .then((res) => {
+    if (!_.get(res, 'body.result.success')) {
+      throw new Error(`Failed to get topic details of topic id: ${topicId}`);
+    }
+
+    const topic = _.get(res, 'body.result.content');
+
+    // this API gives an array instead of one topic
+    if (topic.length < 1) {
+      throw new Error(`Failed to get topic details of topic id: ${topicId}`);
+    }
+
+    return topic[0];
+  }).catch((err) => {
+    const errorDetails = _.get(err, 'response.body.result.content.message');
+    throw new Error(
+      `Failed to get topic details of topic id: ${topicId}.` +
+      (errorDetails ? ' Server response: ' + errorDetails : '')
+    );
+  });
+
+
 module.exports = {
   getProject,
   getRoleMembers,
   getUsersById,
+  getTopic,
 };

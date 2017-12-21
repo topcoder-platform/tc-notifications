@@ -33,10 +33,11 @@ const TOPCODER_ROLE_RULES = {
  * Supported events configuration
  *
  * Each event configuration object has
- *   type          {String}  [mandatory] Event type
- *   projectRoles  {Array}   [optional]  List of project member roles which has to get notification
- *   topcoderRoles {Array}   [optional]  List of TopCoder member roles which has to get notification
- *   toUserHandle  {Boolean} [optional]  If set to true, user defined in `message.userHandle` will get notification
+ *   type           {String}  [mandatory] Event type
+ *   projectRoles   {Array}   [optional]  List of project member roles which has to get notification
+ *   topcoderRoles  {Array}   [optional]  List of TopCoder member roles which has to get notification
+ *   toUserHandle   {Boolean} [optional]  If set to true, user defined in `message.userHandle` will get notification
+ *   toTopicStarter {Boolean} [optional]  If set to true, than will find who started topic `message.topicId` and send notification to him
  *
  * @type {Array}
  */
@@ -96,7 +97,7 @@ const EVENTS = [
   }, {
     type: 'notifications.connect.project.post.created',
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
-    toUserHandle: true,
+    toTopicStarter: true,
   },
   {
     type: 'notifications.connect.project.linkCreated',

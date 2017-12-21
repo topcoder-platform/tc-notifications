@@ -120,11 +120,39 @@ const getNotificationsForUserId = (eventConfig, userId) => {
   }
 
   return Promise.resolve([{
-    userId,
+    userId: userId.toString(),
     contents: {
       toUserHandle: true,
     },
   }]);
+};
+
+/**
+ * Get notifications for a user who started topic which was commented
+ *
+ * @param  {Object} eventConfig event configuration
+ * @param  {String} topicId     topic id
+ *
+ * @return {Promise}            resolves to a list of notifications
+ */
+const getNotificationsForTopicStarter = (eventConfig, topicId) => {
+  // if event doesn't have to be send to a topic starter, then skip
+  if (!eventConfig.toTopicStarter) {
+    return Promise.resolve([]);
+  }
+
+  // if we have to send notification to the topic starter
+  // but topicId is not provided in the message, then throw error
+  if (!topicId) {
+    return Promise.reject(new Error('Missing topicId in the event message.'));
+  }
+
+  return service.getTopic(topicId).then((topic) => ({
+    userId: topic.userId.toString(),
+    contents: {
+      toTopicStarter: true,
+    },
+  }));
 };
 
 // set configuration for the server, see ../config/default.js for available config parameters
@@ -164,11 +192,13 @@ const handler = (topic, message, callback) => {
       // NOTE: always add all handles here, they have to check by themselves:
       //       - if they have to handle particular event type or skip it
       //       - check that event has everything required or throw error
+      getNotificationsForTopicStarter(eventConfig, message.topicId),
       getNotificationsForUserId(eventConfig, message.userId),
       getProjectMembersNotifications(eventConfig, project),
       getTopCoderMembersNotifications(eventConfig),
     ]).then((notificationsPerSource) => (
       // first found notification for one user will be send, the rest ignored
+      // NOTE all userId has to be string
       _.uniqBy(_.flatten(notificationsPerSource), 'userId')
     )).then((notifications) => {
       allNotifications = notifications;
