@@ -214,7 +214,7 @@ const handler = (topic, message, callback) => {
       return [];
     }).then((users) => {
       _.map(allNotifications, (notification) => {
-        notification.projectName = project.name;
+        notification.contents.projectName = project.name;
         // if found a user then add user handle
         if (users.length) {
           notification.contents.userHandle = users[0].handle;
