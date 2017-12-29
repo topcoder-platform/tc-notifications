@@ -110,28 +110,6 @@ function start(handlers) {
     });
   });
 
-  app.use('/notifications/debug', (req, res) => {
-    const options = {
-      from: new Date - 1 * 60 * 60 * 1000,
-      until: new Date,
-      limit: 100000,
-      start: 0,
-      order: 'desc',
-    };
-
-    //
-    // Find items logged between today and yesterday.
-    //
-    logger.query(options, (err, results) => {
-      if (err) {
-        res.status(500).json(err);
-        return;
-      }
-
-      res.status(200).json({ history: results, env: process.env });
-    });
-  });
-
   app.use('/', apiRouter);
 
 
