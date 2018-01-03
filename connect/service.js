@@ -105,14 +105,7 @@ const getTopic = (topicId) => request
       throw new Error(`Failed to get topic details of topic id: ${topicId}`);
     }
 
-    const topic = _.get(res, 'body.result.content');
-
-    // this API gives an array instead of one topic
-    if (topic.length < 1) {
-      throw new Error(`Failed to get topic details of topic id: ${topicId}`);
-    }
-
-    return topic[0];
+    return _.get(res, 'body.result.content');
   }).catch((err) => {
     const errorDetails = _.get(err, 'response.body.result.content.message');
     throw new Error(
