@@ -34,10 +34,12 @@ const TOPCODER_ROLE_RULES = {
  *
  * Each event configuration object has
  *   type           {String}  [mandatory] Event type
+ *   version        {Number}  [optional]  Version of the event.
  *   projectRoles   {Array}   [optional]  List of project member roles which has to get notification
  *   topcoderRoles  {Array}   [optional]  List of TopCoder member roles which has to get notification
  *   toUserHandle   {Boolean} [optional]  If set to true, user defined in `message.userHandle` will get notification
- *   toTopicStarter {Boolean} [optional]  If set to true, than will find who started topic `message.topicId` and send notification to him
+ *   toTopicStarter {Boolean} [optional]  If set to true, than will find who started topic `message.topicId` and
+ *                                        send notification to him
  *
  * @type {Array}
  */
@@ -73,13 +75,16 @@ const EVENTS = [
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER],
   }, {
     type: 'notifications.connect.project.member.left',
+    version: 2,
     projectRoles: [PROJECT_ROLE_MANAGER],
   }, {
     type: 'notifications.connect.project.member.removed',
+    version: 2,
     projectRoles: [PROJECT_ROLE_MANAGER],
     toUserHandle: true,
   }, {
     type: 'notifications.connect.project.member.assignedAsOwner',
+    version: 2,
     projectRoles: [PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER],
     toUserHandle: true,
   }, {
@@ -93,20 +98,25 @@ const EVENTS = [
   // Project activity
   {
     type: 'notifications.connect.project.topic.created',
+    version: 2,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
   }, {
     type: 'notifications.connect.project.post.created',
+    version: 2,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
     toTopicStarter: true,
   },
   {
     type: 'notifications.connect.project.linkCreated',
+    version: 2,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
   }, {
     type: 'notifications.connect.project.fileUploaded',
+    version: 2,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
   }, {
     type: 'notifications.connect.project.specificationModified',
+    version: 2,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
   },
 ];

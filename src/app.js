@@ -53,6 +53,7 @@ function startKafkaConsumer(handlers) {
       .then((notifications) => Promise.all(_.map(notifications, (notification) => models.Notification.create({
         userId: notification.userId,
         type: topicName,
+        version: notification.version || null,
         contents: _.extend({}, messageJSON, notification.contents),
         read: false,
       }))))
