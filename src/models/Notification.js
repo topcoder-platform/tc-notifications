@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => sequelize.define('Notification', {
   type: { type: DataTypes.STRING, allowNull: false },
   contents: { type: DataTypes.JSONB, allowNull: false },
   read: { type: DataTypes.BOOLEAN, allowNull: false },
+  version: { type: DataTypes.SMALLINT, allowNull: true },
 }, {});
 
 // sequelize will generate and manage createdAt, updatedAt fields

@@ -22,6 +22,7 @@ const PROJECT_ROLE_OWNER = require('./events-config').PROJECT_ROLE_OWNER;
  * @return {Promise}            resolves to a list of notifications
  */
 const getTopCoderMembersNotifications = (eventConfig) => {
+  // if event doesn't have to be notified to topcoder member, just ignore
   if (!eventConfig.topcoderRoles) {
     return Promise.resolve([]);
   }
@@ -59,8 +60,13 @@ const getTopCoderMembersNotifications = (eventConfig) => {
  *
  * @return {Promise}            resolves to a list of notifications
  */
-const getProjectMembersNotifications = (eventConfig, project) => (
-  new Promise((resolve) => {
+const getProjectMembersNotifications = (eventConfig, project) => {
+  // if event doesn't have to be notified to project member, just ignore
+  if (!eventConfig.projectRoles) {
+    return Promise.resolve([]);
+  }
+
+  return new Promise((resolve) => {
     let notifications = [];
     const projectMembers = _.get(project, 'members', []);
 
@@ -96,8 +102,8 @@ const getProjectMembersNotifications = (eventConfig, project) => (
     notifications = _.uniqBy(notifications, 'userId');
 
     resolve(notifications);
-  })
-);
+  });
+};
 
 /**
  * Get notifications for a user who started topic which was commented
@@ -125,6 +131,49 @@ const getNotificationsForTopicStarter = (eventConfig, topicId) => {
       toTopicStarter: true,
     },
   }));
+};
+
+/**
+ * Exclude notifications using exclude rules of the event config
+ *
+ * @param {Array}  notifications notifications list
+ * @param {Object} eventConfig   event configuration
+ * @param {Object} message       message
+ * @param {Object} data          any additional data which is retrieved once
+ *
+ * @returns {Promise} resolves to the list of filtered notifications
+ */
+const excludeNotifications = (notifications, eventConfig, message, data) => {
+  // if there are no rules to exclude notifications, just return all of them untouched
+  if (!eventConfig.exclude) {
+    return Promise.resolve(notifications);
+  }
+
+  const { project } = data;
+  // create event config using rules to exclude notifications
+  const excludeEventConfig = Object.assign({
+    type: eventConfig.type,
+  }, eventConfig.exclude);
+
+  // get notifications using rules for exclude notifications
+  // and after filter out such notifications from the notifications list
+  // TODO move this promise all together with `_.uniqBy` to one function
+  //      and reuse it here and in `handler` function
+  return Promise.all([
+    getNotificationsForTopicStarter(excludeEventConfig, message.topicId),
+    getNotificationsForUserId(excludeEventConfig, message.userId),
+    getProjectMembersNotifications(excludeEventConfig, project),
+    getTopCoderMembersNotifications(excludeEventConfig),
+  ]).then((notificationsPerSource) => (
+    _.uniqBy(_.flatten(notificationsPerSource), 'userId')
+  )).then((excludedNotifications) => {
+    const excludedUserIds = _.map(excludedNotifications, 'userId');
+    const filteredNotifications = notifications.filter((notification) => (
+      !_.includes(excludedUserIds, notification.userId)
+    ));
+
+    return filteredNotifications;
+  });
 };
 
 // set configuration for the server, see ../config/default.js for available config parameters
@@ -173,12 +222,16 @@ const handler = (topic, message, callback) => {
       // then filter out notifications to the user who initiated the message
       _.filter(_.uniqBy(_.flatten(notificationsPerSource), 'userId'),
                (notification) => notification.userId !== message.userId)
+    )).then((notifications) => (
+      excludeNotifications(notifications, eventConfig, message, {
+        project,
+      })
     )).then((notifications) => {
       allNotifications = notifications;
 
       // now let's retrieve some additional data
 
-      // if message has userId such messages will likely need userHandle
+      // if message has userId such messages will likely need userHandle and user full name
       // so let's get it
       if (message.userId) {
         const ids = [message.userId];
@@ -187,10 +240,12 @@ const handler = (topic, message, callback) => {
       return [];
     }).then((users) => {
       _.map(allNotifications, (notification) => {
+        notification.version = eventConfig.version;
         notification.contents.projectName = project.name;
         // if found a user then add user handle
         if (users.length) {
           notification.contents.userHandle = users[0].handle;
+          notification.contents.userFullName = `${users[0].firstName} ${users[0].lastName}`;
         }
       });
       callback(null, allNotifications);
