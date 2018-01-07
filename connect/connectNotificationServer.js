@@ -205,7 +205,7 @@ const handler = (topic, message, callback) => {
 
       // now let's retrieve some additional data
 
-      // if message has userId such messages will likely need userHandle
+      // if message has userId such messages will likely need userHandle and user full name
       // so let's get it
       if (message.userId) {
         const ids = [message.userId];
@@ -214,10 +214,12 @@ const handler = (topic, message, callback) => {
       return [];
     }).then((users) => {
       _.map(allNotifications, (notification) => {
+        notification.version = eventConfig.version;
         notification.contents.projectName = project.name;
         // if found a user then add user handle
         if (users.length) {
           notification.contents.userHandle = users[0].handle;
+          notification.contents.userFullName = `${users[0].firstName} ${users[0].lastName}`;
         }
       });
       callback(null, allNotifications);
