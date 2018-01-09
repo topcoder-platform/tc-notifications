@@ -17,5 +17,5 @@ module.exports = {
   ADMINISTRATOR_ROLE_ID: 1,
 
   // id of the BOT user which creates post with various events in discussions
-  TCWEBSERVICE_ID: process.env.TCWEBSERVICE_ID || '22838965', 
+  TCWEBSERVICE_ID: process.env.TCWEBSERVICE_ID || '22838965',
 };

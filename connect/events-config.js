@@ -40,6 +40,8 @@ const TOPCODER_ROLE_RULES = {
  *   toUserHandle   {Boolean} [optional]  If set to true, user defined in `message.userHandle` will get notification
  *   toTopicStarter {Boolean} [optional]  If set to true, than will find who started topic `message.topicId` and
  *                                        send notification to him
+ *   exclude        {Object}  [optional]  May contains any rules like `projectRoles`, `toUserHandle` etc
+ *                                        but these rules will forbid sending notifications to members who satisfy them
  *
  * @type {Array}
  */
@@ -48,6 +50,9 @@ const EVENTS = [
   {
     type: 'notifications.connect.project.created',
     projectRoles: [PROJECT_ROLE_OWNER],
+    exclude: {
+      topcoderRoles: [ROLE_CONNECT_MANAGER, ROLE_ADMINISTRATOR],
+    },
   }, {
     type: 'notifications.connect.project.submittedForReview',
     projectRoles: [PROJECT_ROLE_OWNER],

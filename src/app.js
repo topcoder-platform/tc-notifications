@@ -110,7 +110,7 @@ function start(handlers) {
       apiRouter[verb](url, helper.autoWrapExpress(actions));
     });
   });
-  
+
   app.use('/notifications/debug', (req, res) => {
     const options = {
       from: new Date - 1 * 60 * 60 * 1000,
