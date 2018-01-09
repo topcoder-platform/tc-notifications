@@ -106,34 +106,6 @@ const getProjectMembersNotifications = (eventConfig, project) => {
 };
 
 /**
- * Get notifications for users obtained from userId
- *
- * @param  {Object} eventConfig event configuration
- * @param  {String} userId  user id
- *
- * @return {Promise}            resolves to a list of notifications
- */
-const getNotificationsForUserId = (eventConfig, userId) => {
-  // if event doesn't have to be notified to provided userHandle, just ignore
-  if (!eventConfig.toUserHandle) {
-    return Promise.resolve([]);
-  }
-
-  // if we have to send notification to the userHandle,
-  // but it's not provided in the message, then throw error
-  if (!userId) {
-    return Promise.reject(new Error('Missing userId in the event message.'));
-  }
-
-  return Promise.resolve([{
-    userId: userId.toString(),
-    contents: {
-      toUserHandle: true,
-    },
-  }]);
-};
-
-/**
  * Get notifications for a user who started topic which was commented
  *
  * @param  {Object} eventConfig event configuration
@@ -251,13 +223,14 @@ const handler = (topic, message, callback) => {
       //       - if they have to handle particular event type or skip it
       //       - check that event has everything required or throw error
       getNotificationsForTopicStarter(eventConfig, message.topicId),
-      getNotificationsForUserId(eventConfig, message.userId),
       getProjectMembersNotifications(eventConfig, project),
       getTopCoderMembersNotifications(eventConfig),
     ]).then((notificationsPerSource) => (
       // first found notification for one user will be send, the rest ignored
       // NOTE all userId has to be string
-      _.uniqBy(_.flatten(notificationsPerSource), 'userId')
+      // then filter out notifications to the user who initiated the message
+      _.filter(_.uniqBy(_.flatten(notificationsPerSource), 'userId'),
+               (notification) => notification.userId !== message.userId)
     )).then((notifications) => (
       excludeNotifications(notifications, eventConfig, message, {
         project,
