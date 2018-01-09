@@ -153,12 +153,21 @@ const getNotificationsForTopicStarter = (eventConfig, topicId) => {
     return Promise.reject(new Error('Missing topicId in the event message.'));
   }
 
-  return service.getTopic(topicId).then((topic) => ({
-    userId: topic.userId.toString(),
-    contents: {
-      toTopicStarter: true,
-    },
-  }));
+  return service.getTopic(topicId).then((topic) => {
+    const userId = topic.userId.toString();
+
+    // special case: if topic created by CoderBot, don't send notification to him
+    if (userId === 'CoderBot') {
+      return [];
+    }
+
+    return [{
+      userId,
+      contents: {
+        toTopicStarter: true,
+      },
+    }];
+  });
 };
 
 /**
