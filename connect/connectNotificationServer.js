@@ -284,7 +284,7 @@ const handler = (topic, message, callback) => {
       //       - check that event has everything required or throw error
       getNotificationsForTopicStarter(eventConfig, message.topicId),
       getNotificationsForUserId(eventConfig, message.userId),
-      getNotificationsForMentionedUser(eventConfig, message.contents.postContent),
+      message.contents && message.contents.postContent ? getNotificationsForMentionedUser(eventConfig, message.contents.postContent) : Promise.resolve([]),
       getProjectMembersNotifications(eventConfig, project),
       getTopCoderMembersNotifications(eventConfig),
     ]).then((notificationsPerSource) => (
