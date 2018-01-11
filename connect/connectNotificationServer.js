@@ -53,6 +53,38 @@ const getTopCoderMembersNotifications = (eventConfig) => {
 };
 
 /**
+ * Get notifications for mentioned users
+ *
+ * @param  {Object} eventConfig event configuration
+ * @param  {Object} message content
+ *
+ * @return {Promise}            resolves to a list of notifications
+ */
+const getNotificationsForMentionedUser = (eventConfig, content) => {
+  if (!eventConfig.toMentionedUsers) {
+    return Promise.resolve([]);
+  }
+
+  let notifications = [];
+  const regexUserId = /@([0-9]+)/g;
+  let matches = regexUserId.exec(content);
+  while (matches) {
+    notifications.push({
+      userId: matches[1].toString(),
+      newType: 'notifications.connect.project.post.mention',
+      contents: {
+        toUserHandle: true,
+      },
+    });
+    matches = regexUserId.exec(content);
+  }
+
+  // only one per userId
+  notifications = _.uniqBy(notifications, 'userId');
+  return Promise.resolve(notifications);
+};
+
+/**
  * Get project members notifications
  *
  * @param  {Object} eventConfig event configuration
@@ -252,6 +284,7 @@ const handler = (topic, message, callback) => {
       //       - check that event has everything required or throw error
       getNotificationsForTopicStarter(eventConfig, message.topicId),
       getNotificationsForUserId(eventConfig, message.userId),
+      getNotificationsForMentionedUser(eventConfig, message.contents.postContent),
       getProjectMembersNotifications(eventConfig, project),
       getTopCoderMembersNotifications(eventConfig),
     ]).then((notificationsPerSource) => (
