@@ -53,6 +53,7 @@ function startKafkaConsumer(handlers) {
       .then((notifications) => Promise.all(_.map(notifications, (notification) => models.Notification.create({
         userId: notification.userId,
         type: notification.newType | topicName,
+        version: notification.version || null,
         contents: _.extend({}, messageJSON, notification.contents),
         read: false,
       }))))
@@ -107,6 +108,28 @@ function start(handlers) {
       }
       actions.push(method);
       apiRouter[verb](url, helper.autoWrapExpress(actions));
+    });
+  });
+
+  app.use('/notifications/debug', (req, res) => {
+    const options = {
+      from: new Date - 1 * 60 * 60 * 1000,
+      until: new Date,
+      limit: 100000,
+      start: 0,
+      order: 'desc',
+    };
+
+    //
+    // Find items logged between today and yesterday.
+    //
+    logger.query(options, (err, results) => {
+      if (err) {
+        res.status(500).json(err);
+        return;
+      }
+
+      res.status(200).json({ history: results, env: process.env });
     });
   });
 

@@ -87,12 +87,11 @@ function* updateSettings(data, userId) {
  */
 function* listNotifications(query, userId) {
   const settings = yield getSettings(userId);
-  
 
   const filter = { where: {
     userId,
   }, offset: query.offset, limit: query.limit, order: [['createdAt', 'DESC']] };
-  if (_.keys(settings).length>0){
+  if (_.keys(settings).length > 0) {
     // only filter out notifications types which were explicitly set to 'no' - so we return notification by default
     const notificationTypes = _.keys(settings).filter((notificationType) => settings[notificationType].web !== 'no');
     filter.where.type = { $in: notificationTypes };
