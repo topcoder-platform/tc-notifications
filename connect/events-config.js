@@ -98,6 +98,9 @@ const EVENTS = [
     type: 'notifications.connect.project.post.created',
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
     toTopicStarter: true,
+    toMentionedUsers: true,
+  }, {
+    type: 'notifications.connect.project.post.mention',
   },
   {
     type: 'notifications.connect.project.linkCreated',
