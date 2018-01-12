@@ -66,22 +66,35 @@ const getNotificationsForMentionedUser = (eventConfig, content) => {
   }
 
   let notifications = [];
-  const regexUserId = /@([0-9]+)/g;
-  let matches = regexUserId.exec(content);
+  const regexUserId = /@([a-zA-Z0-9-_.{}\[\]]+)/g;
+  let handles=[];
+  let matches = regexUserId.exec(content); 
+  console.log("matches"+matches)
   while (matches) {
+    let handle = matches[1].toString();
     notifications.push({
-      userId: matches[1].toString(),
+      userHandle: handle,
       newType: 'notifications.connect.project.post.mention',
       contents: {
         toUserHandle: true,
       },
     });
     matches = regexUserId.exec(content);
+    handles.push(handle);
   }
+  // only one per userHandle
+  notifications = _.uniqBy(notifications, 'userHandle');
 
-  // only one per userId
-  notifications = _.uniqBy(notifications, 'userId');
-  return Promise.resolve(notifications);
+  return new Promise((resolve)=>{
+    service.getUsersByHandle(handles).then((users)=>{
+      console.log(users);
+      _.map(notifications,(notification)=>{
+        console.log("userhandle: "+notification.userHandle);
+        notification.userId = _.find(users,{handle:notification.userHandle}).userId;
+      });
+      resolve(notifications);
+    })
+  });
 };
 
 /**
@@ -284,7 +297,7 @@ const handler = (topic, message, callback) => {
       //       - check that event has everything required or throw error
       getNotificationsForTopicStarter(eventConfig, message.topicId),
       getNotificationsForUserId(eventConfig, message.userId),
-      message.contents && message.contents.postContent ? getNotificationsForMentionedUser(eventConfig, message.contents.postContent) : Promise.resolve([]),
+      message.postContent ? getNotificationsForMentionedUser(eventConfig, message.postContent) : Promise.resolve([]),
       getProjectMembersNotifications(eventConfig, project),
       getTopCoderMembersNotifications(eventConfig),
     ]).then((notificationsPerSource) => (
