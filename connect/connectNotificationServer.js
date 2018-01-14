@@ -66,10 +66,10 @@ const getNotificationsForMentionedUser = (eventConfig, content) => {
   }
 
   let notifications = [];
-  const regexUserId = /@([a-zA-Z0-9-_.{}\[\]]+)/g;
+  const regexUserHandle = /title=\"@([a-zA-Z0-9-_.{}\[\]]+)\"/g;
   let handles=[];
-  let matches = regexUserId.exec(content); 
-  console.log("matches"+matches)
+  let matches = regexUserHandle.exec(content); 
+  console.log(content)
   while (matches) {
     let handle = matches[1].toString();
     notifications.push({
@@ -79,7 +79,7 @@ const getNotificationsForMentionedUser = (eventConfig, content) => {
         toUserHandle: true,
       },
     });
-    matches = regexUserId.exec(content);
+    matches = regexUserHandle.exec(content);
     handles.push(handle);
   }
   // only one per userHandle
@@ -87,9 +87,7 @@ const getNotificationsForMentionedUser = (eventConfig, content) => {
 
   return new Promise((resolve)=>{
     service.getUsersByHandle(handles).then((users)=>{
-      console.log(users);
       _.map(notifications,(notification)=>{
-        console.log("userhandle: "+notification.userHandle);
         notification.userId = _.find(users,{handle:notification.userHandle}).userId;
       });
       resolve(notifications);
