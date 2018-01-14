@@ -307,7 +307,7 @@ const handler = (topic, message, callback) => {
         project,
       })
     )).then((notifications) => {
-      allNotifications = notifications;
+      allNotifications = _.filter(notifications,notification=>notification.userId!=message.initiatorUserId);
 
       // now let's retrieve some additional data
 
