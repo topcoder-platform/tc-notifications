@@ -32,7 +32,7 @@
     "pg": "^7.3.0",
     "sequelize": "^4.21.0",
     "superagent": "^3.8.0",
-    "tc-core-library-js": "gondzo/tc-core-library-js.git#dev",
+    "tc-core-library-js": "appirio-tech/tc-core-library-js.git#v2.2",
     "winston": "^2.2.0"
   },
   "engines": {
