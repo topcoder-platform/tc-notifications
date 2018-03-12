@@ -56,6 +56,7 @@ function startKafkaConsumer(handlers) {
         version: notification.version || null,
         contents: _.extend({}, messageJSON, notification.contents),
         read: false,
+        seen: false,
       }))))
       // commit offset
       .then(() => consumer.commitOffset({ topic, partition, offset: m.offset }))
