@@ -19,6 +19,12 @@ module.exports = {
       method: 'markAllRead',
     },
   },
+  '/notifications/:id/seen': {
+    put: {
+      controller: 'NotificationController',
+      method: 'markAsSeen',
+    },
+  },
   '/notificationsettings': {
     get: {
       controller: 'NotificationController',

@@ -70,6 +70,9 @@ paths:
                     read:
                       type: boolean
                       description: read flag
+                    seen:
+                      type: boolean
+                      description: seen flag
                     contents:
                       type: object
                       description: the event message in JSON format
@@ -146,6 +149,42 @@ paths:
           description: OK, all notifications are marked as read
         401:
           description: "authentication failed"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal server error."
+          schema:
+            $ref: "#/definitions/Error"
+  /notifications/{id}/seen:
+    put:
+      description:
+        mark notification(s) as seen, id can be single id or '-' separated ids
+      security:
+        - jwt: []
+      parameters:
+        - in: path
+          name: id
+          description: notification id
+          required: true
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: OK, the notification(s) are marked as seen
+        400:
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/Error"
+        401:
+          description: "authentication failed"
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Action not allowed."
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "Notification is not found"
           schema:
             $ref: "#/definitions/Error"
         500:
