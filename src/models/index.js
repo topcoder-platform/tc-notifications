@@ -18,5 +18,5 @@ const NotificationSetting = require('./NotificationSetting')(sequelize, DataType
 module.exports = {
   Notification,
   NotificationSetting,
-  init: () => sequelize.sync(),
+  init: () => sequelize.sync({ alter: true }),
 };
