@@ -6,7 +6,7 @@
 - Heroku Toolbelt https://toolbelt.heroku.com
 - git
 - PostgreSQL 9.5
-
+ 
 
 ## Configuration
 Configuration for the notification server is at `config/default.js`.
