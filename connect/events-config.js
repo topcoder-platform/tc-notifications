@@ -112,6 +112,12 @@ const EVENTS = [
     toTopicStarter: true,
     toMentionedUsers: true,
   }, {
+    type: 'notifications.connect.project.post.edited',
+    version: 2,
+    projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
+    toTopicStarter: true,
+    toMentionedUsers: true,
+  }, {
     type: 'notifications.connect.project.post.mention',
   },
   {
