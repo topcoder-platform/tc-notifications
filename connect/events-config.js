@@ -62,6 +62,10 @@ const EVENTS = [
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER],
     topcoderRoles: [ROLE_CONNECT_COPILOT, ROLE_ADMINISTRATOR],
   }, {
+    type: 'notifications.connect.project.active',
+    projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER],
+    topcoderRoles: [ROLE_ADMINISTRATOR],
+  }, {
     type: 'notifications.connect.project.paused',
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER],
     topcoderRoles: [ROLE_ADMINISTRATOR],
