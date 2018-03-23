@@ -6,7 +6,7 @@
 - Heroku Toolbelt https://toolbelt.heroku.com
 - git
 - PostgreSQL 9.5
-
+ 
 
 ## Configuration
 Configuration for the notification server is at `config/default.js`.
@@ -130,5 +130,5 @@ In case it expires, you may get a new token in this way:
 ## Swagger
 
 Swagger API definition is provided at `docs/swagger_api.yaml`,
-you may check it at `http://editor.swagger.io`.
+you may check it at `http://editor.swagger.io`. 
 

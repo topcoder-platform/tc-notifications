@@ -60,6 +60,7 @@ function startKafkaConsumer(handlers) {
           version: notification.version || null,
           contents: _.extend({}, messageJSON, notification.contents),
           read: false,
+	  seen: false,
         })
         .then(() => {
           // if it's interesting event, create email event and send to bus api
@@ -121,6 +122,7 @@ function startKafkaConsumer(handlers) {
       .then(() => consumer.commitOffset({ topic, partition, offset: m.offset }))
       .catch((err) => logger.error(err));
   });
+
   consumer
     .init()
     .then(() => _.each(_.keys(handlers),

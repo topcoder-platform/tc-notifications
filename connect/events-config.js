@@ -62,6 +62,10 @@ const EVENTS = [
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER],
     topcoderRoles: [ROLE_CONNECT_COPILOT, ROLE_ADMINISTRATOR],
   }, {
+    type: 'notifications.connect.project.active',
+    projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER],
+    topcoderRoles: [ROLE_ADMINISTRATOR],
+  }, {
     type: 'notifications.connect.project.paused',
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER],
     topcoderRoles: [ROLE_ADMINISTRATOR],
@@ -107,6 +111,12 @@ const EVENTS = [
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
   }, {
     type: 'notifications.connect.project.post.created',
+    version: 2,
+    projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
+    toTopicStarter: true,
+    toMentionedUsers: true,
+  }, {
+    type: 'notifications.connect.project.post.edited',
     version: 2,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
     toTopicStarter: true,
