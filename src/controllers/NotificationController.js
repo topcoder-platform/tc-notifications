@@ -35,6 +35,16 @@ function* markAllRead(req, res) {
 }
 
 /**
+ * Mark a notification as seen.
+ * @param req the request
+ * @param res the response
+ */
+function* markAsSeen(req, res) {
+  yield NotificationService.markAsSeen(req.params.id, req.user.userId);
+  res.end();
+}
+
+/**
  * Get notification settings.
  * @param req the request
  * @param res the response
@@ -58,6 +68,7 @@ module.exports = {
   listNotifications,
   markAsRead,
   markAllRead,
+  markAsSeen,
   getSettings,
   updateSettings,
 };

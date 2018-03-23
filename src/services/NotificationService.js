@@ -174,6 +174,36 @@ markAllRead.schema = {
   userId: Joi.number().required(),
 };
 
+/**
+ * Mark notification(s) as seen.
+ * @param {Number} id the notification id or '-' separated ids
+ * @param {Number} userId the user id
+ */
+function* markAsSeen(id, userId) {
+  const ids = _.map(id.split('-'), (str) => {
+    const idInt = Number(str);
+    if (!_.isInteger(idInt)) {
+      throw new errors.BadRequestError(`Notification id should be integer: ${str}`);
+    }
+    return idInt;
+  });
+  const entities = yield models.Notification.findAll({ where: { id: { $in: ids }, seen: { $not: true } } });
+  if (!entities || entities.length === 0) {
+    throw new errors.NotFoundError(`Cannot find un-seen Notification where id = ${id}`);
+  }
+  _.each(entities, (entity) => {
+    if (Number(entity.userId) !== userId) {
+      throw new errors.ForbiddenError(`Cannot access Notification where id = ${entity.id}`);
+    }
+  });
+  yield models.Notification.update({ seen: true }, { where: { id: { $in: ids }, seen: { $not: true } } });
+}
+
+markAsSeen.schema = {
+  id: Joi.string().required(),
+  userId: Joi.number().required(),
+};
+
 updateSettings.schema = {
   data: Joi.array().min(1).items(Joi.object().keys({
     topic: Joi.string().required(),
@@ -188,6 +218,7 @@ module.exports = {
   listNotifications,
   markAsRead,
   markAllRead,
+  markAsSeen,
   getSettings,
   updateSettings,
 };
