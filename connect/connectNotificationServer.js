@@ -326,6 +326,7 @@ const handler = (topic, message, callback) => {
         if (users.length) {
           notification.contents.userHandle = users[0].handle;
           notification.contents.userFullName = `${users[0].firstName} ${users[0].lastName}`;
+          notification.contents.userEmail = users[0].email;
         }
       });
       callback(null, allNotifications);

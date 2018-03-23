@@ -7,14 +7,17 @@ require('./bootstrap');
 const config = require('config');
 const express = require('express');
 const jwtAuth = require('tc-core-library-js').middleware.jwtAuthenticator;
+const jwt = require('jsonwebtoken');
 const _ = require('lodash');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const helper = require('./common/helper');
 const logger = require('./common/logger');
 const errors = require('./common/errors');
+const service = require('./services/BusAPI');
 const models = require('./models');
 const Kafka = require('no-kafka');
+const base64 = require('base-64');
 
 /**
  * Start Kafka consumer.
@@ -49,19 +52,75 @@ function startKafkaConsumer(handlers) {
     const handlerAsync = Promise.promisify(handler);
     // use handler to create notification instances for each recipient
     return handlerAsync(topicName, messageJSON)
-      // save notifications
-      .then((notifications) => Promise.all(_.map(notifications, (notification) => models.Notification.create({
-        userId: notification.userId,
-        type: notification.newType || topicName,
-        version: notification.version || null,
-        contents: _.extend({}, messageJSON, notification.contents),
-        read: false,
-      }))))
+      .then((notifications) => Promise.all(_.map(notifications, (notification) =>
+        // save notifications
+        models.Notification.create({
+          userId: notification.userId,
+          type: notification.newType || topicName,
+          version: notification.version || null,
+          contents: _.extend({}, messageJSON, notification.contents),
+          read: false,
+        })
+        .then(() => {
+          // if it's interesting event, create email event and send to bus api
+          const notificationType = notification.newType || topicName;
+          logger.debug(`checking ${notificationType} notification ${JSON.stringify(notification)}`);
+          let eventType;
+
+          if (notificationType === 'notifications.connect.project.topic.created') {
+            eventType = 'email.project.topic.created';
+          } else if (notificationType === 'notifications.connect.project.post.created') {
+            eventType = 'email.project.post.created';
+          } else if (notificationType === 'notifications.connect.project.post.mention') {
+            eventType = 'email.project.post.mention'
+          }
+          if (!!eventType) {
+
+            const recipients = [notification.contents.userEmail];
+            let replyTo = config.DEFAULT_REPLY_EMAIL;
+            if (notificationType === 'notifications.connect.project.post.mention') {
+              // get jwt token then encode it with base64
+              const token = base64.encode(
+                jwt.sign({
+                  userId: parseInt(notification.userId, 10),
+                  topicId: parseInt(messageJSON.topicId, 10),
+                  postId: messageJSON.postId ? parseInt(messageJSON.postId, 10) : -1,
+                  userEmail: notification.contents.userEmail,
+                }, config.authSecret, {})
+              );
+
+              replyTo = `${config.REPLY_EMAIL_PREFIX}-${token}@${config.REPLY_EMAIL_DOMAIN}`;
+
+              recipients.push(config.MENTION_EMAIL);
+            }
+
+            const eventMessage = JSON.stringify({
+              projectId: messageJSON.projectId,
+              data: {
+                name: notification.userFullName,
+                handle: notification.userHandle,
+                topicTitle: messageJSON.topicTitle || '',
+                post: messageJSON.postContent,
+                date: (new Date()).toUTCString(),
+                projectName: notification.projectName,
+              },
+              recipients,
+              replyTo,
+            });
+            // send event to bus api
+            return service.postEvent({
+              type: eventType,
+              message: eventMessage,
+            }).then(() => {
+              logger.info(`sent ${eventType} event with body ${eventMessage} to bus api`);
+            });
+          }
+        })
+      )))
       // commit offset
       .then(() => consumer.commitOffset({ topic, partition, offset: m.offset }))
       .catch((err) => logger.error(err));
   });
-
   consumer
     .init()
     .then(() => _.each(_.keys(handlers),

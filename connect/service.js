@@ -69,7 +69,7 @@ const getRoleMembers = (roleId) => request
 const getUsersById = (ids) => {
   const query = _.map(ids, (id) => 'userId:' + id).join(' OR ');
   return request
-    .get(`${config.TC_API_V3_BASE_URL}/members/_search?fields=userId,handle,firstName,lastName&query=${query}`)
+    .get(`${config.TC_API_V3_BASE_URL}/members/_search?fields=userId,email,handle,firstName,lastName&query=${query}`)
     .set('accept', 'application/json')
     .set('authorization', `Bearer ${config.TC_ADMIN_TOKEN}`)
     .then((res) => {
@@ -78,7 +78,6 @@ const getUsersById = (ids) => {
       }
 
       const users = _.get(res, 'body.result.content');
-
       return users;
     }).catch((err) => {
       const errorDetails = _.get(err, 'response.body.result.content.message');
@@ -143,7 +142,6 @@ const getTopic = (topicId) => request
       (errorDetails ? ' Server response: ' + errorDetails : '')
     );
   });
-
 
 module.exports = {
   getProject,
