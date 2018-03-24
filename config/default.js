@@ -36,4 +36,5 @@ module.exports = {
 
   TC_ADMIN_TOKEN: process.env.TC_ADMIN_TOKEN,
   TC_API_V3_BASE_URL: process.env.TC_API_V3_BASE_URL || 'https://api.topcoder-dev.com/v3',
+  ENABLE_EMAILS: process.env.ENABLE_EMAILS || true,
 };

@@ -63,63 +63,65 @@ function startKafkaConsumer(handlers) {
           seen: false,
         })
         .then(() => {
-          // if it's interesting event, create email event and send to bus api
-          const notificationType = notification.newType || topicName;
-          logger.debug(`checking ${notificationType} notification ${JSON.stringify(notification)}`);
-          let eventType;
+          if (config.ENABLE_EMAILS) {
+            // if it's interesting event, create email event and send to bus api
+            const notificationType = notification.newType || topicName;
+            logger.debug(`checking ${notificationType} notification ${JSON.stringify(notification)}`);
+            let eventType;
 
-          if (notificationType === 'notifications.connect.project.topic.created') {
-            eventType = 'email.project.topic.created';
-          } else if (notificationType === 'notifications.connect.project.post.created') {
-            eventType = 'email.project.post.created';
-          } else if (notificationType === 'notifications.connect.project.post.mention') {
-            eventType = 'email.project.post.mention';
-          }
-          if (!!eventType) {
-            const topicId = parseInt(messageJSON.topicId, 10);
+            if (notificationType === 'notifications.connect.project.topic.created') {
+              eventType = 'email.project.topic.created';
+            } else if (notificationType === 'notifications.connect.project.post.created') {
+              eventType = 'email.project.post.created';
+            } else if (notificationType === 'notifications.connect.project.post.mention') {
+              eventType = 'email.project.post.mention';
+            }
+            if (!!eventType) {
+              const topicId = parseInt(messageJSON.topicId, 10);
 
-            helperService.getUsersById([notification.userId]).then((users) => {
-              logger.debug(`got users ${users}`);
-              helperService.getTopic(topicId).then((connectTopic) => {
-                logger.debug(`got topic ${connectTopic}`);
-                const user = users[0];
-                const recipients = [user.email];
-                if (notificationType === 'notifications.connect.project.post.mention') {
-                  recipients.push(config.MENTION_EMAIL);
-                }
+              helperService.getUsersById([notification.userId]).then((users) => {
+                logger.debug(`got users ${users}`);
+                helperService.getTopic(topicId).then((connectTopic) => {
+                  logger.debug(`got topic ${connectTopic}`);
+                  const user = users[0];
+                  const recipients = [user.email];
+                  if (notificationType === 'notifications.connect.project.post.mention') {
+                    recipients.push(config.MENTION_EMAIL);
+                  }
 
-                // get jwt token then encode it with base64
-                const body = {
-                  userId: parseInt(notification.userId, 10),
-                  topicId,
-                  userEmail: user.email,
-                };
-                const token = jwt.sign(body, config.authSecret, { noTimestamp: true }).split('.')[2];
+                  // get jwt token then encode it with base64
+                  const body = {
+                    userId: parseInt(notification.userId, 10),
+                    topicId,
+                    userEmail: user.email,
+                  };
+                  const token = jwt.sign(body, config.authSecret, { noTimestamp: true }).split('.')[2];
 
-                const replyTo = `${config.REPLY_EMAIL_PREFIX}+${topicId}/${token}@${config.REPLY_EMAIL_DOMAIN}`;
+                  const replyTo = `${config.REPLY_EMAIL_PREFIX}+${topicId}/${token}@${config.REPLY_EMAIL_DOMAIN}`;
 
-                const eventMessage = JSON.stringify({
-                  projectId: messageJSON.projectId,
-                  data: {
-                    name: user.firstName + ' ' + user.lastName,
-                    handle: user.handle,
-                    topicTitle: connectTopic.title || '',
-                    post: messageJSON.postContent,
-                    date: (new Date()).toUTCString(),
-                    projectName: notification.contents.projectName,
-                  },
-                  recipients,
-                  replyTo,
-                });
-                // send event to bus api
-                return service.postEvent({
-                  type: eventType,
-                  message: eventMessage,
-                }).then(() => {
-                  logger.info(`sent ${eventType} event with body ${eventMessage} to bus api`);
+                  const eventMessage = JSON.stringify({
+                    projectId: messageJSON.projectId,
+                    data: {
+                      name: user.firstName + ' ' + user.lastName,
+                      handle: user.handle,
+                      topicTitle: connectTopic.title || '',
+                      post: messageJSON.postContent,
+                      date: (new Date()).toUTCString(),
+                      projectName: notification.contents.projectName,
+                    },
+                    recipients,
+                    replyTo,
+                  });
+                  // send event to bus api
+                  return service.postEvent({
+                    type: eventType,
+                    message: eventMessage,
+                  }).then(() => {
+                    logger.info(`sent ${eventType} event with body ${eventMessage} to bus api`);
+                  });
                 });
               });
-            });
+            }
           }
         })
       )))
