@@ -12,12 +12,12 @@ const _ = require('lodash');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const helper = require('./common/helper');
+const helperService = require('./services/helper');
 const logger = require('./common/logger');
 const errors = require('./common/errors');
 const service = require('./services/BusAPI');
 const models = require('./models');
 const Kafka = require('no-kafka');
-const base64 = require('base-64');
 
 /**
  * Start Kafka consumer.
@@ -60,7 +60,7 @@ function startKafkaConsumer(handlers) {
           version: notification.version || null,
           contents: _.extend({}, messageJSON, notification.contents),
           read: false,
-	  seen: false,
+          seen: false,
         })
         .then(() => {
           // if it's interesting event, create email event and send to bus api
@@ -73,47 +73,52 @@ function startKafkaConsumer(handlers) {
           } else if (notificationType === 'notifications.connect.project.post.created') {
             eventType = 'email.project.post.created';
           } else if (notificationType === 'notifications.connect.project.post.mention') {
-            eventType = 'email.project.post.mention'
+            eventType = 'email.project.post.mention';
           }
           if (!!eventType) {
+            const topicId = parseInt(messageJSON.topicId, 10);
 
-            const recipients = [notification.contents.userEmail];
-            let replyTo = config.DEFAULT_REPLY_EMAIL;
-            if (notificationType === 'notifications.connect.project.post.mention') {
-              // get jwt token then encode it with base64
-              const token = base64.encode(
-                jwt.sign({
+            helperService.getUsersById([notification.userId]).then((users) => {
+              logger.debug(`got users ${users}`);
+              helperService.getTopic(topicId).then((connectTopic) => {
+                logger.debug(`got topic ${connectTopic}`);
+                const user = users[0];
+                const recipients = [user.email];
+                if (notificationType === 'notifications.connect.project.post.mention') {
+                  recipients.push(config.MENTION_EMAIL);
+                }
+
+                // get jwt token then encode it with base64
+                const body = {
                   userId: parseInt(notification.userId, 10),
-                  topicId: parseInt(messageJSON.topicId, 10),
-                  postId: messageJSON.postId ? parseInt(messageJSON.postId, 10) : -1,
-                  userEmail: notification.contents.userEmail,
-                }, config.authSecret, {})
-              );
+                  topicId,
+                  userEmail: user.email,
+                };
+                const token = jwt.sign(body, config.authSecret, { noTimestamp: true }).split('.')[2];
 
-              replyTo = `${config.REPLY_EMAIL_PREFIX}-${token}@${config.REPLY_EMAIL_DOMAIN}`;
+                const replyTo = `${config.REPLY_EMAIL_PREFIX}+${topicId}/${token}@${config.REPLY_EMAIL_DOMAIN}`;
 
-              recipients.push(config.MENTION_EMAIL);
-            }
-
-            const eventMessage = JSON.stringify({
-              projectId: messageJSON.projectId,
-              data: {
-                name: notification.userFullName,
-                handle: notification.userHandle,
-                topicTitle: messageJSON.topicTitle || '',
-                post: messageJSON.postContent,
-                date: (new Date()).toUTCString(),
-                projectName: notification.projectName,
-              },
-              recipients,
-              replyTo,
-            });
-            // send event to bus api
-            return service.postEvent({
-              type: eventType,
-              message: eventMessage,
-            }).then(() => {
-              logger.info(`sent ${eventType} event with body ${eventMessage} to bus api`);
+                const eventMessage = JSON.stringify({
+                  projectId: messageJSON.projectId,
+                  data: {
+                    name: user.firstName + ' ' + user.lastName,
+                    handle: user.handle,
+                    topicTitle: connectTopic.title || '',
+                    post: messageJSON.postContent,
+                    date: (new Date()).toUTCString(),
+                    projectName: notification.contents.projectName,
+                  },
+                  recipients,
+                  replyTo,
+                });
+                // send event to bus api
+                return service.postEvent({
+                  type: eventType,
+                  message: eventMessage,
+                }).then(() => {
+                  logger.info(`sent ${eventType} event with body ${eventMessage} to bus api`);
+                });
+              });
             });
           }
         })

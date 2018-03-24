@@ -30,8 +30,10 @@ module.exports = {
 
   BUS_API_BASE_URL: process.env.BUS_API_BASE_URL,
   BUS_API_AUTH_TOKEN: process.env.BUS_API_AUTH_TOKEN,
-  DEFAULT_REPLY_EMAIL: process.env.DEFAULT_REPLY_EMAIL,
   MENTION_EMAIL: process.env.MENTION_EMAIL,
   REPLY_EMAIL_PREFIX: process.env.REPLY_EMAIL_PREFIX,
   REPLY_EMAIL_DOMAIN: process.env.REPLY_EMAIL_DOMAIN,
+
+  TC_ADMIN_TOKEN: process.env.TC_ADMIN_TOKEN,
+  TC_API_V3_BASE_URL: process.env.TC_API_V3_BASE_URL || 'https://api.topcoder-dev.com/v3',
 };

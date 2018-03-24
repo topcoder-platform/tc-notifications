@@ -12,7 +12,7 @@ const _ = require('lodash');
 const postEvent = (event) => request
   .post(`${config.BUS_API_BASE_URL}/events`)
   .set('Content-Type', 'application/json')
-  .set('authorization', `Bearer ${config.BUS_API_AUTH_TOKEN}`)
+  .set('Authorization', `Bearer ${config.BUS_API_AUTH_TOKEN}`)
   .send(event)
   .then(() => '')
   .catch((err) => {
