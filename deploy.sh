@@ -170,7 +170,7 @@ make_task_def(){
 						},
             {
                 "name": "ENABLE_EMAILS",
-                "value": %s
+                "value": "%s"
             },
             {
                 "name": "MENTION_EMAIL",
