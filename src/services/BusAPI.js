@@ -9,11 +9,8 @@ const _ = require('lodash');
  *
  * @return {Promise}          promise resolved to post event
  */
-const postEvent = (event) => {
-  console.log('URL: ', `${config.TC_API_BASE_URL}/eventbus/events`);
-  console.log('URL: ', `${config.TC_API_V3_BASE_URL}/eventbus/events`);
-  return request
-  .post(`${config.TC_API_BASE_URL}/eventbus/events`)
+const postEvent = (event) => request
+  .post(`${config.TC_API_V5_BASE_URL}/bus/events`)
   .set('Content-Type', 'application/json')
   .set('Authorization', `Bearer ${config.BUS_API_AUTH_TOKEN}`)
   .send(event)
@@ -25,7 +22,6 @@ const postEvent = (event) => {
       (errorDetails ? ' Server response: ' + errorDetails : '')
     );
   });
-}
 
 module.exports = {
   postEvent,
