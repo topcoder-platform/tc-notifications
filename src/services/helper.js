@@ -42,7 +42,7 @@ const getUsersById = (ids) => {
  * @return {Promise}          promise resolved to topic details
  */
 const getTopic = (topicId) => request
-  .get(`http://${config.TC_API_V4_BASE_URL}/topics/${topicId}`)
+  .get(`${config.TC_API_V4_BASE_URL}/topics/${topicId}`)
   .set('accept', 'application/json')
   .set('authorization', `Bearer ${config.TC_ADMIN_TOKEN}`)
   .then((res) => {
@@ -52,6 +52,7 @@ const getTopic = (topicId) => request
 
     return _.get(res, 'body.result.content');
   }).catch((err) => {
+    console.log(err, "Error");
     const errorDetails = _.get(err, 'response.body.result.content.message');
     throw new Error(
       `Failed to get topic details of topic id: ${topicId}.` +
