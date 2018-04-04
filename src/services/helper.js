@@ -42,7 +42,7 @@ const getUsersById = (ids) => {
  * @return {Promise}          promise resolved to topic details
  */
 const getTopic = (topicId) => request
-  .get(`http://local.topcoder-dev.com:8001/v4/topics/${topicId}`)
+  .get(`http://${config.TC_API_V4_BASE_URL}/topics/${topicId}`)
   .set('accept', 'application/json')
   .set('authorization', `Bearer ${config.TC_ADMIN_TOKEN}`)
   .then((res) => {
