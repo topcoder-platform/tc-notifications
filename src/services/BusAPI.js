@@ -10,7 +10,7 @@ const _ = require('lodash');
  * @return {Promise}          promise resolved to post event
  */
 const postEvent = (event) => request
-  .post(`${config.BUS_API_BASE_URL}/events`)
+  .post(`${config.TC_API_BASE_URL}/eventbus/events`)
   .set('Content-Type', 'application/json')
   .set('Authorization', `Bearer ${config.BUS_API_AUTH_TOKEN}`)
   .send(event)

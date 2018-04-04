@@ -45,6 +45,13 @@ TC_ADMIN_TOKEN=$(eval "echo \$${ENV}_TC_ADMIN_TOKEN")
 LOG_LEVEL=$(eval "echo \$${ENV}_LOG_LEVEL")
 PORT=$(eval "echo \$${ENV}_PORT")
 
+# email notifications config
+ENABLE_EMAILS=$(eval "echo \$${ENV}_ENABLE_EMAILS")
+BUS_API_AUTH_TOKEN=$(eval "echo \$${ENV}_BUS_API_AUTH_TOKEN")
+MENTION_EMAIL=$(eval "echo \$${ENV}_MENTION_EMAIL")
+REPLY_EMAIL_PREFIX=$(eval "echo \$${ENV}_REPLY_EMAIL_PREFIX")
+REPLY_EMAIL_DOMAIN=$(eval "echo \$${ENV}_REPLY_EMAIL_DOMAIN")
+
 TC_API_V3_BASE_URL=$(eval "echo \$${ENV}_TC_API_V3_BASE_URL")
 TC_API_V4_BASE_URL=$(eval "echo \$${ENV}_TC_API_V4_BASE_URL")
 
@@ -161,6 +168,26 @@ make_task_def(){
 								"name": "TC_ADMIN_TOKEN",
 								"value": "%s"
 						},
+            {
+                "name": "ENABLE_EMAILS",
+                "value": %s
+            },
+            {
+                "name": "MENTION_EMAIL",
+                "value": "%s"
+            },
+            {
+                "name": "REPLY_EMAIL_PREFIX",
+                "value": "%s"
+            },
+            {
+                "name": "REPLY_EMAIL_DOMAIN",
+                "value": "%s"
+            },
+            {
+                "name": "BUS_API_AUTH_TOKEN",
+                "value": "%s"
+            },
 						{
 								"name": "LOG_LEVEL",
 								"value": "%s"
