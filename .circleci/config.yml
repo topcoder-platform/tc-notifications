@@ -82,7 +82,7 @@ workflows:
       - "build-dev":
           filters:
             branches:
-              only: "feature/v5-support"
+              only: dev
       - "build-prod":
           filters:
             branches:
