@@ -1,31 +1,31 @@
 'use strict';
 
 module.exports = {
-  '/notifications': {
+  '/': {
     get: {
       controller: 'NotificationController',
       method: 'listNotifications',
     },
   },
-  '/notifications/:id/read': {
+  '/:id/read': {
     put: {
       controller: 'NotificationController',
       method: 'markAsRead',
     },
   },
-  '/notifications/read': {
+  '/read': {
     put: {
       controller: 'NotificationController',
       method: 'markAllRead',
     },
   },
-  '/notifications/:id/seen': {
+  '/:id/seen': {
     put: {
       controller: 'NotificationController',
       method: 'markAsSeen',
     },
   },
-  '/notificationsettings': {
+  '/settings': {
     get: {
       controller: 'NotificationController',
       method: 'getSettings',

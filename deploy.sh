@@ -58,6 +58,8 @@ DATABASE_URL=postgres://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_DATABASE;
 family=$(eval "echo \$${ENV}_AWS_ECS_TASK_FAMILY")
 AWS_ECS_CONTAINER_NAME=$(eval "echo \$${ENV}_AWS_ECS_CONTAINER_NAME")
 
+API_CONTEXT_PATH=$(eval "echo \$${ENV}_API_CONTEXT_PATH")
+
 echo $APP_NAME
 
 configure_aws_cli() {
@@ -172,6 +174,10 @@ make_task_def(){
 						{
 								"name": "PORT",
 								"value": "%s"
+						},
+						{
+								"name": "API_CONTEXT_PATH",
+								"value": "%s"
 						}
 				],
 				"portMappings": [
@@ -192,7 +198,7 @@ make_task_def(){
 		}
 	]'
 
-	task_def=$(printf "$task_template" $AWS_ECS_CONTAINER_NAME $AWS_ACCOUNT_ID $AWS_REGION $AWS_REPOSITORY $TAG $ENV "$KAFKA_CLIENT_CERT" "$KAFKA_CLIENT_CERT_KEY" $KAFKA_GROUP_ID "$KAFKA_TOPIC_IGNORE_PREFIX" $KAFKA_URL $DATABASE_URL $AUTHSECRET "$AUTHDOMAIN" "$JWKSURI" $TC_API_BASE_URL $TC_API_V3_BASE_URL $TC_API_V4_BASE_URL $TC_ADMIN_TOKEN $LOG_LEVEL $VALID_ISSUERS $PORT $AWS_ECS_CLUSTER $AWS_REGION $AWS_ECS_CLUSTER $ENV)
+	task_def=$(printf "$task_template" $AWS_ECS_CONTAINER_NAME $AWS_ACCOUNT_ID $AWS_REGION $AWS_REPOSITORY $TAG $ENV "$KAFKA_CLIENT_CERT" "$KAFKA_CLIENT_CERT_KEY" $KAFKA_GROUP_ID "$KAFKA_TOPIC_IGNORE_PREFIX" $KAFKA_URL $DATABASE_URL $AUTHSECRET "$AUTHDOMAIN" "$JWKSURI" $TC_API_BASE_URL $TC_API_V3_BASE_URL $TC_API_V4_BASE_URL $TC_ADMIN_TOKEN $LOG_LEVEL $VALID_ISSUERS $PORT "$API_CONTEXT_PATH" $AWS_ECS_CLUSTER $AWS_REGION $AWS_ECS_CLUSTER $ENV)
 }
 
 register_definition() {
@@ -226,5 +232,5 @@ check_service_status() {
 
 configure_aws_cli
 push_ecr_image
-deploy_cluster
-check_service_status
+#deploy_cluster
+#check_service_status
