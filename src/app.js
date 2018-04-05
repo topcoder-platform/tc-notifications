@@ -100,7 +100,7 @@ function startKafkaConsumer(handlers) {
                   const replyTo = `${config.REPLY_EMAIL_PREFIX}+${topicId}/${token}@${config.REPLY_EMAIL_DOMAIN}`;
 
                   const eventMessage = JSON.stringify({
-                    projectId: messageJSON.projectId,
+                    // projectId: messageJSON.projectId,
                     data: {
                       name: user.firstName + ' ' + user.lastName,
                       handle: user.handle,
