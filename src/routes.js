@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-  '/': {
+  '/list': {
     get: {
       controller: 'NotificationController',
       method: 'listNotifications',
