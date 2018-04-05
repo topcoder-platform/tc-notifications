@@ -150,7 +150,7 @@ function start(handlers) {
         logger.info(`Express server listening on port ${app.get('port')}`);
       });
 
-      //startKafkaConsumer(handlers);
+      startKafkaConsumer(handlers);
     })
     .catch((err) => logger.error(err));
 }
