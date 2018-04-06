@@ -39,4 +39,5 @@ module.exports = {
   TC_API_V4_BASE_URL: process.env.TC_API_V4_BASE_URL || 'https://api.topcoder-dev.com/v4',
   TC_API_V5_BASE_URL: process.env.TC_API_V5_BASE_URL || 'https://api.topcoder-dev.com/v5',
   ENABLE_EMAILS: process.env.ENABLE_EMAILS || true,
+  API_CONTEXT_PATH: process.env.API_CONTEXT_PATH || '/v5/notifications',
 };
