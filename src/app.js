@@ -95,8 +95,11 @@ function startKafkaConsumer(handlers) {
                     topicId,
                     userEmail: user.email,
                   };
+                  logger.debug(`body for generating token: ${JSON.stringify(body)}`);
+                  logger.debug(`authSecret: ${config.authSecret.substring(-5)}`);
                   const token = jwt.sign(body, config.authSecret, { noTimestamp: true }).split('.')[2];
-
+                  logger.debug(`token: ${token}`);
+                  
                   const replyTo = `${config.REPLY_EMAIL_PREFIX}+${topicId}/${token}@${config.REPLY_EMAIL_DOMAIN}`;
 
                   const eventMessage = JSON.stringify({
