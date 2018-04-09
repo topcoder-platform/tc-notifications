@@ -70,11 +70,11 @@ function startKafkaConsumer(handlers) {
             let eventType;
 
             if (notificationType === 'notifications.connect.project.topic.created') {
-              eventType = 'connect.email.project.topic.created';
+              eventType = 'connect.action.email.project.topic.created';
             } else if (notificationType === 'notifications.connect.project.post.created') {
-              eventType = 'connect.email.project.post.created';
+              eventType = 'connect.action.email.project.post.created';
             } else if (notificationType === 'notifications.connect.project.post.mention') {
-              eventType = 'connect.email.project.post.mention';
+              eventType = 'connect.action.email.project.post.mention';
             }
             if (!!eventType) {
               const topicId = parseInt(messageJSON.topicId, 10);
