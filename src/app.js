@@ -70,11 +70,11 @@ function startKafkaConsumer(handlers) {
             let eventType;
 
             if (notificationType === 'notifications.connect.project.topic.created') {
-              eventType = 'email.project.topic.created';
+              eventType = 'connect.email.project.topic.created';
             } else if (notificationType === 'notifications.connect.project.post.created') {
-              eventType = 'email.project.post.created';
+              eventType = 'connect.email.project.post.created';
             } else if (notificationType === 'notifications.connect.project.post.mention') {
-              eventType = 'email.project.post.mention';
+              eventType = 'connect.email.project.post.mention';
             }
             if (!!eventType) {
               const topicId = parseInt(messageJSON.topicId, 10);
@@ -99,26 +99,29 @@ function startKafkaConsumer(handlers) {
                   logger.debug(`authSecret: ${config.authSecret.substring(-5)}`);
                   const token = jwt.sign(body, config.authSecret, { noTimestamp: true }).split('.')[2];
                   logger.debug(`token: ${token}`);
-                  
+
                   const replyTo = `${config.REPLY_EMAIL_PREFIX}+${topicId}/${token}@${config.REPLY_EMAIL_DOMAIN}`;
 
-                  const eventMessage = JSON.stringify({
+                  const eventMessage = {
                     // projectId: messageJSON.projectId,
                     data: {
                       name: user.firstName + ' ' + user.lastName,
                       handle: user.handle,
                       topicTitle: connectTopic.title || '',
                       post: messageJSON.postContent,
-                      date: (new Date()).toUTCString(),
+                      date: (new Date()).toISOString(),
                       projectName: notification.contents.projectName,
                     },
                     recipients,
                     replyTo,
-                  });
+                  };
                   // send event to bus api
                   return service.postEvent({
-                    type: eventType,
-                    message: eventMessage,
+                    "topic": eventType,
+                    "originator": "tc-notifications",
+                    "timestamp": (new Date()).toISOString(),
+                    "mime-type": "application/json",
+                    "payload": eventMessage,
                   }).then(() => {
                     logger.info(`sent ${eventType} event with body ${eventMessage} to bus api`);
                   });
