@@ -81,7 +81,7 @@ function startKafkaConsumer(handlers) {
 
               helperService.getUsersById([notification.userId]).then((users) => {
                 logger.debug(`got users ${JSON.stringify(users)}`);
-                helperService.getTopic(topicId).then((connectTopic) => {
+                helperService.getTopic(topicId, logger).then((connectTopic) => {
                   logger.debug(`got topic ${JSON.stringify(connectTopic)}`);
                   const user = users[0];
                   const recipients = [!config.ENABLE_DEV_MODE ? user.email : config.DEV_MODE_EMAIL];
