@@ -130,13 +130,13 @@ const getTopic = (topicId) => request
   .set('accept', 'application/json')
   .set('authorization', `Bearer ${config.TC_ADMIN_TOKEN}`)
   .then((res) => {
-    console.log(`${config.MESSAGE_API_BASE_URL}/topics/${topicId}`);
     if (!_.get(res, 'body.result.success')) {
       throw new Error(`Failed to get topic details of topic id: ${topicId}`);
     }
 
     return _.get(res, 'body.result.content');
   }).catch((err) => {
+    console.log(`${config.MESSAGE_API_BASE_URL}/topics/${topicId}`);
     const errorDetails = _.get(err, 'response.body.result.content.message');
     throw new Error(
       `Failed to get topic details of topic id: ${topicId}.` +
