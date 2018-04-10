@@ -93,7 +93,7 @@ function startKafkaConsumer(handlers) {
                   const body = {
                     userId: parseInt(notification.userId, 10),
                     topicId,
-                    userEmail: user.email,
+                    userEmail: helper.sanitizeEmail(user.email),
                   };
                   logger.debug(`body for generating token: ${JSON.stringify(body)}`);
                   logger.debug(`authSecret: ${config.authSecret.substring(-5)}`);
