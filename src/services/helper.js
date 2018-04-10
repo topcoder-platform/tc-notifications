@@ -53,8 +53,7 @@ const getTopic = (topicId, logger) => request
     return _.get(res, 'body.result.content');
   }).catch((err) => {
     if (logger) {
-      logger.info(`${config.MESSAGE_API_BASE_URL}/topics/${topicId}`);
-      logger.error(err, "Error");
+      logger.error(err, `Error while calling ${config.MESSAGE_API_BASE_URL}/topics/${topicId}`);
     }
     const errorDetails = _.get(err, 'response.body.result.content.message');
     throw new Error(
