@@ -38,6 +38,9 @@ module.exports = {
   TC_API_V3_BASE_URL: process.env.TC_API_V3_BASE_URL || 'https://api.topcoder-dev.com/v3',
   TC_API_V4_BASE_URL: process.env.TC_API_V4_BASE_URL || 'https://api.topcoder-dev.com/v4',
   TC_API_V5_BASE_URL: process.env.TC_API_V5_BASE_URL || 'https://api.topcoder-dev.com/v5',
+  MESSAGE_API_BASE_URL: process.env.MESSAGE_API_BASE_URL || 'https://api.topcoder-dev.com/v4',
   ENABLE_EMAILS: process.env.ENABLE_EMAILS || true,
+  ENABLE_DEV_MODE: process.env.ENABLE_DEV_MODE || true,
+  DEV_MODE_EMAIL: process.env.DEV_MODE_EMAIL,
   API_CONTEXT_PATH: process.env.API_CONTEXT_PATH || '/v5/notifications',
 };

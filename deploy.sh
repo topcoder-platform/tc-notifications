@@ -51,10 +51,13 @@ BUS_API_AUTH_TOKEN=$(eval "echo \$${ENV}_BUS_API_AUTH_TOKEN")
 MENTION_EMAIL=$(eval "echo \$${ENV}_MENTION_EMAIL")
 REPLY_EMAIL_PREFIX=$(eval "echo \$${ENV}_REPLY_EMAIL_PREFIX")
 REPLY_EMAIL_DOMAIN=$(eval "echo \$${ENV}_REPLY_EMAIL_DOMAIN")
+ENABLE_DEV_MODE=$(eval "echo \$${ENV}_ENABLE_DEV_MODE")
+DEV_MODE_EMAIL=$(eval "echo \$${ENV}_DEV_MODE_EMAIL")
 
 TC_API_V3_BASE_URL=$(eval "echo \$${ENV}_TC_API_V3_BASE_URL")
 TC_API_V4_BASE_URL=$(eval "echo \$${ENV}_TC_API_V4_BASE_URL")
 TC_API_V5_BASE_URL=$(eval "echo \$${ENV}_TC_API_V5_BASE_URL")
+MESSAGE_API_BASE_URL=$(eval "echo \$${ENV}_MESSAGE_API_BASE_URL")
 
 DB_USER=$(eval "echo \$${ENV}_DB_USER")
 DB_PASSWORD=$(eval "echo \$${ENV}_DB_PASSWORD")
@@ -171,6 +174,10 @@ make_task_def(){
                 "name": "TC_API_V5_BASE_URL",
                 "value": "%s"
             },
+            {
+                "name": "MESSAGE_API_BASE_URL",
+                "value": "%s"
+            },
 						{
 								"name": "TC_ADMIN_TOKEN",
 								"value": "%s"
@@ -189,6 +196,14 @@ make_task_def(){
             },
             {
                 "name": "REPLY_EMAIL_DOMAIN",
+                "value": "%s"
+            },
+            {
+                "name": "ENABLE_DEV_MODE",
+                "value": "%s"
+            },
+            {
+                "name": "DEV_MODE_EMAIL",
                 "value": "%s"
             },
             {
@@ -230,7 +245,7 @@ make_task_def(){
 		}
 	]'
 
-	task_def=$(printf "$task_template" $AWS_ECS_CONTAINER_NAME $AWS_ACCOUNT_ID $AWS_REGION $AWS_REPOSITORY $TAG $ENV "$KAFKA_CLIENT_CERT" "$KAFKA_CLIENT_CERT_KEY" $KAFKA_GROUP_ID "$KAFKA_TOPIC_IGNORE_PREFIX" $KAFKA_URL $DATABASE_URL $AUTHSECRET "$AUTHDOMAIN" "$JWKSURI" $TC_API_BASE_URL $TC_API_V3_BASE_URL $TC_API_V4_BASE_URL $TC_API_V5_BASE_URL $TC_ADMIN_TOKEN $ENABLE_EMAILS $MENTION_EMAIL $REPLY_EMAIL_PREFIX $REPLY_EMAIL_DOMAIN $BUS_API_AUTH_TOKEN $LOG_LEVEL $VALID_ISSUERS $PORT "$API_CONTEXT_PATH" $AWS_ECS_CLUSTER $AWS_REGION $AWS_ECS_CLUSTER $ENV)
+	task_def=$(printf "$task_template" $AWS_ECS_CONTAINER_NAME $AWS_ACCOUNT_ID $AWS_REGION $AWS_REPOSITORY $TAG $ENV "$KAFKA_CLIENT_CERT" "$KAFKA_CLIENT_CERT_KEY" $KAFKA_GROUP_ID "$KAFKA_TOPIC_IGNORE_PREFIX" $KAFKA_URL $DATABASE_URL $AUTHSECRET "$AUTHDOMAIN" "$JWKSURI" $TC_API_BASE_URL $TC_API_V3_BASE_URL $TC_API_V4_BASE_URL $TC_API_V5_BASE_URL $MESSAGE_API_BASE_URL $TC_ADMIN_TOKEN $ENABLE_EMAILS $MENTION_EMAIL $REPLY_EMAIL_PREFIX $REPLY_EMAIL_DOMAIN $ENABLE_DEV_MODE $DEV_MODE_EMAIL $BUS_API_AUTH_TOKEN $LOG_LEVEL $VALID_ISSUERS $PORT "$API_CONTEXT_PATH" $AWS_ECS_CLUSTER $AWS_REGION $AWS_ECS_CLUSTER $ENV)
 }
 
 register_definition() {

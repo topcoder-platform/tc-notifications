@@ -126,7 +126,7 @@ const getUsersByHandle = (handles) => {
  * @return {Promise}          promise resolved to topic details
  */
 const getTopic = (topicId) => request
-  .get(`${config.TC_API_V4_BASE_URL}/topics/${topicId}`)
+  .get(`${config.MESSAGE_API_BASE_URL}/topics/${topicId}`)
   .set('accept', 'application/json')
   .set('authorization', `Bearer ${config.TC_ADMIN_TOKEN}`)
   .then((res) => {

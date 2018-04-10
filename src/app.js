@@ -84,7 +84,7 @@ function startKafkaConsumer(handlers) {
                 helperService.getTopic(topicId).then((connectTopic) => {
                   logger.debug(`got topic ${JSON.stringify(connectTopic)}`);
                   const user = users[0];
-                  const recipients = [user.email];
+                  const recipients = [!config.ENABLE_DEV_MODE ? user.email : config.DEV_MODE_EMAIL];
                   if (notificationType === 'notifications.connect.project.post.mention') {
                     recipients.push(config.MENTION_EMAIL);
                   }
