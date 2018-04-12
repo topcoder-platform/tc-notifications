@@ -78,6 +78,7 @@ function startKafkaConsumer(handlers) {
             }
             if (!!eventType) {
               const topicId = parseInt(messageJSON.topicId, 10);
+              const postId = messageJSON.postId ? parseInt(messageJSON.postId, 10) : null;
 
               helperService.getUsersById([notification.userId]).then((users) => {
                 logger.debug(`got users ${JSON.stringify(users)}`);
@@ -115,6 +116,8 @@ function startKafkaConsumer(handlers) {
                       date: (new Date()).toISOString(),
                       projectName: notification.contents.projectName,
                       projectId: messageJSON.projectId,
+                      topicId,
+                      postId,
                     },
                     recipients,
                     replyTo,
