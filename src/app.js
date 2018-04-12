@@ -107,7 +107,6 @@ function startKafkaConsumer(handlers) {
                   const replyTo = `${config.REPLY_EMAIL_PREFIX}+${topicId}/${token}@${config.REPLY_EMAIL_DOMAIN}`;
 
                   const eventMessage = {
-                    // projectId: messageJSON.projectId,
                     data: {
                       name: user.firstName + ' ' + user.lastName,
                       handle: user.handle,
@@ -115,6 +114,7 @@ function startKafkaConsumer(handlers) {
                       post: messageJSON.postContent,
                       date: (new Date()).toISOString(),
                       projectName: notification.contents.projectName,
+                      projectId: messageJSON.projectId,
                     },
                     recipients,
                     replyTo,
