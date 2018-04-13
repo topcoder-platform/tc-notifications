@@ -11,6 +11,7 @@ const jwt = require('jsonwebtoken');
 const _ = require('lodash');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const { BUS_API_EVENT } = require('./constants')
 const helper = require('./common/helper');
 const helperService = require('./services/helper');
 const logger = require('./common/logger');
@@ -69,12 +70,12 @@ function startKafkaConsumer(handlers) {
             logger.debug(`checking ${notificationType} notification ${JSON.stringify(notification)}`);
             let eventType;
 
-            if (notificationType === 'notifications.connect.project.topic.created') {
-              eventType = 'connect.action.email.project.topic.created';
-            } else if (notificationType === 'notifications.connect.project.post.created') {
-              eventType = 'connect.action.email.project.post.created';
-            } else if (notificationType === 'notifications.connect.project.post.mention') {
-              eventType = 'connect.action.email.project.post.mention';
+            if (notificationType === BUS_API_EVENT.CONNECT.TOPIC_CREATED) {
+              eventType = BUS_API_EVENT.EMAIL.TOPIC_CREATED;
+            } else if (notificationType === BUS_API_EVENT.CONNECT.POST_CREATED) {
+              eventType = BUS_API_EVENT.EMAIL.POST_CREATED;
+            } else if (notificationType === BUS_API_EVENT.CONNECT.MENTIONED_IN_POST) {
+              eventType = BUS_API_EVENT.EMAIL.MENTIONED_IN_POST;
             }
             if (!!eventType) {
               const topicId = parseInt(messageJSON.topicId, 10);
@@ -90,7 +91,7 @@ function startKafkaConsumer(handlers) {
                     userEmail = config.DEV_MODE_EMAIL;
                   }
                   const recipients = [userEmail];
-                  if (notificationType === 'notifications.connect.project.post.mention') {
+                  if (notificationType === BUS_API_EVENT.EMAIL.MENTIONED_IN_POST) {
                     recipients.push(config.MENTION_EMAIL);
                   }
 
