@@ -18,4 +18,14 @@ module.exports = {
 
   // id of the BOT user which creates post with various events in discussions
   TCWEBSERVICE_ID: process.env.TCWEBSERVICE_ID || '22838965',
+
+  // Configuration for generating machine to machine auth0 token.
+  // The token will be used for calling another internal API.
+  auth0Url: process.env.auth0Url || 'https://topcoder-newauth.auth0.com/oauth/token',
+  auth0Audience: process.env.auth0Audience || 'https://www.topcoder.com',
+  // The token will be cached.
+  // We define the time period of the cached token.
+  tokenCacheTime: process.env.tokenCacheTime || 86400000,
+  auth0CliendId: process.env.auth0CliendId,
+  auth0CliendSecret: process.env.auth0CliendSecret,
 };

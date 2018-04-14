@@ -4,6 +4,8 @@
 const request = require('superagent');
 const config = require('./config');
 const _ = require('lodash');
+const tcCoreLibAuth = require('tc-core-library-js').auth;
+const m2m = tcCoreLibAuth.m2m(config);
 
 /**
  * Get project details
@@ -68,24 +70,32 @@ const getRoleMembers = (roleId) => request
  */
 const getUsersById = (ids) => {
   const query = _.map(ids, (id) => 'userId:' + id).join(' OR ');
-  return request
-    .get(`${config.TC_API_V3_BASE_URL}/members/_search?fields=userId,handle,firstName,lastName&query=${query}`)
-    .set('accept', 'application/json')
-    .set('authorization', `Bearer ${config.TC_ADMIN_TOKEN}`)
-    .then((res) => {
-      if (!_.get(res, 'body.result.success')) {
-        throw new Error(`Failed to get users by id: ${ids}`);
-      }
+  return m2m.getMachineToken(config.auth0CliendId, config.auth0CliendSecret)
+    .then((token) => {
+      if (!token && config.TC_ADMIN_TOKEN) token = config.TC_ADMIN_TOKEN;
 
-      const users = _.get(res, 'body.result.content');
+      return request
+      .get(`${config.TC_API_V3_BASE_URL}/members/_search?fields=userId,handle,firstName,lastName&query=${query}`)
+      .set('accept', 'application/json')
+      .set('authorization', `Bearer ${token}`)
+      .then((res) => {
+        if (!_.get(res, 'body.result.success')) {
+          throw new Error(`Failed to get users by id: ${ids}`);
+        }
 
-      return users;
-    }).catch((err) => {
-      const errorDetails = _.get(err, 'response.body.result.content.message');
-      throw new Error(
-        `Failed to get users by ids: ${ids}.` +
-        (errorDetails ? ' Server response: ' + errorDetails : '')
-      );
+        const users = _.get(res, 'body.result.content');
+        return users;
+      }).catch((err) => {
+        const errorDetails = _.get(err, 'response.body.result.content.message');
+        throw new Error(
+          `Failed to get users by ids: ${ids}.` +
+          (errorDetails ? ' Server response: ' + errorDetails : '')
+        );
+      });
+    })
+    .catch((err) => {
+      err.message = 'Error generating m2m token: ' + err.message;
+      throw err;
     });
 };
 
@@ -98,24 +108,32 @@ const getUsersById = (ids) => {
  */
 const getUsersByHandle = (handles) => {
   const query = _.map(handles, (handle) => 'handle:' + handle).join(' OR ');
-  return request
-    .get(`${config.TC_API_V3_BASE_URL}/members/_search?fields=userId,handle,firstName,lastName&query=${query}`)
-    .set('accept', 'application/json')
-    .set('authorization', `Bearer ${config.TC_ADMIN_TOKEN}`)
-    .then((res) => {
-      if (!_.get(res, 'body.result.success')) {
-        throw new Error(`Failed to get users by handle: ${handles}`);
-      }
+  return m2m.getMachineToken(config.auth0CliendId, config.auth0CliendSecret)
+    .then((token) => {
+      if (!token && config.TC_ADMIN_TOKEN) token = config.TC_ADMIN_TOKEN;
 
-      const users = _.get(res, 'body.result.content');
+      return request
+      .get(`${config.TC_API_V3_BASE_URL}/members/_search?fields=userId,handle,firstName,lastName&query=${query}`)
+      .set('accept', 'application/json')
+      .set('authorization', `Bearer ${token}`)
+      .then((res) => {
+        if (!_.get(res, 'body.result.success')) {
+          throw new Error(`Failed to get users by handle: ${handles}`);
+        }
+        const users = _.get(res, 'body.result.content');
 
-      return users;
-    }).catch((err) => {
-      const errorDetails = _.get(err, 'response.body.result.content.message');
-      throw new Error(
-        `Failed to get users by handles: ${handles}.` +
-        (errorDetails ? ' Server response: ' + errorDetails : '')
-      );
+        return users;
+      }).catch((err) => {
+        const errorDetails = _.get(err, 'response.body.result.content.message');
+        throw new Error(
+          `Failed to get users by handles: ${handles}.` +
+          (errorDetails ? ' Server response: ' + errorDetails : '')
+        );
+      });
+    })
+    .catch((err) => {
+      err.message = 'Error generating m2m token: ' + err.message;
+      throw err;
     });
 };
 
