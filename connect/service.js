@@ -126,7 +126,7 @@ const getUsersByHandle = (handles) => {
  * @return {Promise}          promise resolved to topic details
  */
 const getTopic = (topicId, logger) => request
-  .get(`${config.MESSAGE_API_BASE_URL}/topics/${topicId}`)
+  .get(`${config.MESSAGE_API_BASE_URL}/topics/${topicId}/read`)
   .set('accept', 'application/json')
   .set('authorization', `Bearer ${config.TC_ADMIN_TOKEN}`)
   .then((res) => {
@@ -137,7 +137,7 @@ const getTopic = (topicId, logger) => request
     return _.get(res, 'body.result.content');
   }).catch((err) => {
     if (logger) {
-      logger.error(err, `Error while calling ${config.MESSAGE_API_BASE_URL}/topics/${topicId}`);
+      logger.error(err, `Error while calling ${config.MESSAGE_API_BASE_URL}/topics/${topicId}/read`);
     }
     const errorDetails = _.get(err, 'response.body.result.content.message');
     throw new Error(
