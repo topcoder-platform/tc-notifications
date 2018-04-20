@@ -80,7 +80,7 @@ const getUsersById = (ids) => {
       .set('authorization', `Bearer ${token}`)
       .then((res) => {
         if (!_.get(res, 'body.result.success')) {
-          throw new Error(`Failed to get users by id: ${ids}`);
+          throw new Error(`Failed to get users by id: ${ids}  token:  ${token}`);
         }
 
         const users = _.get(res, 'body.result.content');
