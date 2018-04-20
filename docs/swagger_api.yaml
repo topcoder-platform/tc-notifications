@@ -4,6 +4,7 @@ info:
   description: "TOPCODER NOTIFICATIONS SERIES - NOTIFICATIONS SERVER"
   version: "1.0.0"
 host: "localhost:4000"
+basePath: "/v5/notifications"
 schemes:
 - "http"
 securityDefinitions:
@@ -14,7 +15,7 @@ securityDefinitions:
     description: JWT Authentication. Provide API Key in the form 'Bearer &lt;token&gt;'.
 
 paths:
-  /notifications:
+  /list:
     get:
       description:
         list notifications
@@ -102,7 +103,7 @@ paths:
           description: "Internal server error."
           schema:
             $ref: "#/definitions/Error"
-  /notifications/{id}/read:
+  /{id}/read:
     put:
       description:
         mark notification(s) as read, id can be single id or '-' separated ids
@@ -138,7 +139,7 @@ paths:
           description: "Internal server error."
           schema:
             $ref: "#/definitions/Error"
-  /notifications/read:
+  /read:
     put:
       description:
         mark all notifications as read
@@ -155,7 +156,7 @@ paths:
           description: "Internal server error."
           schema:
             $ref: "#/definitions/Error"
-  /notifications/{id}/seen:
+  /{id}/seen:
     put:
       description:
         mark notification(s) as seen, id can be single id or '-' separated ids
@@ -191,7 +192,7 @@ paths:
           description: "Internal server error."
           schema:
             $ref: "#/definitions/Error"
-  /notificationsettings:
+  /settings:
     get:
       description:
         get notification settings

@@ -27,4 +27,5 @@ module.exports = {
   KAFKA_CLIENT_CERT: process.env.KAFKA_CLIENT_CERT ? process.env.KAFKA_CLIENT_CERT.replace('\\n', '\n') : null,
   KAFKA_CLIENT_CERT_KEY: process.env.KAFKA_CLIENT_CERT_KEY ?
     process.env.KAFKA_CLIENT_CERT_KEY.replace('\\n', '\n') : null,
+  API_CONTEXT_PATH: process.env.API_CONTEXT_PATH || '/v5/notifications',	
 };
