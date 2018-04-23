@@ -66,12 +66,12 @@ const getNotificationsForMentionedUser = (eventConfig, content) => {
   }
 
   let notifications = [];
+  // eslint-disable-next-line
   const regexUserHandle = /title=\"@([a-zA-Z0-9-_.{}\[\]]+)\"/g;
-  let handles=[];
-  let matches = regexUserHandle.exec(content); 
-  console.log(content)
+  const handles = [];
+  let matches = regexUserHandle.exec(content);
   while (matches) {
-    let handle = matches[1].toString();
+    const handle = matches[1].toString();
     notifications.push({
       userHandle: handle,
       newType: 'notifications.connect.project.post.mention',
@@ -85,13 +85,13 @@ const getNotificationsForMentionedUser = (eventConfig, content) => {
   // only one per userHandle
   notifications = _.uniqBy(notifications, 'userHandle');
 
-  return new Promise((resolve)=>{
-    service.getUsersByHandle(handles).then((users)=>{
-      _.map(notifications,(notification)=>{
-        notification.userId = _.find(users,{handle:notification.userHandle}).userId;
+  return new Promise((resolve) => {
+    service.getUsersByHandle(handles).then((users) => {
+      _.map(notifications, (notification) => {
+        notification.userId = _.find(users, { handle: notification.userHandle }).userId.toString();
       });
       resolve(notifications);
-    })
+    });
   });
 };
 
@@ -307,7 +307,7 @@ const handler = (topic, message, callback) => {
         project,
       })
     )).then((notifications) => {
-      allNotifications = _.filter(notifications,notification=>notification.userId!=message.initiatorUserId);
+      allNotifications = _.filter(notifications, notification => notification.userId !== message.initiatorUserId);
 
       // now let's retrieve some additional data
 
@@ -326,6 +326,7 @@ const handler = (topic, message, callback) => {
         if (users.length) {
           notification.contents.userHandle = users[0].handle;
           notification.contents.userFullName = `${users[0].firstName} ${users[0].lastName}`;
+          notification.contents.userEmail = users[0].email;
         }
       });
       callback(null, allNotifications);

@@ -28,7 +28,12 @@ The following parameters can be set in config files or in env variables:
 - KAFKA_CLIENT_CERT_KEY: Kafka connection private key, optional;
     if not provided, then SSL connection is not used, direct insecure connection is used;
     if provided, it can be either path to private key file or private key content
-
+- BUS_API_BASE_URL: Bus API url
+- BUS_API_AUTH_TOKEN: Bus API auth token
+- REPLY_EMAIL_PREFIX: prefix of the genereated reply email address
+- REPLY_EMAIL_DOMAIN: email domain
+- DEFAULT_REPLY_EMAIL: default reply to email address, for example no-reply@topcoder.com
+- MENTION_EMAIL: recipient email used for email.project.post.mention event
 
 Configuration for the connect notification server is at `connect/config.js`.
 The following parameters can be set in config files or in env variables:
