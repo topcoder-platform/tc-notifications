@@ -69,7 +69,7 @@ const getRoleMembers = (roleId) => request
 const getUsersById = (ids) => {
   const query = _.map(ids, (id) => 'userId:' + id).join(' OR ');
   return request
-    .get(`${config.TC_API_V3_BASE_URL}/members/_search?fields=userId,handle,firstName,lastName&query=${query}`)
+    .get(`${config.TC_API_V3_BASE_URL}/members/_search?fields=userId,email,handle,firstName,lastName&query=${query}`)
     .set('accept', 'application/json')
     .set('authorization', `Bearer ${config.TC_ADMIN_TOKEN}`)
     .then((res) => {
@@ -78,7 +78,6 @@ const getUsersById = (ids) => {
       }
 
       const users = _.get(res, 'body.result.content');
-
       return users;
     }).catch((err) => {
       const errorDetails = _.get(err, 'response.body.result.content.message');
@@ -126,8 +125,8 @@ const getUsersByHandle = (handles) => {
  *
  * @return {Promise}          promise resolved to topic details
  */
-const getTopic = (topicId) => request
-  .get(`${config.TC_API_V4_BASE_URL}/topics/${topicId}`)
+const getTopic = (topicId, logger) => request
+  .get(`${config.MESSAGE_API_BASE_URL}/topics/${topicId}/read`)
   .set('accept', 'application/json')
   .set('authorization', `Bearer ${config.TC_ADMIN_TOKEN}`)
   .then((res) => {
@@ -137,13 +136,15 @@ const getTopic = (topicId) => request
 
     return _.get(res, 'body.result.content');
   }).catch((err) => {
+    if (logger) {
+      logger.error(err, `Error while calling ${config.MESSAGE_API_BASE_URL}/topics/${topicId}/read`);
+    }
     const errorDetails = _.get(err, 'response.body.result.content.message');
     throw new Error(
       `Failed to get topic details of topic id: ${topicId}.` +
       (errorDetails ? ' Server response: ' + errorDetails : '')
     );
   });
-
 
 module.exports = {
   getProject,
