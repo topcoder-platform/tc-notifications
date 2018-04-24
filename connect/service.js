@@ -81,7 +81,7 @@ const getUsersById = (ids) => {
       .set('authorization', `Bearer ${token}`)
       .then((res) => {
         if (!_.get(res, 'body.result.success')) {
-          throw new Error(`Failed to get users by id: ${ids}  token:  ${token}`);
+          throw new Error(`Failed to get users by id: ${ids}`);
         }
 
         const users = _.get(res, 'body.result.content');
@@ -89,7 +89,7 @@ const getUsersById = (ids) => {
       }).catch((err) => {
         const errorDetails = _.get(err, 'response.body.result.content.message');
         throw new Error(
-          `Failed to get users by ids: ${ids}  ${token} .` +
+          `Failed to get users by ids: ${ids}.` +
           (errorDetails ? ' Server response: ' + errorDetails : '')
         );
       });
@@ -120,7 +120,7 @@ const getUsersByHandle = (handles) => {
       .set('authorization', `Bearer ${token}`)
       .then((res) => {
         if (!_.get(res, 'body.result.success')) {
-          throw new Error(`Failed to get users by handle: ${handles} ${token}`);
+          throw new Error(`Failed to get users by handle: ${handles}`);
         }
         const users = _.get(res, 'body.result.content');
 
@@ -128,7 +128,7 @@ const getUsersByHandle = (handles) => {
       }).catch((err) => {
         const errorDetails = _.get(err, 'response.body.result.content.message');
         throw new Error(
-          `Failed to get users by handles: ${handles} ${token}.` +
+          `Failed to get users by handles: ${handles}` +
           (errorDetails ? ' Server response: ' + errorDetails : '')
         );
       });
