@@ -9,6 +9,7 @@ const config = require('./config');
 const notificationServer = require('../index');
 const _ = require('lodash');
 const service = require('./service');
+const { BUS_API_EVENT } = require('../src/constants')
 const EVENTS = require('./events-config').EVENTS;
 const TOPCODER_ROLE_RULES = require('./events-config').TOPCODER_ROLE_RULES;
 const PROJECT_ROLE_RULES = require('./events-config').PROJECT_ROLE_RULES;
@@ -67,14 +68,14 @@ const getNotificationsForMentionedUser = (eventConfig, content) => {
 
   let notifications = [];
   // eslint-disable-next-line
-  const regexUserHandle = /title=\"@([a-zA-Z0-9-_.{}\[\]]+)\"/g;
+  const regexUserHandle = /title=\"@([a-zA-Z0-9-_.{}\[\]]+)\"|\[.*\]\(.*\"\@(.*)\"\)/g;
   const handles = [];
   let matches = regexUserHandle.exec(content);
   while (matches) {
-    const handle = matches[1].toString();
+    const handle = matches[1] ? matches[1].toString() : matches[2].toString();
     notifications.push({
       userHandle: handle,
-      newType: 'notifications.connect.project.post.mention',
+      newType: BUS_API_EVENT.CONNECT.MENTIONED_IN_POST,
       contents: {
         toUserHandle: true,
       },
@@ -279,7 +280,7 @@ const handler = (topic, message, callback) => {
 
   // filter out `notifications.connect.project.topic.created` events send by bot
   // because they create too much clutter and duplicate info
-  if (topic === 'notifications.connect.project.topic.created' && message.userId.toString() === config.TCWEBSERVICE_ID) {
+  if (topic === BUS_API_EVENT.CONNECT.TOPIC_CREATED && message.userId.toString() === config.TCWEBSERVICE_ID) {
     return callback(null, []);
   }
 
