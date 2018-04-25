@@ -92,7 +92,7 @@ function startKafkaConsumer(handlers) {
                   }
                   const recipients = [userEmail];
                   const cc = [];
-                  if (notificationType === BUS_API_EVENT.EMAIL.MENTIONED_IN_POST) {
+                  if (eventType === BUS_API_EVENT.EMAIL.MENTIONED_IN_POST) {
                     cc.push(config.MENTION_EMAIL);
                   }
                   const categories = [`${config.ENV}:${eventType}`];
