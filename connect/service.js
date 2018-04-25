@@ -71,8 +71,7 @@ const getRoleMembers = (roleId) => request
 const getUsersById = (ids) => {
   const query = _.map(ids, (id) => 'userId:' + id).join(' OR ');
   return m2m.getMachineToken(config.auth0CliendId, config.auth0CliendSecret)
-    .then((cachedToken) => {
-      let token = cachedToken[config.auth0CliendId];	    
+    .then((token) => {
       if (!token && config.TC_ADMIN_TOKEN) token = config.TC_ADMIN_TOKEN;
 
       return request
@@ -110,8 +109,7 @@ const getUsersById = (ids) => {
 const getUsersByHandle = (handles) => {
   const query = _.map(handles, (handle) => 'handle:' + handle).join(' OR ');
   return m2m.getMachineToken(config.auth0CliendId, config.auth0CliendSecret)
-    .then((cachedToken) => {
-      let token = cachedToken[config.auth0CliendId];	    
+    .then((token) => {
       if (!token && config.TC_ADMIN_TOKEN) token = config.TC_ADMIN_TOKEN;
 
       return request
