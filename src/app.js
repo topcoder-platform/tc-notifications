@@ -113,7 +113,7 @@ function startKafkaConsumer(handlers) {
                       name: user.firstName + ' ' + user.lastName,
                       handle: user.handle,
                       topicTitle: connectTopic.title || '',
-                      post: messageJSON.postContent,
+                      post: helperService.markdownToHTML(messageJSON.postContent),
                       date: (new Date()).toISOString(),
                       projectName: notification.contents.projectName,
                       projectId: messageJSON.projectId,

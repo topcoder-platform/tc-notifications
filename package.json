@@ -35,7 +35,8 @@
     "sequelize": "^4.21.0",
     "superagent": "^3.8.0",
     "tc-core-library-js": "appirio-tech/tc-core-library-js.git#v2.2",
-    "winston": "^2.2.0"
+    "winston": "^2.2.0",
+    "remarkable": "^1.7.1"
   },
   "engines": {
     "node": "6.x"
