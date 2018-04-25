@@ -68,11 +68,11 @@ const getNotificationsForMentionedUser = (eventConfig, content) => {
 
   let notifications = [];
   // eslint-disable-next-line
-  const regexUserHandle = /title=\"@([a-zA-Z0-9-_.{}\[\]]+)\"|\[(.*)\]\(.*\"\@(.*)\"\)/g;
+  const regexUserHandle = /title=\"@([a-zA-Z0-9-_.{}\[\]]+)\"|\[.*\]\(.*\"\@(.*)\"\)/g;
   const handles = [];
   let matches = regexUserHandle.exec(content);
   while (matches) {
-    const handle = matches[1].toString();
+    const handle = matches[1] ? matches[1].toString() : matches[2].toString();
     notifications.push({
       userHandle: handle,
       newType: BUS_API_EVENT.CONNECT.MENTIONED_IN_POST,
