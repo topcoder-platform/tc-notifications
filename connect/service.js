@@ -126,7 +126,7 @@ const getUsersByHandle = (handles) => {
       }).catch((err) => {
         const errorDetails = _.get(err, 'response.body.result.content.message');
         throw new Error(
-          `Failed to get users by handles: ${handles}.` +
+          `Failed to get users by handles: ${handles}` +
           (errorDetails ? ' Server response: ' + errorDetails : '')
         );
       });

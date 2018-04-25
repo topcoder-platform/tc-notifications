@@ -112,7 +112,7 @@ function start(handlers) {
     });
   });
 
-  app.use('/', apiRouter);
+  app.use(config.API_CONTEXT_PATH, apiRouter);
 
 
   app.use((req, res) => {
