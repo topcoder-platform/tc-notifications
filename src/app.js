@@ -119,6 +119,7 @@ function startKafkaConsumer(handlers) {
                       projectId: messageJSON.projectId,
                       topicId,
                       postId,
+                      authorHandle: notification.contents.userHandle,
                     },
                     recipients,
                     replyTo,
