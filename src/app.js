@@ -11,7 +11,7 @@ const jwt = require('jsonwebtoken');
 const _ = require('lodash');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const { BUS_API_EVENT } = require('./constants')
+const { BUS_API_EVENT } = require('./constants');
 const helper = require('./common/helper');
 const helperService = require('./services/helper');
 const logger = require('./common/logger');
@@ -113,7 +113,7 @@ function startKafkaConsumer(handlers) {
                       name: user.firstName + ' ' + user.lastName,
                       handle: user.handle,
                       topicTitle: connectTopic.title || '',
-                      post: messageJSON.postContent,
+                      post: helperService.markdownToHTML(messageJSON.postContent),
                       date: (new Date()).toISOString(),
                       projectName: notification.contents.projectName,
                       projectId: messageJSON.projectId,
