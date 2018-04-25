@@ -75,7 +75,7 @@ const getNotificationsForMentionedUser = (eventConfig, content) => {
     const handle = matches[1].toString();
     notifications.push({
       userHandle: handle,
-      newType: BUS_API_EVENT.EMAIL.MENTIONED_IN_POST,
+      newType: BUS_API_EVENT.CONNECT.MENTIONED_IN_POST,
       contents: {
         toUserHandle: true,
       },
