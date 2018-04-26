@@ -95,7 +95,7 @@ function startKafkaConsumer(handlers) {
                   if (eventType === BUS_API_EVENT.EMAIL.MENTIONED_IN_POST) {
                     cc.push(config.MENTION_EMAIL);
                   }
-                  const categories = [`${config.ENV}:${eventType}`];
+                  const categories = [`${config.ENV}:${eventType}`.toLowerCase()];
 
                   // get jwt token then encode it with base64
                   const body = {
