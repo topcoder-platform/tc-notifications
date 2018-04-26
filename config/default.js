@@ -2,6 +2,7 @@
  * The configuration file.
  */
 module.exports = {
+  ENV: process.env.ENV,
   LOG_LEVEL: process.env.LOG_LEVEL,
   PORT: process.env.PORT,
   authSecret: process.env.authSecret,
