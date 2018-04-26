@@ -91,9 +91,11 @@ function startKafkaConsumer(handlers) {
                     userEmail = config.DEV_MODE_EMAIL;
                   }
                   const recipients = [userEmail];
-                  if (notificationType === BUS_API_EVENT.EMAIL.MENTIONED_IN_POST) {
-                    recipients.push(config.MENTION_EMAIL);
+                  const cc = [];
+                  if (eventType === BUS_API_EVENT.EMAIL.MENTIONED_IN_POST) {
+                    cc.push(config.MENTION_EMAIL);
                   }
+                  const categories = [`${config.ENV}:${eventType}`.toLowerCase()];
 
                   // get jwt token then encode it with base64
                   const body = {
@@ -123,6 +125,12 @@ function startKafkaConsumer(handlers) {
                     },
                     recipients,
                     replyTo,
+                    cc,
+                    from: {
+                      name: notification.contents.userHandle,
+                      email: 'topcoder@connectemail.topcoder.com',//TODO pick from config
+                    },
+                    categories,
                   };
                   // send event to bus api
                   return service.postEvent({
