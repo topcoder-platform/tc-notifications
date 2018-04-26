@@ -103,6 +103,7 @@ function startKafkaConsumer(handlers) {
                     topicId,
                     userEmail: helper.sanitizeEmail(user.email),
                   };
+                  logger.debug('body', body);
                   logger.debug(`body for generating token: ${JSON.stringify(body)}`);
                   logger.debug(`authSecret: ${config.authSecret.substring(-5)}`);
                   const token = jwt.sign(body, config.authSecret, { noTimestamp: true }).split('.')[2];
