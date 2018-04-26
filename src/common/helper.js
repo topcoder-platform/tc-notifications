@@ -49,7 +49,8 @@ function autoWrapExpress(obj) {
  */
 function sanitizeEmail(email) {
   if (email) {
-    return email.substring(0, email.indexOf('+')) + email.substring(email.indexOf('@'));
+    return email.substring(0, email.indexOf('+') !== -1 ? email.indexOf('+') : email.indexOf('@'))
+    + email.substring(email.indexOf('@'));
   }
   return '';
 }
