@@ -44,4 +44,14 @@ module.exports = {
   ENABLE_DEV_MODE: process.env.ENABLE_DEV_MODE || true,
   DEV_MODE_EMAIL: process.env.DEV_MODE_EMAIL,
   API_CONTEXT_PATH: process.env.API_CONTEXT_PATH || '/v5/notifications',
+
+  // Configuration for generating machine to machine auth0 token.
+  // The token will be used for calling another internal API.
+  auth0Url: process.env.auth0Url,
+  auth0Audience: process.env.auth0Audience,
+  // The token will be cached.
+  // We define the time period of the cached token.
+  tokenCacheTime: process.env.tokenCacheTime || 86400000,
+  auth0CliendId: process.env.auth0CliendId,
+  auth0CliendSecret: process.env.auth0CliendSecret,
 };

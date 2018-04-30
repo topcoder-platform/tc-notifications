@@ -82,7 +82,7 @@ workflows:
       - "build-dev":
           filters:
             branches:
-              only: [dev, 'feature/notification-email-improvements']
+              only: [dev, 'feature/m2mtoken']
       - "build-prod":
           filters:
             branches:
