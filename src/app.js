@@ -7,12 +7,16 @@ require('./bootstrap');
 const config = require('config');
 const express = require('express');
 const jwtAuth = require('tc-core-library-js').middleware.jwtAuthenticator;
+const jwt = require('jsonwebtoken');
 const _ = require('lodash');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const { BUS_API_EVENT } = require('./constants');
 const helper = require('./common/helper');
+const helperService = require('./services/helper');
 const logger = require('./common/logger');
 const errors = require('./common/errors');
+const service = require('./services/BusAPI');
 const models = require('./models');
 const Kafka = require('no-kafka');
 
@@ -49,15 +53,102 @@ function startKafkaConsumer(handlers) {
     const handlerAsync = Promise.promisify(handler);
     // use handler to create notification instances for each recipient
     return handlerAsync(topicName, messageJSON)
-      // save notifications
-      .then((notifications) => Promise.all(_.map(notifications, (notification) => models.Notification.create({
-        userId: notification.userId,
-        type: notification.newType || topicName,
-        version: notification.version || null,
-        contents: _.extend({}, messageJSON, notification.contents),
-        read: false,
-        seen: false,
-      }))))
+      .then((notifications) => Promise.all(_.map(notifications, (notification) =>
+        // save notifications
+        models.Notification.create({
+          userId: notification.userId,
+          type: notification.newType || topicName,
+          version: notification.version || null,
+          contents: _.extend({}, messageJSON, notification.contents),
+          read: false,
+          seen: false,
+        })
+        .then(() => {
+          if (config.ENABLE_EMAILS) {
+            // if it's interesting event, create email event and send to bus api
+            const notificationType = notification.newType || topicName;
+            logger.debug(`checking ${notificationType} notification ${JSON.stringify(notification)}`);
+            let eventType;
+
+            if (notificationType === BUS_API_EVENT.CONNECT.TOPIC_CREATED) {
+              eventType = BUS_API_EVENT.EMAIL.TOPIC_CREATED;
+            } else if (notificationType === BUS_API_EVENT.CONNECT.POST_CREATED) {
+              eventType = BUS_API_EVENT.EMAIL.POST_CREATED;
+            } else if (notificationType === BUS_API_EVENT.CONNECT.MENTIONED_IN_POST) {
+              eventType = BUS_API_EVENT.EMAIL.MENTIONED_IN_POST;
+            }
+            if (!!eventType) {
+              const topicId = parseInt(messageJSON.topicId, 10);
+              const postId = messageJSON.postId ? parseInt(messageJSON.postId, 10) : null;
+
+              helperService.getUsersById([notification.userId]).then((users) => {
+                logger.debug(`got users ${JSON.stringify(users)}`);
+                helperService.getTopic(topicId, logger).then((connectTopic) => {
+                  logger.debug(`got topic ${JSON.stringify(connectTopic)}`);
+                  const user = users[0];
+                  let userEmail = user.email;
+                  if (config.ENABLE_DEV_MODE === 'true') {
+                    userEmail = config.DEV_MODE_EMAIL;
+                  }
+                  const recipients = [userEmail];
+                  const cc = [];
+                  if (eventType === BUS_API_EVENT.EMAIL.MENTIONED_IN_POST) {
+                    cc.push(config.MENTION_EMAIL);
+                  }
+                  const categories = [`${config.ENV}:${eventType}`.toLowerCase()];
+
+                  // get jwt token then encode it with base64
+                  const body = {
+                    userId: parseInt(notification.userId, 10),
+                    topicId,
+                    userEmail: helper.sanitizeEmail(user.email),
+                  };
+                  logger.debug('body', body);
+                  logger.debug(`body for generating token: ${JSON.stringify(body)}`);
+                  logger.debug(`authSecret: ${config.authSecret.substring(-5)}`);
+                  const token = jwt.sign(body, config.authSecret, { noTimestamp: true }).split('.')[2];
+                  logger.debug(`token: ${token}`);
+
+                  const replyTo = `${config.REPLY_EMAIL_PREFIX}+${topicId}/${token}@${config.REPLY_EMAIL_DOMAIN}`;
+
+                  const eventMessage = {
+                    data: {
+                      name: user.firstName + ' ' + user.lastName,
+                      handle: user.handle,
+                      topicTitle: connectTopic.title || '',
+                      post: helperService.markdownToHTML(messageJSON.postContent),
+                      date: (new Date()).toISOString(),
+                      projectName: notification.contents.projectName,
+                      projectId: messageJSON.projectId,
+                      topicId,
+                      postId,
+                      authorHandle: notification.contents.userHandle,
+                    },
+                    recipients,
+                    replyTo,
+                    cc,
+                    from: {
+                      name: notification.contents.userHandle,
+                      email: 'topcoder@connectemail.topcoder.com',//TODO pick from config
+                    },
+                    categories,
+                  };
+                  // send event to bus api
+                  return service.postEvent({
+                    "topic": eventType,
+                    "originator": "tc-notifications",
+                    "timestamp": (new Date()).toISOString(),
+                    "mime-type": "application/json",
+                    "payload": eventMessage,
+                  }).then(() => {
+                    logger.info(`sent ${eventType} event with body ${eventMessage} to bus api`);
+                  });
+                });
+              });
+            }
+          }
+        })
+      )))
       // commit offset
       .then(() => consumer.commitOffset({ topic, partition, offset: m.offset }))
       .catch((err) => logger.error(err));
@@ -112,7 +203,7 @@ function start(handlers) {
     });
   });
 
-  app.use('/', apiRouter);
+  app.use(config.API_CONTEXT_PATH, apiRouter);
 
 
   app.use((req, res) => {
