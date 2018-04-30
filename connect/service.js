@@ -2,7 +2,7 @@
  * Service to get data from TopCoder API
  */
 const request = require('superagent');
-const config = require('../config');
+const config = require('config');
 const _ = require('lodash');
 const tcCoreLibAuth = require('tc-core-library-js').auth;
 const m2m = tcCoreLibAuth.m2m(config);
