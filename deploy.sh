@@ -71,6 +71,12 @@ AWS_ECS_CONTAINER_NAME=$(eval "echo \$${ENV}_AWS_ECS_CONTAINER_NAME")
 
 API_CONTEXT_PATH=$(eval "echo \$${ENV}_API_CONTEXT_PATH")
 
+AUTH0_URL=$(eval "echo \$${ENV}_AUTH0_URL")
+AUTH0_AUDIENCE=$(eval "echo \$${ENV}_AUTH0_AUDIENCE")
+TOKEN_CACHE_TIME=$(eval "echo \$${ENV}_TOKEN_CACHE_TIME")
+AUTH0_CLIENT_ID=$(eval "echo \$${ENV}_AUTH0_CLIENT_ID")
+AUTH0_CLIENT_SECRET=$(eval "echo \$${ENV}_AUTH0_CLIENT_SECRET")
+
 echo $APP_NAME
 
 configure_aws_cli() {
@@ -111,141 +117,161 @@ deploy_cluster() {
 
 make_task_def(){
 	task_template='[
-		{
-				"name": "%s",
-				"image": "%s.dkr.ecr.%s.amazonaws.com/%s:%s",
-				"essential": true,
-				"memory": 500,
-				"cpu": 100,
-				"environment": [
-						{
-								"name": "ENV",
-								"value": "%s"
-						},
-						{
-								"name": "KAFKA_CLIENT_CERT",
-								"value": "%s"
-						},
-						{
-								"name": "KAFKA_CLIENT_CERT_KEY",
-								"value": "%s"
-						},
-						{
-								"name": "KAFKA_GROUP_ID",
-								"value": "%s"
-						},
-						{
-								"name": "KAFKA_TOPIC_IGNORE_PREFIX",
-								"value": "%s"
-						},
-						{
-								"name": "KAFKA_URL",
-								"value": "%s"
-						},
-						{
-								"name": "DATABASE_URL",
-								"value": "%s"
-						},
-						{
-								"name": "authSecret",
-								"value": "%s"
-						},
-						{
-								"name": "authDomain",
-								"value": "%s"
-						},
-						{
-								"name": "jwksUri",
-								"value": "%s"
-						},
-						{
-								"name": "TC_API_BASE_URL",
-								"value": "%s"
-						},
-						{
-								"name": "TC_API_V3_BASE_URL",
-								"value": "%s"
-						},
-						{
-								"name": "TC_API_V4_BASE_URL",
-								"value": "%s"
-						},
-            {
-                "name": "TC_API_V5_BASE_URL",
-                "value": "%s"
-            },
-            {
-                "name": "MESSAGE_API_BASE_URL",
-                "value": "%s"
-            },
-						{
-								"name": "TC_ADMIN_TOKEN",
-								"value": "%s"
-						},
-            {
-                "name": "ENABLE_EMAILS",
-                "value": "%s"
-            },
-            {
-                "name": "MENTION_EMAIL",
-                "value": "%s"
-            },
-            {
-                "name": "REPLY_EMAIL_PREFIX",
-                "value": "%s"
-            },
-            {
-                "name": "REPLY_EMAIL_DOMAIN",
-                "value": "%s"
-            },
-            {
-                "name": "ENABLE_DEV_MODE",
-                "value": "%s"
-            },
-            {
-                "name": "DEV_MODE_EMAIL",
-                "value": "%s"
-            },
-            {
-                "name": "BUS_API_AUTH_TOKEN",
-                "value": "%s"
-            },
-						{
-								"name": "LOG_LEVEL",
-								"value": "%s"
-						},
-						{
-								"name": "validIssuers",
-								"value": "%s"
-						},
-						{
-								"name": "PORT",
-								"value": "%s"
-						},
-						{
-								"name": "API_CONTEXT_PATH",
-								"value": "%s"
-						}
-				],
-				"portMappings": [
-						{
-								"hostPort": 0,
-								"containerPort": 4000,
-								"protocol": "tcp"
-						}
-				],
-				"logConfiguration": {
-						"logDriver": "awslogs",
-						"options": {
-								"awslogs-group": "/aws/ecs/%s",
-								"awslogs-region": "%s",
-								"awslogs-stream-prefix": "%s_%s"
-						}
-				}
-		}
-	]'
+  {
+    "name": "%s",
+    "image": "%s.dkr.ecr.%s.amazonaws.com/%s:%s",
+    "essential": true,
+    "memory": 500,
+    "cpu": 100,
+    "environment": [
+      {
+        "name": "ENV",
+        "value": "%s"
+      },
+      {
+        "name": "KAFKA_CLIENT_CERT",
+        "value": "%s"
+      },
+      {
+        "name": "KAFKA_CLIENT_CERT_KEY",
+        "value": "%s"
+      },
+      {
+        "name": "KAFKA_GROUP_ID",
+        "value": "%s"
+      },
+      {
+        "name": "KAFKA_TOPIC_IGNORE_PREFIX",
+        "value": "%s"
+      },
+      {
+        "name": "KAFKA_URL",
+        "value": "%s"
+      },
+      {
+        "name": "DATABASE_URL",
+        "value": "%s"
+      },
+      {
+        "name": "authSecret",
+        "value": "%s"
+      },
+      {
+        "name": "authDomain",
+        "value": "%s"
+      },
+      {
+        "name": "jwksUri",
+        "value": "%s"
+      },
+      {
+        "name": "TC_API_BASE_URL",
+        "value": "%s"
+      },
+      {
+        "name": "TC_API_V3_BASE_URL",
+        "value": "%s"
+      },
+      {
+        "name": "TC_API_V4_BASE_URL",
+        "value": "%s"
+      },
+      {
+        "name": "TC_API_V5_BASE_URL",
+        "value": "%s"
+      },
+      {
+        "name": "MESSAGE_API_BASE_URL",
+        "value": "%s"
+      },
+      {
+        "name": "TC_ADMIN_TOKEN",
+        "value": "%s"
+      },
+      {
+        "name": "ENABLE_EMAILS",
+        "value": "%s"
+      },
+      {
+        "name": "MENTION_EMAIL",
+        "value": "%s"
+      },
+      {
+        "name": "REPLY_EMAIL_PREFIX",
+        "value": "%s"
+      },
+      {
+        "name": "REPLY_EMAIL_DOMAIN",
+        "value": "%s"
+      },
+      {
+        "name": "ENABLE_DEV_MODE",
+        "value": "%s"
+      },
+      {
+        "name": "DEV_MODE_EMAIL",
+        "value": "%s"
+      },
+      {
+        "name": "BUS_API_AUTH_TOKEN",
+        "value": "%s"
+      },
+      {
+        "name": "LOG_LEVEL",
+        "value": "%s"
+      },
+      {
+        "name": "validIssuers",
+        "value": "%s"
+      },
+      {
+        "name": "PORT",
+        "value": "%s"
+      },
+      {
+        "name": "API_CONTEXT_PATH",
+        "value": "%s"
+      },
+      {
+        "name": "AUTH0_URL",
+        "value": "%s"
+      },
+      {
+        "name": "AUTH0_AUDIENCE",
+        "value": "%s"
+      },
+      {
+        "name": "AUTH0_CLIENT_ID",
+        "value": "%s"
+      },
+      {
+        "name": "AUTH0_CLIENT_SECRET",
+        "value": "%s"
+      },
+      {
+        "name": "TOKEN_CACHE_TIME",
+        "value": "%s"
+      }
+    ],
+    "portMappings": [
+      {
+        "hostPort": 0,
+        "containerPort": 4000,
+        "protocol": "tcp"
+      }
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "/aws/ecs/%s",
+        "awslogs-region": "%s",
+        "awslogs-stream-prefix": "%s_%s"
+      }
+    }
+  }
+]'
 
-	task_def=$(printf "$task_template" $AWS_ECS_CONTAINER_NAME $AWS_ACCOUNT_ID $AWS_REGION $AWS_REPOSITORY $TAG $ENV "$KAFKA_CLIENT_CERT" "$KAFKA_CLIENT_CERT_KEY" $KAFKA_GROUP_ID "$KAFKA_TOPIC_IGNORE_PREFIX" $KAFKA_URL $DATABASE_URL $AUTHSECRET "$AUTHDOMAIN" "$JWKSURI" $TC_API_BASE_URL $TC_API_V3_BASE_URL $TC_API_V4_BASE_URL $TC_API_V5_BASE_URL $MESSAGE_API_BASE_URL $TC_ADMIN_TOKEN $ENABLE_EMAILS $MENTION_EMAIL $REPLY_EMAIL_PREFIX $REPLY_EMAIL_DOMAIN $ENABLE_DEV_MODE $DEV_MODE_EMAIL $BUS_API_AUTH_TOKEN $LOG_LEVEL $VALID_ISSUERS $PORT "$API_CONTEXT_PATH" $AWS_ECS_CLUSTER $AWS_REGION $AWS_ECS_CLUSTER $ENV)
+	task_def=$(printf "$task_template" $AWS_ECS_CONTAINER_NAME $AWS_ACCOUNT_ID $AWS_REGION $AWS_REPOSITORY $TAG $ENV "$KAFKA_CLIENT_CERT" "$KAFKA_CLIENT_CERT_KEY" $KAFKA_GROUP_ID "$KAFKA_TOPIC_IGNORE_PREFIX" $KAFKA_URL $DATABASE_URL $AUTHSECRET "$AUTHDOMAIN" "$JWKSURI" $TC_API_BASE_URL $TC_API_V3_BASE_URL $TC_API_V4_BASE_URL $TC_API_V5_BASE_URL $MESSAGE_API_BASE_URL $TC_ADMIN_TOKEN $ENABLE_EMAILS $MENTION_EMAIL $REPLY_EMAIL_PREFIX $REPLY_EMAIL_DOMAIN $ENABLE_DEV_MODE $DEV_MODE_EMAIL $BUS_API_AUTH_TOKEN $LOG_LEVEL $VALID_ISSUERS $PORT "$API_CONTEXT_PATH" "$AUTH0_URL" "$AUTH0_AUDIENCE" $AUTH0_CLIENT_ID "$AUTH0_CLIENT_SECRET" $TOKEN_CACHE_TIME $AWS_ECS_CLUSTER $AWS_REGION $AWS_ECS_CLUSTER $ENV)
 }
 
 register_definition() {

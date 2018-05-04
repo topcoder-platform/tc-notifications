@@ -19,4 +19,5 @@ module.exports = {
 
   // id of the BOT user which creates post with various events in discussions
   TCWEBSERVICE_ID: process.env.TCWEBSERVICE_ID || '22838965',
+
 };
