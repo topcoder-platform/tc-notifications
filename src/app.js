@@ -105,8 +105,8 @@ function startKafkaConsumer(handlers) {
                   };
                   logger.debug('body', body);
                   logger.debug(`body for generating token: ${JSON.stringify(body)}`);
-                  logger.debug(`authSecret: ${config.authSecret.substring(-5)}`);
-                  const token = jwt.sign(body, config.authSecret, { noTimestamp: true }).split('.')[2];
+                  logger.debug(`AUTH_SECRET: ${config.AUTH_SECRET.substring(-5)}`);
+                  const token = jwt.sign(body, config.AUTH_SECRET, { noTimestamp: true }).split('.')[2];
                   logger.debug(`token: ${token}`);
 
                   const replyTo = `${config.REPLY_EMAIL_PREFIX}+${topicId}/${token}@${config.REPLY_EMAIL_DOMAIN}`;

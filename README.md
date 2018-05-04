@@ -13,9 +13,8 @@ Configuration for the notification server is at `config/default.js`.
 The following parameters can be set in config files or in env variables:
 - LOG_LEVEL: the log level
 - PORT: the notification server port
-- authSecret: TC auth secret
-- authDomain: TC auth domain
-- validIssuers: TC auth valid issuers
+- AUTH_SECRET: TC auth secret
+- VALID_ISSUERS: TC auth valid issuers
 - jwksUri: TC auth JWKS URI
 - DATABASE_URL: URI to PostgreSQL database
 - DATABASE_OPTIONS: database connection options
@@ -84,9 +83,8 @@ In case it expires, you may get a new token in this way:
 
 ## Local deployment
 - for local development environment you can set variables as following:
-  - `authSecret`, `authDomain`, `validIssuers` can get from [tc-project-service config](https://github.com/topcoder-platform/tc-project-service/blob/dev/config/default.json)
+  - `AUTH_SECRET`,`VALID_ISSUERS` can get from [tc-project-service config](https://github.com/topcoder-platform/tc-project-service/blob/dev/config/default.json)
   - `PORT=4000` because **connect-app** call this port by default
-  - `jwksUri` - any
   - `KAFKA_TOPIC_IGNORE_PREFIX=joan-26673.` (with point at the end)
   - `TC_API_V4_BASE_URL=https://api.topcoder-dev.com/v4`
   - `TC_API_V3_BASE_URL=https://api.topcoder-dev.com/v3`

@@ -5,9 +5,7 @@ module.exports = {
   ENV: process.env.ENV,
   LOG_LEVEL: process.env.LOG_LEVEL,
   PORT: process.env.PORT,
-  authSecret: process.env.authSecret,
-  authDomain: process.env.authDomain,
-  jwksUri: process.env.jwksUri,
+  AUTH_SECRET: process.env.authSecret,
   DATABASE_URL: process.env.DATABASE_URL,
   DATABASE_OPTIONS: {
     dialect: 'postgres',
@@ -21,7 +19,7 @@ module.exports = {
     },
   },
 
-  validIssuers: process.env.validIssuers ? process.env.validIssuers.replace(/\\"/g, '') : null,
+  VALID_ISSUERS: process.env.validIssuers ? process.env.validIssuers.replace(/\\"/g, '') : null,
   KAFKA_URL: process.env.KAFKA_URL,
   KAFKA_TOPIC_IGNORE_PREFIX: process.env.KAFKA_TOPIC_IGNORE_PREFIX,
   KAFKA_GROUP_ID: process.env.KAFKA_GROUP_ID,
@@ -47,11 +45,11 @@ module.exports = {
 
   // Configuration for generating machine to machine auth0 token.
   // The token will be used for calling another internal API.
-  auth0Url: process.env.auth0Url,
-  auth0Audience: process.env.auth0Audience,
+  AUTH0_URL: process.env.AUTH0_URL,
+  AUTH0_AUDIENCE: process.env.AUTH0_AUDIENCE,
   // The token will be cached.
   // We define the time period of the cached token.
-  tokenCacheTime: process.env.tokenCacheTime || 86400000,
-  auth0CliendId: process.env.auth0CliendId,
-  auth0CliendSecret: process.env.auth0CliendSecret,
+  TOKEN_CACHE_TIME: process.env.TOKEN_CACHE_TIME || 86400000,
+  AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID,
+  AUTH0_CLIENT_SECRET: process.env.AUTH0_CLIENT_SECRET,
 };
