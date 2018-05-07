@@ -27,7 +27,6 @@ module.exports = {
   KAFKA_CLIENT_CERT_KEY: process.env.KAFKA_CLIENT_CERT_KEY ?
     process.env.KAFKA_CLIENT_CERT_KEY.replace('\\n', '\n') : null,
 
-  BUS_API_AUTH_TOKEN: process.env.BUS_API_AUTH_TOKEN,
   MENTION_EMAIL: process.env.MENTION_EMAIL,
   REPLY_EMAIL_PREFIX: process.env.REPLY_EMAIL_PREFIX,
   REPLY_EMAIL_DOMAIN: process.env.REPLY_EMAIL_DOMAIN,
@@ -37,7 +36,7 @@ module.exports = {
   TC_API_V3_BASE_URL: process.env.TC_API_V3_BASE_URL || 'https://api.topcoder-dev.com/v3',
   TC_API_V4_BASE_URL: process.env.TC_API_V4_BASE_URL || 'https://api.topcoder-dev.com/v4',
   TC_API_V5_BASE_URL: process.env.TC_API_V5_BASE_URL || 'https://api.topcoder-dev.com/v5',
-  MESSAGE_API_BASE_URL: process.env.MESSAGE_API_BASE_URL || 'https://api.topcoder-dev.com/v4',
+  MESSAGE_API_BASE_URL: process.env.MESSAGE_API_BASE_URL || 'https://api.topcoder-dev.com/v5',
   ENABLE_EMAILS: process.env.ENABLE_EMAILS || true,
   ENABLE_DEV_MODE: process.env.ENABLE_DEV_MODE || true,
   DEV_MODE_EMAIL: process.env.DEV_MODE_EMAIL,

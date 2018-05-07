@@ -6,6 +6,8 @@
 const config = require('config');
 const _ = require('lodash');
 const errors = require('./src/common/errors');
+const tcCoreLibAuth = require('tc-core-library-js').auth;
+global.M2m = tcCoreLibAuth.m2m(config);
 
 // key is topic name, e.g. 'notifications.connect.project.created';
 // value is handler for the topic to find user ids that should receive notifications for a message,
