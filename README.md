@@ -28,7 +28,6 @@ The following parameters can be set in config files or in env variables:
     if not provided, then SSL connection is not used, direct insecure connection is used;
     if provided, it can be either path to private key file or private key content
 - BUS_API_BASE_URL: Bus API url
-- BUS_API_AUTH_TOKEN: Bus API auth token
 - REPLY_EMAIL_PREFIX: prefix of the genereated reply email address
 - REPLY_EMAIL_DOMAIN: email domain
 - DEFAULT_REPLY_EMAIL: default reply to email address, for example no-reply@topcoder.com

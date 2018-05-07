@@ -9,19 +9,28 @@ const _ = require('lodash');
  *
  * @return {Promise}          promise resolved to post event
  */
-const postEvent = (event) => request
-  .post(`${config.TC_API_V5_BASE_URL}/bus/events`)
-  .set('Content-Type', 'application/json')
-  .set('Authorization', `Bearer ${config.BUS_API_AUTH_TOKEN}`)
-  .send(event)
-  .then(() => '')
-  .catch((err) => {
-    const errorDetails = _.get(err, 'message');
-    throw new Error(
-      `Failed to post event ${event}.` +
-      (errorDetails ? ' Server response: ' + errorDetails : '')
-    );
-  });
+const postEvent = (event) => {
+  return M2m.getMachineToken(config.AUTH0_CLIENT_ID, config.AUTH0_CLIENT_SECRET)
+    .then((token) => {
+      return request
+        .post(`${config.TC_API_V5_BASE_URL}/bus/events`)
+        .set('Content-Type', 'application/json')
+        .set('Authorization', `Bearer ${token}`)
+        .send(event)
+        .then(() => '')
+        .catch((err) => {
+          const errorDetails = _.get(err, 'message');
+          throw new Error(
+            `Failed to post event ${event}.` +
+            (errorDetails ? ' Server response: ' + errorDetails : '')
+          );
+        });
+    })
+    .catch((err) => {
+      err.message = 'Error generating m2m token: ' + err.message;
+      throw err;
+    });
+}
 
 module.exports = {
   postEvent,

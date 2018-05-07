@@ -4,8 +4,6 @@
 const request = require('superagent');
 const config = require('config');
 const _ = require('lodash');
-const tcCoreLibAuth = require('tc-core-library-js').auth;
-const m2m = tcCoreLibAuth.m2m(config);
 
 /**
  * Get project details
@@ -70,7 +68,7 @@ const getRoleMembers = (roleId) => request
  */
 const getUsersById = (ids) => {
   const query = _.map(ids, (id) => 'userId:' + id).join(' OR ');
-  return m2m.getMachineToken(config.AUTH0_CLIENT_ID, config.AUTH0_CLIENT_SECRET)
+  return M2m.getMachineToken(config.AUTH0_CLIENT_ID, config.AUTH0_CLIENT_SECRET)
     .then((token) => {
       if (!token && config.TC_ADMIN_TOKEN) token = config.TC_ADMIN_TOKEN;
 
@@ -108,7 +106,7 @@ const getUsersById = (ids) => {
  */
 const getUsersByHandle = (handles) => {
   const query = _.map(handles, (handle) => 'handle:' + handle).join(' OR ');
-  return m2m.getMachineToken(config.AUTH0_CLIENT_ID, config.AUTH0_CLIENT_SECRET)
+  return M2m.getMachineToken(config.AUTH0_CLIENT_ID, config.AUTH0_CLIENT_SECRET)
     .then((token) => {
       if (!token && config.TC_ADMIN_TOKEN) token = config.TC_ADMIN_TOKEN;
 
