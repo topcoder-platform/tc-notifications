@@ -31,7 +31,6 @@ module.exports = {
   REPLY_EMAIL_PREFIX: process.env.REPLY_EMAIL_PREFIX,
   REPLY_EMAIL_DOMAIN: process.env.REPLY_EMAIL_DOMAIN,
 
-  TC_ADMIN_TOKEN: process.env.TC_ADMIN_TOKEN,
   TC_API_BASE_URL: process.env.TC_API_BASE_URL || 'https://api.topcoder-dev.com',
   TC_API_V3_BASE_URL: process.env.TC_API_V3_BASE_URL || 'https://api.topcoder-dev.com/v3',
   TC_API_V4_BASE_URL: process.env.TC_API_V4_BASE_URL || 'https://api.topcoder-dev.com/v4',
