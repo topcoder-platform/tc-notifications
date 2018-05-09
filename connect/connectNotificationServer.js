@@ -243,6 +243,7 @@ const excludeNotifications = (notifications, eventConfig, message, data) => {
   return Promise.all([
     getNotificationsForTopicStarter(excludeEventConfig, message.topicId),
     getNotificationsForUserId(excludeEventConfig, message.userId),
+    getNotificationsForMentionedUser(eventConfig, message.postContent),
     getProjectMembersNotifications(excludeEventConfig, project),
     getTopCoderMembersNotifications(excludeEventConfig),
   ]).then((notificationsPerSource) => (
