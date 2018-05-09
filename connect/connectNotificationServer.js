@@ -62,7 +62,7 @@ const getTopCoderMembersNotifications = (eventConfig) => {
  * @return {Promise}            resolves to a list of notifications
  */
 const getNotificationsForMentionedUser = (eventConfig, content) => {
-  if (!eventConfig.toMentionedUsers) {
+  if (!eventConfig.toMentionedUsers || !content) {
     return Promise.resolve([]);
   }
 
@@ -296,7 +296,7 @@ const handler = (topic, message, callback) => {
       //       - check that event has everything required or throw error
       getNotificationsForTopicStarter(eventConfig, message.topicId),
       getNotificationsForUserId(eventConfig, message.userId),
-      message.postContent ? getNotificationsForMentionedUser(eventConfig, message.postContent) : Promise.resolve([]),
+      getNotificationsForMentionedUser(eventConfig, message.postContent),
       getProjectMembersNotifications(eventConfig, project),
       getTopCoderMembersNotifications(eventConfig),
     ]).then((notificationsPerSource) => (
