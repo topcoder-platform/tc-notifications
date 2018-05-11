@@ -1,9 +1,11 @@
 /**
  * Service to get data from TopCoder API
  */
+/* global M2m */
 const request = require('superagent');
-const config = require('config');
+const config = require('./config');
 const _ = require('lodash');
+const { logger } = require('../index');
 
 /**
  * Get project details
@@ -70,7 +72,7 @@ const getUsersById = (ids) => {
   const query = _.map(ids, (id) => 'userId:' + id).join(' OR ');
   return M2m.getMachineToken(config.AUTH0_CLIENT_ID, config.AUTH0_CLIENT_SECRET)
     .then((token) => {
-      if (!token && config.TC_ADMIN_TOKEN) token = config.TC_ADMIN_TOKEN;
+      /* if (!token && config.TC_ADMIN_TOKEN) */ token = config.TC_ADMIN_TOKEN;
 
       return request
       .get(`${config.TC_API_V3_BASE_URL}/members/_search?fields=userId,email,handle,firstName,lastName&query=${query}`)
@@ -142,7 +144,7 @@ const getUsersByHandle = (handles) => {
  *
  * @return {Promise}          promise resolved to topic details
  */
-const getTopic = (topicId, logger) => request
+const getTopic = (topicId) => request
   .get(`${config.MESSAGE_API_BASE_URL}/topics/${topicId}/read`)
   .set('accept', 'application/json')
   .set('authorization', `Bearer ${config.TC_ADMIN_TOKEN}`)

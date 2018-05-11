@@ -12,7 +12,10 @@ const getParams = require('get-parameter-names');
 
 const transports = [];
 if (!config.DISABLE_LOGGING) {
-  transports.push(new (winston.transports.Console)({ level: config.LOG_LEVEL }));
+  transports.push(new (winston.transports.Console)({
+    colorize: true,
+    level: config.LOG_LEVEL,
+  }));
   transports.push(new (winston.transports.File)({
     filename: 'log.txt',
     timestamp: true,
