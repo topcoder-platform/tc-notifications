@@ -69,8 +69,7 @@ const getNotificationsForMentionedUser = (eventConfig, content) => {
 
   let notifications = [];
   // eslint-disable-next-line
-  const regexUserHandle = /title=\"@([a-zA-Z0-9-_.{}\[\]]+)\"|\[.*\]\(.*\"\@(.*)\"\)/g;
-  const handles = [];
+  const regexUserHandle = /title=\"@([a-zA-Z0-9-_.{}\[\]]+)\"|\[.*?\]\(.*?\"\@(.*?)\"\)/g;
   let matches = regexUserHandle.exec(content);
   while (matches) {
     const handle = matches[1] ? matches[1].toString() : matches[2].toString();
@@ -82,12 +81,12 @@ const getNotificationsForMentionedUser = (eventConfig, content) => {
       },
     });
     matches = regexUserHandle.exec(content);
-    handles.push(handle);
   }
   // only one per userHandle
   notifications = _.uniqBy(notifications, 'userHandle');
 
   return new Promise((resolve) => {
+    const handles = _.map(notifications, 'userHandle');
     service.getUsersByHandle(handles).then((users) => {
       _.map(notifications, (notification) => {
         notification.userId = _.find(users, { handle: notification.userHandle }).userId.toString();

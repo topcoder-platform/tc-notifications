@@ -47,7 +47,7 @@ const getRoleMembers = (roleId) => request
   .set('authorization', `Bearer ${config.TC_ADMIN_TOKEN}`)
   .then((res) => {
     if (!_.get(res, 'body.result.success')) {
-      throw new Error(`Failed to get role memebrs of role id: ${roleId}`);
+      throw new Error(`Failed to get role members of role id: ${roleId}`);
     }
 
     const members = _.get(res, 'body.result.content.subjects');
@@ -56,7 +56,7 @@ const getRoleMembers = (roleId) => request
   }).catch((err) => {
     const errorDetails = _.get(err, 'response.body.result.content.message');
     throw new Error(
-      `Failed to get role memebrs of role id: ${roleId}.` +
+      `Failed to get role members of role id: ${roleId}.` +
       (errorDetails ? ' Server response: ' + errorDetails : '')
     );
   });
@@ -72,7 +72,7 @@ const getUsersById = (ids) => {
   const query = _.map(ids, (id) => 'userId:' + id).join(' OR ');
   return M2m.getMachineToken(config.AUTH0_CLIENT_ID, config.AUTH0_CLIENT_SECRET)
     .then((token) => {
-      /* if (!token && config.TC_ADMIN_TOKEN) */ token = config.TC_ADMIN_TOKEN;
+      /* if (!token && config.TC_ADMIN_TOKEN) */ token = config.TC_ADMIN_TOKEN; // TODO uncomment when get fixed m2m token
 
       return request
       .get(`${config.TC_API_V3_BASE_URL}/members/_search?fields=userId,email,handle,firstName,lastName&query=${query}`)
@@ -110,7 +110,7 @@ const getUsersByHandle = (handles) => {
   const query = _.map(handles, (handle) => 'handle:' + handle).join(' OR ');
   return M2m.getMachineToken(config.AUTH0_CLIENT_ID, config.AUTH0_CLIENT_SECRET)
     .then((token) => {
-      if (!token && config.TC_ADMIN_TOKEN) token = config.TC_ADMIN_TOKEN;
+      /* if (!token && config.TC_ADMIN_TOKEN) */ token = config.TC_ADMIN_TOKEN; // TODO uncomment when get fixed m2m token
 
       return request
       .get(`${config.TC_API_V3_BASE_URL}/members/_search?fields=userId,handle,firstName,lastName&query=${query}`)
