@@ -85,24 +85,26 @@ class EventScheduler {
   /**
    * Adds events to the list of pending events
    *
-   * @param {Object} data       any event data
-   * @param {String} periodName event period name
-   * @param {Number} userId     (optional) user id
-   * @param {String} eventType  (optional) event type
+   * @param {Object} scheduledEvent             event prams to schedule
+   * @param {Object} scheduledEvent.data        arbitrary event data
+   * @param {String} scheduledEvent.period      event period name
+   * @param {Number} scheduledEvent.userId      (optional) user id
+   * @param {String} scheduledEvent.eventType   (optional) event type
+   * @param {String} scheduledEvent.reference   (optional) target entity name (like 'topic')
+   * @param {String} scheduledEvent.referenceId (optional) target entity id (like <topicId>)
    *
    * @return {Promise} resolves to model create result
    */
-  addEvent(data, periodName, userId, eventType) {
-    logger.verbose(`[EventScheduler] add event for handler '${this.schedulerId}' period '${periodName}'.`);
+  addEvent(scheduledEvent) {
+    logger.verbose(`[EventScheduler] add event for handler '${this.schedulerId}' period '${scheduledEvent.period}'.`);
 
-    return models.ScheduledEvents.create({
-      schedulerId: this.schedulerId,
-      data,
-      period: periodName,
-      status: SCHEDULED_EVENT_STATUS.PENDING,
-      userId,
-      eventType,
-    });
+    const event = _.pick(scheduledEvent, [
+      'data', 'period', 'userId', 'eventType', 'reference', 'referenceId',
+    ]);
+    event.schedulerId = this.schedulerId;
+    event.status = SCHEDULED_EVENT_STATUS.PENDING;
+
+    return models.ScheduledEvents.create(event);
   }
 }
 

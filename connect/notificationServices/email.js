@@ -168,12 +168,14 @@ function handler(topicName, messageJSON, notification) {
                 + ` '${SETTINGS_EMAIL_SERVICE_ID}' option 'bundlePeriod' has unsupported value '${bundlePeriod}'.`);
             }
 
-            scheduler.addEvent(
-              eventMessage,
-              bundlePeriod,
-              notification.userId,
-              eventType
-            );
+            scheduler.addEvent({
+              data: eventMessage,
+              period: bundlePeriod,
+              userId: notification.userId,
+              eventType,
+              reference: 'topic',
+              referenceId: topicId,
+            });
           } else {
             // send event to bus api
             return busService.postEvent({
