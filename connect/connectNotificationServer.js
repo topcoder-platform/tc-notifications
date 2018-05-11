@@ -9,11 +9,12 @@ const config = require('./config');
 const notificationServer = require('../index');
 const _ = require('lodash');
 const service = require('./service');
-const { BUS_API_EVENT } = require('../src/constants')
+const { BUS_API_EVENT } = require('./constants');
 const EVENTS = require('./events-config').EVENTS;
 const TOPCODER_ROLE_RULES = require('./events-config').TOPCODER_ROLE_RULES;
 const PROJECT_ROLE_RULES = require('./events-config').PROJECT_ROLE_RULES;
 const PROJECT_ROLE_OWNER = require('./events-config').PROJECT_ROLE_OWNER;
+const emailNotificationServiceHandler = require('./notificationServices/email').handler;
 
 /**
  * Get TopCoder members notifications
@@ -344,6 +345,11 @@ const handler = (topic, message, callback) => {
 EVENTS.forEach(eventConfig => {
   notificationServer.addTopicHandler(eventConfig.type, handler);
 });
+
+// add notification service handlers
+if (config.ENABLE_EMAILS) {
+  notificationServer.addNotificationServiceHandler(emailNotificationServiceHandler);
+}
 
 // init database, it will clear and re-create all tables
 notificationServer
