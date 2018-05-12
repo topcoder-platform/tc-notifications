@@ -87,12 +87,16 @@ const getNotificationsForMentionedUser = (eventConfig, content) => {
 
   return new Promise((resolve) => {
     const handles = _.map(notifications, 'userHandle');
-    service.getUsersByHandle(handles).then((users) => {
-      _.map(notifications, (notification) => {
-        notification.userId = _.find(users, { handle: notification.userHandle }).userId.toString();
+    if (handles.length > 0) {
+      service.getUsersByHandle(handles).then((users) => {
+        _.forEach(notifications, (notification) => {
+          notification.userId = _.find(users, { handle: notification.userHandle }).userId.toString();
+        });
+        resolve(notifications);
       });
-      resolve(notifications);
-    });
+    } else {
+      resolve([]);
+    }
   });
 };
 
