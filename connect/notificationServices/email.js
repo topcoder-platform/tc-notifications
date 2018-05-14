@@ -3,7 +3,8 @@
  */
 const _ = require('lodash');
 const jwt = require('jsonwebtoken');
-const { logger, busService, eventScheduler, settingsService } = require('../../index');
+const co = require('co');
+const { logger, busService, eventScheduler, notificationService } = require('../../index');
 const { createEventScheduler, SCHEDULED_EVENT_STATUS } = eventScheduler;
 
 const config = require('../config');
@@ -98,100 +99,114 @@ function handler(topicName, messageJSON, notification) {
   }
 
   if (!!eventType) {
-    const topicId = parseInt(messageJSON.topicId, 10);
-    const postId = messageJSON.postId ? parseInt(messageJSON.postId, 10) : null;
+    return co(function* () {
+      const settings = yield notificationService.getSettings(notification.userId);
 
-    service.getUsersById([notification.userId]).then((users) => {
+      // if email notification is explicitly disabled for current notification type do nothing
+      // by default we treat all notification types enabled
+      if (settings.notifications[notificationType]
+        && settings.notifications[notificationType][SETTINGS_EMAIL_SERVICE_ID]
+        && settings.notifications[notificationType][SETTINGS_EMAIL_SERVICE_ID].enabled === 'no'
+      ) {
+        logger.verbose(`Notification '${notificationType}' won't be sent by '${SETTINGS_EMAIL_SERVICE_ID}'`
+          + ` service to the userId '${notification.userId}' due to his notification settings.`);
+        return;
+      }
+
+      const topicId = parseInt(messageJSON.topicId, 10);
+      const postId = messageJSON.postId ? parseInt(messageJSON.postId, 10) : null;
+
+      const users = yield service.getUsersById([notification.userId]);
       logger.debug(`got users ${JSON.stringify(users)}`);
-      service.getTopic(topicId, logger).then((connectTopic) => {
-        logger.debug(`got topic ${JSON.stringify(connectTopic)}`);
-        const user = users[0];
-        let userEmail = user.email;
-        if (config.ENABLE_DEV_MODE === 'true') {
-          userEmail = config.DEV_MODE_EMAIL;
-        }
-        const recipients = [userEmail];
-        const cc = [];
-        if (eventType === BUS_API_EVENT.EMAIL.MENTIONED_IN_POST) {
-          cc.push(config.MENTION_EMAIL);
-        }
-        const categories = [`${config.ENV}:${eventType}`.toLowerCase()];
 
-        // get jwt token then encode it with base64
-        const body = {
-          userId: parseInt(notification.userId, 10),
+      const connectTopic = yield service.getTopic(topicId, logger);
+      logger.debug(`got topic ${JSON.stringify(connectTopic)}`);
+
+      const user = users[0];
+      let userEmail = user.email;
+      if (config.ENABLE_DEV_MODE === 'true') {
+        userEmail = config.DEV_MODE_EMAIL;
+      }
+      const recipients = [userEmail];
+      const cc = [];
+      if (eventType === BUS_API_EVENT.EMAIL.MENTIONED_IN_POST) {
+        cc.push(config.MENTION_EMAIL);
+      }
+      const categories = [`${config.ENV}:${eventType}`.toLowerCase()];
+
+      // get jwt token then encode it with base64
+      const body = {
+        userId: parseInt(notification.userId, 10),
+        topicId,
+        userEmail: helpers.sanitizeEmail(user.email),
+      };
+      logger.debug('body', body);
+      logger.debug(`body for generating token: ${JSON.stringify(body)}`);
+      logger.debug(`AUTH_SECRET: ${config.AUTH_SECRET.substring(-5)}`);
+      const token = jwt.sign(body, config.AUTH_SECRET, { noTimestamp: true }).split('.')[2];
+      logger.debug(`token: ${token}`);
+
+      const replyTo = `${config.REPLY_EMAIL_PREFIX}+${topicId}/${token}@${config.REPLY_EMAIL_DOMAIN}`;
+
+      const eventMessage = {
+        data: {
+          name: user.firstName + ' ' + user.lastName,
+          handle: user.handle,
+          topicTitle: connectTopic.title || '',
+          post: helpers.markdownToHTML(messageJSON.postContent),
+          date: (new Date()).toISOString(),
+          projectName: notification.contents.projectName,
+          projectId: messageJSON.projectId,
           topicId,
-          userEmail: helpers.sanitizeEmail(user.email),
-        };
-        logger.debug('body', body);
-        logger.debug(`body for generating token: ${JSON.stringify(body)}`);
-        logger.debug(`AUTH_SECRET: ${config.AUTH_SECRET.substring(-5)}`);
-        const token = jwt.sign(body, config.AUTH_SECRET, { noTimestamp: true }).split('.')[2];
-        logger.debug(`token: ${token}`);
+          postId,
+          authorHandle: notification.contents.userHandle,
+        },
+        recipients,
+        replyTo,
+        cc,
+        from: {
+          name: notification.contents.userHandle,
+          email: config.REPLY_EMAIL_FROM,
+        },
+        categories,
+      };
 
-        const replyTo = `${config.REPLY_EMAIL_PREFIX}+${topicId}/${token}@${config.REPLY_EMAIL_DOMAIN}`;
+      // if notifications has to be bundled
+      const bundlePeriod = settings.services[SETTINGS_EMAIL_SERVICE_ID]
+        && settings.services[SETTINGS_EMAIL_SERVICE_ID].bundlePeriod;
 
-        const eventMessage = {
-          data: {
-            name: user.firstName + ' ' + user.lastName,
-            handle: user.handle,
-            topicTitle: connectTopic.title || '',
-            post: helpers.markdownToHTML(messageJSON.postContent),
-            date: (new Date()).toISOString(),
-            projectName: notification.contents.projectName,
-            projectId: messageJSON.projectId,
-            topicId,
-            postId,
-            authorHandle: notification.contents.userHandle,
-          },
-          recipients,
-          replyTo,
-          cc,
-          from: {
-            name: notification.contents.userHandle,
-            email: config.REPLY_EMAIL_FROM,
-          },
-          categories,
-        };
+      if (bundlePeriod) {
+        if (!SCHEDULED_EVENT_PERIOD[bundlePeriod]) {
+          throw new Error(`User's '${notification.userId}' setting for service`
+            + ` '${SETTINGS_EMAIL_SERVICE_ID}' option 'bundlePeriod' has unsupported value '${bundlePeriod}'.`);
+        }
 
-        settingsService.getServiceSettingsOption({
+        // schedule event to be send later
+        scheduler.addEvent({
+          data: eventMessage,
+          period: bundlePeriod,
           userId: notification.userId,
-          serviceId: SETTINGS_EMAIL_SERVICE_ID,
-          name: 'bundlePeriod',
-        }).then((bundleSetting) => {
-          // if notifications has to be bundled
-          const bundlePeriod = bundleSetting && bundleSetting.value;
-
-          if (bundlePeriod) {
-            if (!SCHEDULED_EVENT_PERIOD[bundlePeriod]) {
-              throw new Error(`User's '${notification.userId}' setting for service`
-                + ` '${SETTINGS_EMAIL_SERVICE_ID}' option 'bundlePeriod' has unsupported value '${bundlePeriod}'.`);
-            }
-
-            scheduler.addEvent({
-              data: eventMessage,
-              period: bundlePeriod,
-              userId: notification.userId,
-              eventType,
-              reference: 'topic',
-              referenceId: topicId,
-            });
-          } else {
-            // send event to bus api
-            return busService.postEvent({
-              topic: eventType,
-              originator: 'tc-notifications',
-              timestamp: (new Date()).toISOString(),
-              'mime-type': 'application/json',
-              payload: eventMessage,
-            }).then(() => {
-              logger.info(`Successfully sent ${eventType} event with body ${JSON.stringify(eventMessage)} to bus api`);
-            });
-          }
+          eventType,
+          reference: 'topic',
+          referenceId: topicId,
         });
-      });
+      } else {
+        // send event to bus api
+        return busService.postEvent({
+          topic: eventType,
+          originator: 'tc-notifications',
+          timestamp: (new Date()).toISOString(),
+          'mime-type': 'application/json',
+          payload: eventMessage,
+        }).then(() => {
+          logger.info(`Successfully sent ${eventType} event with body ${JSON.stringify(eventMessage)} to bus api`);
+        });
+      }
     });
   }
+
+  // if no need to send emails, return resolved promise for consistency
+  return Promise.resolve();
 }
 
 module.exports = {
