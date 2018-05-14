@@ -16,7 +16,6 @@ const _ = require('lodash');
 const postEvent = (event) => (
   M2m.getMachineToken(config.AUTH0_CLIENT_ID, config.AUTH0_CLIENT_SECRET)
     .then((token) => (
-      (token = config.TC_ADMIN_TOKEN), // TODO remove when get m2m credentials fixed
       request
         .post(`${config.TC_API_V5_BASE_URL}/bus/events`)
         .set('Content-Type', 'application/json')

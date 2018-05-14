@@ -11,7 +11,7 @@ const tcCoreLibAuth = require('tc-core-library-js').auth;
 const logger = require('./src/common/logger');
 const busService = require('./src/services/BusAPI');
 const eventScheduler = require('./src/services/EventScheduler');
-const settingsService = require('./src/services/SettingsService');
+const notificationService = require('./src/services/NotificationService');
 global.M2m = tcCoreLibAuth.m2m(config);
 
 // key is topic name, e.g. 'notifications.connect.project.created';
@@ -130,5 +130,5 @@ module.exports = {
   logger,
   busService,
   eventScheduler,
-  settingsService,
+  notificationService,
 };

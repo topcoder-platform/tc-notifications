@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => sequelize.define('NotificationSetting
   id: { type: DataTypes.BIGINT, primaryKey: true, autoIncrement: true },
   userId: { type: DataTypes.BIGINT, allowNull: false },
   topic: { type: DataTypes.STRING, allowNull: false },
-  deliveryMethod: { type: DataTypes.STRING, allowNull: false },
+  serviceId: { type: DataTypes.STRING, allowNull: false },
+  name: { type: DataTypes.STRING, allowNull: false },
   value: { type: DataTypes.STRING, allowNull: false },
 }, { timestamps: false });

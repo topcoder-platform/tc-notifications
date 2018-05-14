@@ -1,14 +1,14 @@
 module.exports = {
   // periods of time in cron format (node-cron)
   SCHEDULED_EVENT_PERIOD: {
-    every10minutes: '*/1 * * * *',
+    every10minutes: '*/10 * * * *',
     hourly: '0 * * * *',
     daily: '0 7 * * *', // every day at 7am
     weekly: '0 7 * * 6', // every Saturday at 7am
   },
 
   // email service id for settings
-  SETTINGS_EMAIL_SERVICE_ID: 'connect.email',
+  SETTINGS_EMAIL_SERVICE_ID: 'email',
 
   BUS_API_EVENT: {
     CONNECT: {
