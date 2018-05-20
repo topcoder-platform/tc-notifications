@@ -3,18 +3,17 @@
  */
 
 /**
- * the Notification Setting schema
+ * the Service Settings schema
  *
  * @author      TCSCODER
  * @version     1.0
  */
 
 
-module.exports = (sequelize, DataTypes) => sequelize.define('NotificationSetting', {
+module.exports = (sequelize, DataTypes) => sequelize.define('ServiceSettings', {
   id: { type: DataTypes.BIGINT, primaryKey: true, autoIncrement: true },
   userId: { type: DataTypes.BIGINT, allowNull: false },
-  topic: { type: DataTypes.STRING, allowNull: false },
   serviceId: { type: DataTypes.STRING, allowNull: false },
   name: { type: DataTypes.STRING, allowNull: false },
-  value: { type: DataTypes.STRING, allowNull: false },
+  value: { type: DataTypes.STRING, allowNull: true },
 }, { timestamps: false });
