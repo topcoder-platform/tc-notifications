@@ -41,11 +41,23 @@ function handleScheduledEvents(events, setEventsStatus) {
       email: config.DEFAULT_REPLY_EMAIL,
     };
 
-    // data property we define as an array of data from each individual event
-    eventMessage.data = [];
-    userEvents.forEach((event) => {
-      eventMessage.data.push(event.data.data);
+    // TODO: consider using templating engine to format the bundle email
+    // until there is Sendgrid support for loops in email templates
+    let emailBody = '<p>Your recent updates on Topcoder Connect</p></br>';
+    const eventsByTopics = _.groupBy(userEvents, 'data.data.topicId');
+    _.values(eventsByTopics).forEach((topicEvents) => {
+      emailBody += `<p><strong> ${topicEvents[0].data.data.topicTitle} </strong></p>`;
+      topicEvents.forEach(topicEvent => {
+        emailBody += `<p><em>By ${topicEvent.data.data.name} at ${topicEvent.data.data.date}</em><p>`;
+        emailBody += `<p>${topicEvent.data.data.post} <p>`;
+      });
+      // eslint-disable-next-line
+      emailBody += `<p><a href="http://www.connect.topcoder.com/projects/${topicEvents[0].data.data.projectId}#feed-${topicEvents[0].data.data.topicId}">Visit message</a> <p>`;
+      emailBody += '</br>';
     });
+
+    // data property we define as an array of data from each individual event
+    eventMessage.data = { notificationsHTML: emailBody };
 
     busService.postEvent({
       topic: BUS_API_EVENT.EMAIL.BUNDLED,
