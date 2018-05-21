@@ -1,5 +1,6 @@
 .idea
 node_modules
 *.log
+log.txt
 .DS_Store
 dist

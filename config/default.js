@@ -2,10 +2,8 @@
  * The configuration file.
  */
 module.exports = {
-  ENV: process.env.ENV,
   LOG_LEVEL: process.env.LOG_LEVEL,
   PORT: process.env.PORT,
-  AUTH_SECRET: process.env.authSecret,
   DATABASE_URL: process.env.DATABASE_URL,
   DATABASE_OPTIONS: {
     dialect: 'postgres',
@@ -19,7 +17,12 @@ module.exports = {
     },
   },
 
+  AUTH_SECRET: process.env.authSecret,
   VALID_ISSUERS: process.env.validIssuers ? process.env.validIssuers.replace(/\\"/g, '') : null,
+  // keep it here for dev purposes, it's only needed by modified version of tc-core-library-js
+  // which skips token validation when locally deployed
+  JWKS_URI: process.env.jwksUri,
+
   KAFKA_URL: process.env.KAFKA_URL,
   KAFKA_TOPIC_IGNORE_PREFIX: process.env.KAFKA_TOPIC_IGNORE_PREFIX,
   KAFKA_GROUP_ID: process.env.KAFKA_GROUP_ID,
@@ -27,19 +30,7 @@ module.exports = {
   KAFKA_CLIENT_CERT_KEY: process.env.KAFKA_CLIENT_CERT_KEY ?
     process.env.KAFKA_CLIENT_CERT_KEY.replace('\\n', '\n') : null,
 
-  MENTION_EMAIL: process.env.MENTION_EMAIL,
-  REPLY_EMAIL_PREFIX: process.env.REPLY_EMAIL_PREFIX,
-  REPLY_EMAIL_DOMAIN: process.env.REPLY_EMAIL_DOMAIN,
-
-  TC_ADMIN_TOKEN: process.env.TC_ADMIN_TOKEN,
-  TC_API_BASE_URL: process.env.TC_API_BASE_URL || 'https://api.topcoder-dev.com',
-  TC_API_V3_BASE_URL: process.env.TC_API_V3_BASE_URL || 'https://api.topcoder-dev.com/v3',
-  TC_API_V4_BASE_URL: process.env.TC_API_V4_BASE_URL || 'https://api.topcoder-dev.com/v4',
   TC_API_V5_BASE_URL: process.env.TC_API_V5_BASE_URL || 'https://api.topcoder-dev.com/v5',
-  MESSAGE_API_BASE_URL: process.env.MESSAGE_API_BASE_URL || 'https://api.topcoder-dev.com/v5',
-  ENABLE_EMAILS: process.env.ENABLE_EMAILS || true,
-  ENABLE_DEV_MODE: process.env.ENABLE_DEV_MODE || true,
-  DEV_MODE_EMAIL: process.env.DEV_MODE_EMAIL,
   API_CONTEXT_PATH: process.env.API_CONTEXT_PATH || '/v5/notifications',
 
   // Configuration for generating machine to machine auth0 token.
