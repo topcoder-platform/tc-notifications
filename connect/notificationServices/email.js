@@ -48,12 +48,13 @@ function handleScheduledEvents(events, setEventsStatus) {
     _.values(eventsByTopics).forEach((topicEvents) => {
       emailBody += `<p><strong> ${topicEvents[0].data.data.topicTitle} </strong></p>`;
       topicEvents.forEach(topicEvent => {
-        emailBody += `<p><em>By ${topicEvent.data.data.name} at ${topicEvent.data.data.date}</em><p>`;
-        emailBody += `<p>${topicEvent.data.data.post} <p>`;
+        const auditData += `<em><small>By ${topicEvent.data.data.handle} at ${topicEvent.data.data.date}</small></em>`;
+        emailBody += `<p>${topicEvent.data.data.post} (${auditData})<p>`;
+        emailBody += '<br />';
       });
       // eslint-disable-next-line
       emailBody += `<p><a href="http://www.connect.topcoder.com/projects/${topicEvents[0].data.data.projectId}#feed-${topicEvents[0].data.data.topicId}">Visit message</a> <p>`;
-      emailBody += '</br>';
+      emailBody += '<br />';
     });
 
     // data property we define as an array of data from each individual event
