@@ -50,7 +50,6 @@ The following parameters can be set in config files or in env variables:
   - `TC_API_V3_BASE_URL`: the TopCoder API V3 base URL
   - `TC_API_V4_BASE_URL`: the TopCoder API V4 base URL
   - `MESSAGE_API_BASE_URL`: the TopCoder message service API base URL
-  - `TC_ADMIN_TOKEN`: the admin token to access TopCoder API - same for V3 and V4
 - **Topcder specific**<br>
     Also it has probably temporary variables of TopCoder role ids for 'Connect Manager', 'Connect Copilot' and 'administrator':
   - `CONNECT_MANAGER_ROLE_ID`: 8,
@@ -94,21 +93,6 @@ so we can run `node test/token 305384` to generate a token to manage notificatio
 The generated token is already configured in the Postman notification server API environment TOKEN variable.
 You may reuse it during review.
 
-
-## TC API Admin Token
-
-An admin token is needed to access TC API. This is already configured Postman notification
-server API environment TC_ADMIN_TOKEN variable.
-In case it expires, you may get a new token in this way:
-
-- use Chrome to browse connect.topcoder-dev.com
-- open developer tools, click the Network tab
-- log in with suser1 / Topcoder123, or mess / appirio123
-- once logged in, open some project, for example https://connect.topcoder-dev.com/projects/1936 and in the network inspector
-  look for the call to the project api and get the token from the auth header, see
-  http://pokit.org/get/img/68cdd34f3d205d6d9bd8bddb07bdc216.jpg
-
-
 ## Local deployment
 - for local development environment you can set variables as following:
   - `AUTH_SECRET`,`VALID_ISSUERS` can get from [tc-project-service config](https://github.com/topcoder-platform/tc-project-service/blob/dev/config/default.json)
@@ -116,7 +100,6 @@ In case it expires, you may get a new token in this way:
   - `KAFKA_TOPIC_IGNORE_PREFIX=joan-26673.` (with point at the end)
   - `TC_API_V4_BASE_URL=https://api.topcoder-dev.com/v4`
   - `TC_API_V3_BASE_URL=https://api.topcoder-dev.com/v3`
-  - `TC_ADMIN_TOKEN=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJUb3Bjb2RlciBVc2VyIiwiYWRtaW5pc3RyYXRvciJdLCJpc3MiOiJodHRwczovL2FwaS50b3Bjb2Rlci1kZXYuY29tIiwiaGFuZGxlIjoic3VzZXIxIiwiZXhwIjoxNTEzNDAxMjU4LCJ1c2VySWQiOiI0MDE1MzkzOCIsImlhdCI6MTUwOTYzNzYzOSwiZW1haWwiOiJtdHdvbWV5QGJlYWtzdGFyLmNvbSIsImp0aSI6IjIzZTE2YjA2LWM1NGItNDNkNS1iY2E2LTg0ZGJiN2JiNDA0NyJ9.REds35fdBvY7CMDGGFyT_tOD7DxGimFfVzIyEy9YA0Y` or follow section **TC API Admin Token** to obtain a new one if expired
   - `KAFKA_URL`, `KAFKA_CLIENT_CERT` and `KAFKA_CLIENT_CERT_KEY` get from [tc-bus-api readme](https://github.com/topcoder-platform/tc-bus-api/tree/dev)
 - if you are willing to use notifications API which is hosted by the notifications server locally, you will need to use some patched `tc-core-library-js` module, which skips verification of user token. Because we don't know Topcoder `AUTH_SECRET` locally. So you can install this fork:
   ```

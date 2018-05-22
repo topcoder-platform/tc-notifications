@@ -21,7 +21,6 @@ module.exports = {
   VALID_ISSUERS: process.env.validIssuers ? process.env.validIssuers.replace(/\\"/g, '') : null,
   // keep it here for dev purposes, it's only needed by modified version of tc-core-library-js
   // which skips token validation when locally deployed
-  JWKS_URI: process.env.jwksUri,
 
   KAFKA_URL: process.env.KAFKA_URL,
   KAFKA_TOPIC_IGNORE_PREFIX: process.env.KAFKA_TOPIC_IGNORE_PREFIX,
