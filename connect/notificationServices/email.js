@@ -43,19 +43,16 @@ function handleScheduledEvents(events, setEventsStatus) {
 
     // TODO: consider using templating engine to format the bundle email
     // until there is Sendgrid support for loops in email templates
-    let emailBody = '<p>Your recent updates on Topcoder Connect</p></br>';
+    let emailBody = '<h3>Your recent updates on Topcoder Connect</h3>';
     const eventsByTopics = _.groupBy(userEvents, 'data.data.topicId');
+    emailBody += '<ul>';
     _.values(eventsByTopics).forEach((topicEvents) => {
-      emailBody += `<p><strong> ${topicEvents[0].data.data.topicTitle} </strong></p>`;
-      topicEvents.forEach(topicEvent => {
-        const auditData += `<em><small>By ${topicEvent.data.data.handle} at ${topicEvent.data.data.date}</small></em>`;
-        emailBody += `<p>${topicEvent.data.data.post} (${auditData})<p>`;
-        emailBody += '<br />';
-      });
-      // eslint-disable-next-line
-      emailBody += `<p><a href="http://www.connect.topcoder.com/projects/${topicEvents[0].data.data.projectId}#feed-${topicEvents[0].data.data.topicId}">Visit message</a> <p>`;
-      emailBody += '<br />';
+      emailBody += '<li>';
+      emailBody += `<a href="http://www.connect.topcoder.com/projects/${topicEvents[0].data.data.projectId}#feed-${topicEvents[0].data.data.topicId}> ${topicEvents[0].data.data.topicTitle} </a>`;
+      emailBody += `<span style="color:#777777"> - ${topicEvents.length} updates</span>`;
+      emailBody += '</li>';
     });
+    emailBody += '</ul>';
 
     // data property we define as an array of data from each individual event
     eventMessage.data = { notificationsHTML: emailBody };
