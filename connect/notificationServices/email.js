@@ -48,7 +48,7 @@ function handleScheduledEvents(events, setEventsStatus) {
     emailBody += '<ul>';
     _.values(eventsByTopics).forEach((topicEvents) => {
       emailBody += '<li>';
-      emailBody += `<a href="http://www.connect.topcoder.com/projects/${topicEvents[0].data.data.projectId}#feed-${topicEvents[0].data.data.topicId}> ${topicEvents[0].data.data.topicTitle} </a>`;
+      emailBody += `<a href="http://connect.topcoder.com/projects/${topicEvents[0].data.data.projectId}#feed-${topicEvents[0].data.data.topicId}"> ${topicEvents[0].data.data.topicTitle} </a>`;
       emailBody += `<span style="color:#777777"> - ${topicEvents.length} updates</span>`;
       emailBody += '</li>';
     });
