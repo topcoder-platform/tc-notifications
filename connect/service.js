@@ -1,9 +1,11 @@
 /**
  * Service to get data from TopCoder API
  */
+/* global M2m */
 const request = require('superagent');
-const config = require('config');
+const config = require('./config');
 const _ = require('lodash');
+const { logger } = require('../index');
 
 /**
  * Get project details
@@ -54,14 +56,14 @@ const getRoleMembers = (roleId) => {
         .set('authorization', `Bearer ${token}`)
         .then((res) => {
           if (!_.get(res, 'body.result.success')) {
-            throw new Error(`Failed to get role memebrs of role id: ${roleId}`);
+            throw new Error(`Failed to get role membrs of role id: ${roleId}`);
           }
           const members = _.get(res, 'body.result.content.subjects');
           return members;
         }).catch((err) => {
           const errorDetails = _.get(err, 'response.body.result.content.message');
           throw new Error(
-            `Failed to get role memebrs of role id: ${roleId}.` +
+            `Failed to get role membrs of role id: ${roleId}.` +
             (errorDetails ? ' Server response: ' + errorDetails : '')
           );
         });
@@ -82,6 +84,10 @@ const getRoleMembers = (roleId) => {
 const getUsersById = (ids) => {
   const query = _.map(ids, (id) => 'userId:' + id).join(' OR ');
   return M2m.getMachineToken(config.AUTH0_CLIENT_ID, config.AUTH0_CLIENT_SECRET)
+    .catch((err) => {
+      err.message = 'Error generating m2m token: ' + err.message;
+      throw err;
+    })
     .then((token) => {
       return request
       .get(`${config.TC_API_V3_BASE_URL}/members/_search?fields=userId,email,handle,firstName,lastName&query=${query}`)
@@ -89,22 +95,19 @@ const getUsersById = (ids) => {
       .set('authorization', `Bearer ${token}`)
       .then((res) => {
         if (!_.get(res, 'body.result.success')) {
-          throw new Error(`Failed to get users by id: ${ids}`);
+          throw new Error(`Failed to get users by ids: ${ids}`);
         }
 
         const users = _.get(res, 'body.result.content');
         return users;
       }).catch((err) => {
-        const errorDetails = _.get(err, 'response.body.result.content.message');
+        const errorDetails = _.get(err, 'response.body.result.content.message')
+          || `Status code: ${err.response.statusCode}`;
         throw new Error(
           `Failed to get users by ids: ${ids}.` +
           (errorDetails ? ' Server response: ' + errorDetails : '')
         );
       });
-    })
-    .catch((err) => {
-      err.message = 'Error generating m2m token: ' + err.message;
-      throw err;
     });
 };
 
@@ -118,6 +121,10 @@ const getUsersById = (ids) => {
 const getUsersByHandle = (handles) => {
   const query = _.map(handles, (handle) => 'handle:' + handle).join(' OR ');
   return M2m.getMachineToken(config.AUTH0_CLIENT_ID, config.AUTH0_CLIENT_SECRET)
+    .catch((err) => {
+      err.message = 'Error generating m2m token: ' + err.message;
+      throw err;
+    })
     .then((token) => {
       return request
       .get(`${config.TC_API_V3_BASE_URL}/members/_search?fields=userId,handle,firstName,lastName&query=${query}`)
@@ -131,16 +138,13 @@ const getUsersByHandle = (handles) => {
 
         return users;
       }).catch((err) => {
-        const errorDetails = _.get(err, 'response.body.result.content.message');
+        const errorDetails = _.get(err, 'response.body.result.content.message')
+          || `Status code: ${err.response.statusCode}`;
         throw new Error(
           `Failed to get users by handles: ${handles}.` +
           (errorDetails ? ' Server response: ' + errorDetails : '')
         );
       });
-    })
-    .catch((err) => {
-      err.message = 'Error generating m2m token: ' + err.message;
-      throw err;
     });
 };
 
@@ -162,7 +166,6 @@ const getTopic = (topicId, logger) => {
           if (!_.get(res, 'body.result.success')) {
             throw new Error(`Failed to get topic details of topic id: ${topicId}`);
           }
-
           return _.get(res, 'body.result.content');
         }).catch((err) => {
           if (logger) {

@@ -7,6 +7,11 @@ const config = require('config');
 const _ = require('lodash');
 const errors = require('./src/common/errors');
 const tcCoreLibAuth = require('tc-core-library-js').auth;
+// some useful components to exposure
+const logger = require('./src/common/logger');
+const busService = require('./src/services/BusAPI');
+const eventScheduler = require('./src/services/EventScheduler');
+const notificationService = require('./src/services/NotificationService');
 global.M2m = tcCoreLibAuth.m2m(config);
 
 // key is topic name, e.g. 'notifications.connect.project.created';
@@ -16,6 +21,17 @@ global.M2m = tcCoreLibAuth.m2m(config);
 // the message is JSON event message,
 // the callback is function(error, userIds), where userIds is an array of user ids to receive notifications
 const handlers = {};
+
+/**
+ * List of notification service handlers which will process notifications
+ *
+ * Each item is the function of the next signature
+ * function(topicName, messageJSON, notification)
+ * - {String} topicName    topic name (event type)
+ * - {Object} messageJSON  message raw JSON
+ * - {Object} notification pre-processed notification object
+ */
+const notificationServiceHandlers = [];
 
 /**
  * Set configuration, the default config will be overridden by the given config,
@@ -48,6 +64,18 @@ function addTopicHandler(topic, handler) {
 }
 
 /**
+ * Adds notification service handler
+ *
+ * @param {Function} handler notification service handler
+ */
+function addNotificationServiceHandler(handler) {
+  if (!handler) {
+    throw new errors.ValidationError('Missing notification service handler.');
+  }
+  notificationServiceHandlers.push(handler);
+}
+
+/**
  * Remove topic handler for topic.
  * @param {String} topic the topic name
  */
@@ -75,7 +103,7 @@ function start() {
   }
   // load app only after config is set
   const app = require('./src/app');
-  app.start(handlers);
+  app.start(handlers, notificationServiceHandlers);
 }
 
 /**
@@ -96,4 +124,11 @@ module.exports = {
   getAllHandlers,
   start,
   initDatabase,
+  addNotificationServiceHandler,
+
+  // exposure some useful components
+  logger,
+  busService,
+  eventScheduler,
+  notificationService,
 };

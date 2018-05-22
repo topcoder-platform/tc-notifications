@@ -1,44 +1,50 @@
 {
-	"id": "be0fac1b-3d54-0215-59e4-ed1be841a89e",
+	"id": "3f30c4e3-3b7a-491b-bdb2-6629d081a452",
 	"name": "tc-notification-server-api",
 	"description": "",
+	"auth": null,
+	"events": null,
+	"variables": null,
 	"order": [
-		"e16cc911-9393-9f47-cce4-3ef583449fba",
-		"6e2f5e53-61db-bb45-f7ae-d0fc9883f92b",
-		"919e4314-ca62-918b-e790-7e09afd4cb9b",
-		"dc85dae6-5c2c-114a-7b29-2ddbb0310c06",
-		"4d9e3771-b9d3-a186-45cd-b57b665b4647",
-		"c8ddeee1-2851-b571-08bd-95b822632e40"
+		"19332a51-03e8-4f5c-8f85-4d28d6dfe6f4",
+		"543cab06-2c7d-4aed-8cf3-0808463254d5",
+		"76779830-a8a4-4636-8c03-1801b3d1863d",
+		"cb2299a5-dac7-4c40-80c4-7b1694138354",
+		"d57ba947-a5e7-410a-b978-76882f33c86e",
+		"fce69847-5bf8-4b07-bcaf-6352db4ba923"
+	],
+	"folders_order": [
+		"dbebd550-6c33-4778-b467-d56decf16c91"
 	],
 	"folders": [
 		{
+			"id": "dbebd550-6c33-4778-b467-d56decf16c91",
 			"name": "failure",
 			"description": "",
-			"collectionId": "be0fac1b-3d54-0215-59e4-ed1be841a89e",
+			"auth": null,
+			"events": null,
+			"collection": "3f30c4e3-3b7a-491b-bdb2-6629d081a452",
+			"folder": null,
 			"order": [
-				"36087c50-2265-6db2-7f23-d5607006bb6c",
-				"99bd0688-cdd3-9136-b64e-f1706884fced",
-				"0c7f4099-db8a-5772-9627-335600a8d70e",
-				"dac3727a-ed58-854d-73a2-ab8d5a2256bb",
-				"9c272f57-3621-7f7b-a6a9-3a26969dd4d1",
-				"f8bfa330-ac2e-f0fa-dae8-bb2bcdb3819f",
-				"0f6ffaad-aadb-8ad1-a0b1-16c4b1d87718"
+				"1b3b6480-ea94-4027-8898-f82f28e2bea6",
+				"59fc9f2b-28c5-4cff-b21b-11ab51bf67d8",
+				"cbc03cb1-6dfe-43fd-8e99-8c56923c2978",
+				"d293d2c5-230d-4f34-8c97-1adc1f2f89b4",
+				"da23d550-55b3-4f7d-9131-735956d62f6d",
+				"f2246cf7-7aae-4ea0-9d92-1d932d340302",
+				"f3f3a847-46f6-4059-b167-b436078fb112"
 			],
-			"owner": 0,
-			"folders_order": [],
-			"id": "c54ef790-e9db-6bac-432b-80f10e9fd76a"
+			"folders_order": []
 		}
 	],
-	"folders_order": [
-		"c54ef790-e9db-6bac-432b-80f10e9fd76a"
-	],
-	"timestamp": 1507789221862,
-	"owner": 0,
-	"public": false,
 	"requests": [
 		{
-			"id": "0c7f4099-db8a-5772-9627-335600a8d70e",
-			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
+			"id": "19332a51-03e8-4f5c-8f85-4d28d6dfe6f4",
+			"name": "getSettings",
+			"url": "{{URL}}/settings",
+			"description": "",
+			"data": [],
+			"dataMode": "raw",
 			"headerData": [
 				{
 					"key": "Content-Type",
@@ -53,8 +59,39 @@
 					"enabled": true
 				}
 			],
-			"url": "{{URL}}/notifications?offset=0&limit=20&type=notifications.connect.project.updated&read=yes",
-			"folder": "c54ef790-e9db-6bac-432b-80f10e9fd76a",
+			"method": "GET",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": null,
+			"folder": null,
+			"rawModeData": "",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
+			"pathVariables": {}
+		},
+		{
+			"id": "1b3b6480-ea94-4027-8898-f82f28e2bea6",
+			"name": "listNotifications - invalid read filter",
+			"url": "{{URL}}/list?offset=0&limit=20&type=notifications.connect.project.updated&read=yes",
+			"description": "",
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{TOKEN}}",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"method": "GET",
+			"pathVariableData": [],
 			"queryParams": [
 				{
 					"key": "offset",
@@ -85,471 +122,113 @@
 					"enabled": true
 				}
 			],
-			"preRequestScript": null,
-			"pathVariables": {},
-			"pathVariableData": [],
-			"method": "GET",
-			"data": [],
-			"dataMode": "raw",
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1509801563428,
-			"name": "listNotifications - invalid read filter",
-			"description": "",
-			"collectionId": "be0fac1b-3d54-0215-59e4-ed1be841a89e",
-			"responses": [],
+			"auth": null,
+			"events": null,
+			"folder": "dbebd550-6c33-4778-b467-d56decf16c91",
 			"rawModeData": "",
-			"collection_id": "be0fac1b-3d54-0215-59e4-ed1be841a89e"
-		},
-		{
-			"id": "0f6ffaad-aadb-8ad1-a0b1-16c4b1d87718",
 			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
-			"headerData": [
-				{
-					"key": "Content-Type",
-					"value": "application/json",
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "Authorization",
-					"value": "Bearer {{TOKEN}}",
-					"description": "",
-					"enabled": true
-				}
-			],
-			"url": "{{URL}}/notificationsettings",
-			"folder": "c54ef790-e9db-6bac-432b-80f10e9fd76a",
-			"queryParams": [],
-			"preRequestScript": null,
-			"pathVariables": {},
-			"pathVariableData": [],
-			"method": "PUT",
-			"data": [],
-			"dataMode": "raw",
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1509801716547,
-			"name": "updateSettings - invalid body",
-			"description": "",
-			"collectionId": "be0fac1b-3d54-0215-59e4-ed1be841a89e",
-			"responses": [],
-			"rawModeData": "[\n\t{\n\t\t\"wrong\": \"notifications.connect.project.created\",\n\t\t\"deliveryMethod\": 123,\n\t\t\"value\": \"on\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.project.created\",\n\t\t\"deliveryMethod\": \"sms\",\n\t\t\"value\": \"off\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.project.created\",\n\t\t\"deliveryMethod\": \"web\",\n\t\t\"value\": \"off\"\n\t},\n\t{\n\t\t\"topic\": \"notifications.connect.message.posted\",\n\t\t\"deliveryMethod\": \"email\",\n\t\t\"value\": \"off\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.message.posted\",\n\t\t\"deliveryMethod\": \"sms\",\n\t\t\"value\": \"on\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.message.posted\",\n\t\t\"deliveryMethod\": \"web\",\n\t\t\"value\": \"on\"\n\t}\n]",
-			"collection_id": "be0fac1b-3d54-0215-59e4-ed1be841a89e"
+			"pathVariables": {}
 		},
 		{
-			"id": "36087c50-2265-6db2-7f23-d5607006bb6c",
-			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
-			"headerData": [
-				{
-					"key": "Content-Type",
-					"value": "application/json",
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "Authorization",
-					"value": "Bearer {{TOKEN}}",
-					"description": "",
-					"enabled": true
-				}
-			],
-			"url": "{{URL}}/notifications?offset=-1&limit=20&type=notifications.connect.project.updated",
-			"folder": "c54ef790-e9db-6bac-432b-80f10e9fd76a",
-			"queryParams": [
-				{
-					"key": "offset",
-					"value": "-1",
-					"equals": true,
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "limit",
-					"value": "20",
-					"equals": true,
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "type",
-					"value": "notifications.connect.project.updated",
-					"equals": true,
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "read",
-					"value": "false",
-					"equals": true,
-					"description": "",
-					"enabled": false
-				}
-			],
-			"preRequestScript": null,
-			"pathVariables": {},
-			"pathVariableData": [],
-			"method": "GET",
-			"data": [],
-			"dataMode": "raw",
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1509801475461,
-			"name": "listNotifications - invalid offset",
-			"description": "",
-			"collectionId": "be0fac1b-3d54-0215-59e4-ed1be841a89e",
-			"responses": [],
-			"rawModeData": "",
-			"collection_id": "be0fac1b-3d54-0215-59e4-ed1be841a89e"
-		},
-		{
-			"id": "4d9e3771-b9d3-a186-45cd-b57b665b4647",
-			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
-			"headerData": [
-				{
-					"key": "Content-Type",
-					"value": "application/json",
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "Authorization",
-					"value": "Bearer {{TOKEN}}",
-					"description": "",
-					"enabled": true
-				}
-			],
-			"url": "{{URL}}/notificationsettings",
-			"queryParams": [],
-			"preRequestScript": null,
-			"pathVariables": {},
-			"pathVariableData": [],
-			"method": "GET",
-			"data": [],
-			"dataMode": "raw",
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1509793503637,
-			"name": "getSettings",
-			"description": "",
-			"collectionId": "be0fac1b-3d54-0215-59e4-ed1be841a89e",
-			"responses": [],
-			"rawModeData": "",
-			"collection_id": "be0fac1b-3d54-0215-59e4-ed1be841a89e"
-		},
-		{
-			"id": "6e2f5e53-61db-bb45-f7ae-d0fc9883f92b",
-			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
-			"headerData": [
-				{
-					"key": "Content-Type",
-					"value": "application/json",
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "Authorization",
-					"value": "Bearer {{TOKEN}}",
-					"description": "",
-					"enabled": true
-				}
-			],
-			"url": "{{URL}}/notifications?offset=0&limit=20",
-			"queryParams": [
-				{
-					"key": "offset",
-					"value": "0",
-					"equals": true,
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "limit",
-					"value": "20",
-					"equals": true,
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "type",
-					"value": "notifications.connect.project.updated",
-					"equals": true,
-					"description": "",
-					"enabled": false
-				},
-				{
-					"key": "read",
-					"value": "false",
-					"equals": true,
-					"description": "",
-					"enabled": false
-				}
-			],
-			"preRequestScript": null,
-			"pathVariables": {},
-			"pathVariableData": [],
-			"method": "GET",
-			"data": [],
-			"dataMode": "raw",
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1510707608411,
-			"name": "listNotifications",
-			"description": "",
-			"collectionId": "be0fac1b-3d54-0215-59e4-ed1be841a89e",
-			"responses": [],
-			"rawModeData": ""
-		},
-		{
-			"id": "919e4314-ca62-918b-e790-7e09afd4cb9b",
-			"headers": "//Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
-			"headerData": [
-				{
-					"key": "Content-Type",
-					"value": "application/json",
-					"description": "",
-					"enabled": false
-				},
-				{
-					"key": "Authorization",
-					"value": "Bearer {{TOKEN}}",
-					"description": "",
-					"enabled": true
-				}
-			],
-			"url": "{{URL}}/notifications/1/read",
-			"queryParams": [],
-			"preRequestScript": null,
-			"pathVariables": {},
-			"pathVariableData": [],
-			"method": "PUT",
-			"data": [],
-			"dataMode": "raw",
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1509786004930,
-			"name": "markAsRead",
-			"description": "",
-			"collectionId": "be0fac1b-3d54-0215-59e4-ed1be841a89e",
-			"responses": [],
-			"rawModeData": "",
-			"collection_id": "be0fac1b-3d54-0215-59e4-ed1be841a89e"
-		},
-		{
-			"id": "99bd0688-cdd3-9136-b64e-f1706884fced",
-			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
-			"headerData": [
-				{
-					"key": "Content-Type",
-					"value": "application/json",
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "Authorization",
-					"value": "Bearer {{TOKEN}}",
-					"description": "",
-					"enabled": true
-				}
-			],
-			"url": "{{URL}}/notifications?offset=0&limit=abc&type=notifications.connect.project.updated",
-			"folder": "c54ef790-e9db-6bac-432b-80f10e9fd76a",
-			"queryParams": [
-				{
-					"key": "offset",
-					"value": "0",
-					"equals": true,
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "limit",
-					"value": "abc",
-					"equals": true,
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "type",
-					"value": "notifications.connect.project.updated",
-					"equals": true,
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "read",
-					"value": "false",
-					"equals": true,
-					"description": "",
-					"enabled": false
-				}
-			],
-			"preRequestScript": null,
-			"pathVariables": {},
-			"pathVariableData": [],
-			"method": "GET",
-			"data": [],
-			"dataMode": "raw",
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1509801518188,
-			"name": "listNotifications - invalid limit",
-			"description": "",
-			"collectionId": "be0fac1b-3d54-0215-59e4-ed1be841a89e",
-			"responses": [],
-			"rawModeData": "",
-			"collection_id": "be0fac1b-3d54-0215-59e4-ed1be841a89e"
-		},
-		{
-			"id": "9c272f57-3621-7f7b-a6a9-3a26969dd4d1",
-			"headers": "//Content-Type: application/json\n",
-			"headerData": [
-				{
-					"key": "Content-Type",
-					"value": "application/json",
-					"description": "",
-					"enabled": false
-				}
-			],
-			"url": "{{URL}}/notifications/read",
-			"folder": "c54ef790-e9db-6bac-432b-80f10e9fd76a",
-			"queryParams": [],
-			"preRequestScript": null,
-			"pathVariables": {},
-			"pathVariableData": [],
-			"method": "PUT",
-			"data": [],
-			"dataMode": "raw",
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1509801636468,
-			"name": "markAllRead - missing token",
-			"description": "",
-			"collectionId": "be0fac1b-3d54-0215-59e4-ed1be841a89e",
-			"responses": [],
-			"rawModeData": "",
-			"collection_id": "be0fac1b-3d54-0215-59e4-ed1be841a89e"
-		},
-		{
-			"id": "c8ddeee1-2851-b571-08bd-95b822632e40",
-			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
-			"headerData": [
-				{
-					"key": "Content-Type",
-					"value": "application/json",
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "Authorization",
-					"value": "Bearer {{TOKEN}}",
-					"description": "",
-					"enabled": true
-				}
-			],
-			"url": "{{URL}}/notificationsettings",
-			"queryParams": [],
-			"preRequestScript": null,
-			"pathVariables": {},
-			"pathVariableData": [],
-			"method": "PUT",
-			"data": [],
-			"dataMode": "raw",
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1509794397038,
-			"name": "updateSettings",
-			"description": "",
-			"collectionId": "be0fac1b-3d54-0215-59e4-ed1be841a89e",
-			"responses": [],
-			"rawModeData": "[\n\t{\n\t\t\"topic\": \"notifications.connect.project.created\",\n\t\t\"deliveryMethod\": \"email\",\n\t\t\"value\": \"on\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.project.created\",\n\t\t\"deliveryMethod\": \"sms\",\n\t\t\"value\": \"off\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.project.created\",\n\t\t\"deliveryMethod\": \"web\",\n\t\t\"value\": \"off\"\n\t},\n\t{\n\t\t\"topic\": \"notifications.connect.message.posted\",\n\t\t\"deliveryMethod\": \"email\",\n\t\t\"value\": \"off\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.message.posted\",\n\t\t\"deliveryMethod\": \"sms\",\n\t\t\"value\": \"on\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.message.posted\",\n\t\t\"deliveryMethod\": \"web\",\n\t\t\"value\": \"on\"\n\t}\n]",
-			"collection_id": "be0fac1b-3d54-0215-59e4-ed1be841a89e"
-		},
-		{
-			"id": "dac3727a-ed58-854d-73a2-ab8d5a2256bb",
-			"headers": "//Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
-			"headerData": [
-				{
-					"key": "Content-Type",
-					"value": "application/json",
-					"description": "",
-					"enabled": false
-				},
-				{
-					"key": "Authorization",
-					"value": "Bearer {{TOKEN}}",
-					"description": "",
-					"enabled": true
-				}
-			],
-			"url": "{{URL}}/notifications/1111111/read",
-			"folder": "c54ef790-e9db-6bac-432b-80f10e9fd76a",
-			"queryParams": [],
-			"preRequestScript": null,
-			"pathVariables": {},
-			"pathVariableData": [],
-			"method": "PUT",
-			"data": [],
-			"dataMode": "raw",
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1509801601644,
-			"name": "markAsRead - not found",
-			"description": "",
-			"collectionId": "be0fac1b-3d54-0215-59e4-ed1be841a89e",
-			"responses": [],
-			"rawModeData": "",
-			"collection_id": "be0fac1b-3d54-0215-59e4-ed1be841a89e"
-		},
-		{
-			"id": "dc85dae6-5c2c-114a-7b29-2ddbb0310c06",
-			"headers": "//Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
-			"headerData": [
-				{
-					"key": "Content-Type",
-					"value": "application/json",
-					"description": "",
-					"enabled": false
-				},
-				{
-					"key": "Authorization",
-					"value": "Bearer {{TOKEN}}",
-					"description": "",
-					"enabled": true
-				}
-			],
-			"url": "{{URL}}/notifications/read",
-			"queryParams": [],
-			"preRequestScript": null,
-			"pathVariables": {},
-			"pathVariableData": [],
-			"method": "PUT",
-			"data": [],
-			"dataMode": "raw",
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1509793307190,
+			"id": "543cab06-2c7d-4aed-8cf3-0808463254d5",
 			"name": "markAllRead",
+			"url": "{{URL}}/read",
 			"description": "",
-			"collectionId": "be0fac1b-3d54-0215-59e4-ed1be841a89e",
-			"responses": [],
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": false
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{TOKEN}}",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"method": "PUT",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": null,
+			"folder": null,
 			"rawModeData": "",
-			"collection_id": "be0fac1b-3d54-0215-59e4-ed1be841a89e"
+			"headers": "//Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
+			"pathVariables": {}
 		},
 		{
-			"id": "e16cc911-9393-9f47-cce4-3ef583449fba",
-			"headers": "Content-Type: application/json\nauthorization: Bearer {{TC_ADMIN_TOKEN}}\n",
+			"id": "59fc9f2b-28c5-4cff-b21b-11ab51bf67d8",
+			"name": "getSettings - invalid token",
+			"url": "{{URL}}/settings",
+			"description": "",
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer invalid",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"method": "GET",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": null,
+			"folder": "dbebd550-6c33-4778-b467-d56decf16c91",
+			"rawModeData": "",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer invalid\n",
+			"pathVariables": {}
+		},
+		{
+			"id": "76779830-a8a4-4636-8c03-1801b3d1863d",
+			"name": "markAsRead",
+			"url": "{{URL}}/1/read",
+			"description": "",
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": false
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{TOKEN}}",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"method": "PUT",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": null,
+			"folder": null,
+			"rawModeData": "",
+			"headers": "//Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
+			"pathVariables": {}
+		},
+		{
+			"id": "cb2299a5-dac7-4c40-80c4-7b1694138354",
+			"name": "TC API - get project",
+			"url": "https://api.topcoder-dev.com/v4/projects/1936",
+			"description": "",
+			"data": [],
+			"dataMode": "raw",
 			"headerData": [
 				{
 					"key": "Content-Type",
@@ -564,31 +243,26 @@
 					"enabled": true
 				}
 			],
-			"url": "https://api.topcoder-dev.com/v4/projects/1936",
-			"queryParams": [],
-			"preRequestScript": null,
-			"pathVariables": {},
-			"pathVariableData": [],
 			"method": "GET",
-			"data": [],
-			"dataMode": "raw",
-			"version": 2,
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1509766333902,
-			"name": "TC API - get project",
-			"description": "",
-			"collectionId": "be0fac1b-3d54-0215-59e4-ed1be841a89e",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": null,
+			"folder": null,
 			"responses": [
 				{
+					"id": "ae658c70-e29d-4d49-aefd-944af0e4f811",
+					"name": "test111",
 					"status": "",
+					"mime": "",
+					"language": "json",
+					"text": "{\"id\":\"95744bd2-2830-4014-8885-7182a6225953\",\"version\":\"v4\",\"result\":{\"success\":true,\"status\":200,\"content\":{\"id\":1936,\"directProjectId\":12147,\"billingAccountId\":null,\"name\":\"Test-prj\",\"description\":\"Test description\",\"external\":null,\"bookmarks\":[],\"estimatedPrice\":null,\"actualPrice\":null,\"terms\":[],\"type\":\"app_dev\",\"status\":\"draft\",\"details\":{\"products\":[\"api_dev\"],\"appDefinition\":{\"primaryTarget\":\"desktop\",\"goal\":{\"value\":\"Goal\"},\"users\":{\"value\":\"Developers\"},\"notes\":\"Notes\"},\"utm\":{},\"hideDiscussions\":true},\"challengeEligibility\":[],\"cancelReason\":null,\"createdAt\":\"2017-11-01T15:45:51.000Z\",\"updatedAt\":\"2017-11-01T15:45:51.000Z\",\"createdBy\":305384,\"updatedBy\":305384,\"members\":[{\"id\":2997,\"userId\":305384,\"role\":\"customer\",\"isPrimary\":true,\"createdAt\":\"2017-11-01T15:45:51.000Z\",\"updatedAt\":\"2017-11-01T15:45:51.000Z\",\"createdBy\":305384,\"updatedBy\":305384,\"projectId\":1936}],\"attachments\":[]},\"metadata\":{\"totalCount\":1}}}",
 					"responseCode": {
 						"code": 200,
 						"name": "OK",
 						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
 					},
-					"time": 760,
+					"requestObject": null,
 					"headers": [
 						{
 							"name": "access-control-allow-credentials",
@@ -664,46 +338,52 @@
 						}
 					],
 					"cookies": [],
-					"mime": "",
-					"text": "{\"id\":\"95744bd2-2830-4014-8885-7182a6225953\",\"version\":\"v4\",\"result\":{\"success\":true,\"status\":200,\"content\":{\"id\":1936,\"directProjectId\":12147,\"billingAccountId\":null,\"name\":\"Test-prj\",\"description\":\"Test description\",\"external\":null,\"bookmarks\":[],\"estimatedPrice\":null,\"actualPrice\":null,\"terms\":[],\"type\":\"app_dev\",\"status\":\"draft\",\"details\":{\"products\":[\"api_dev\"],\"appDefinition\":{\"primaryTarget\":\"desktop\",\"goal\":{\"value\":\"Goal\"},\"users\":{\"value\":\"Developers\"},\"notes\":\"Notes\"},\"utm\":{},\"hideDiscussions\":true},\"challengeEligibility\":[],\"cancelReason\":null,\"createdAt\":\"2017-11-01T15:45:51.000Z\",\"updatedAt\":\"2017-11-01T15:45:51.000Z\",\"createdBy\":305384,\"updatedBy\":305384,\"members\":[{\"id\":2997,\"userId\":305384,\"role\":\"customer\",\"isPrimary\":true,\"createdAt\":\"2017-11-01T15:45:51.000Z\",\"updatedAt\":\"2017-11-01T15:45:51.000Z\",\"createdBy\":305384,\"updatedBy\":305384,\"projectId\":1936}],\"attachments\":[]},\"metadata\":{\"totalCount\":1}}}",
-					"language": "json",
-					"rawDataType": "text",
-					"previewType": "text",
-					"searchResultScrolledTo": -1,
-					"forceNoPretty": false,
-					"write": true,
-					"empty": false,
-					"failed": false,
-					"name": "test111",
-					"id": "24a44c8d-b9d3-e6ab-8439-62625dafbd07",
-					"request": {
-						"url": "http://api.topcoder-dev.com/v4/projects/1936",
-						"pathVariables": {},
-						"pathVariableData": [],
-						"queryParams": [],
-						"headerData": [
-							{
-								"key": "authorization",
-								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJUb3Bjb2RlciBVc2VyIiwiYWRtaW5pc3RyYXRvciJdLCJpc3MiOiJodHRwczovL2FwaS50b3Bjb2Rlci1kZXYuY29tIiwiaGFuZGxlIjoic3VzZXIxIiwiZXhwIjoxNTA5NTk3MjM4LCJ1c2VySWQiOiI0MDE1MzkzOCIsImlhdCI6MTUwOTU5NjYzOCwiZW1haWwiOiJtdHdvbWV5QGJlYWtzdGFyLmNvbSIsImp0aSI6ImZmNWY3YWEzLWE0MDktNDE4Ny1hYTBjLWZhZDVmMjI1YTE0NyJ9.WcDvq6bS2R1CMl1YWFzyiSjo0C801RNNS6ACqVRWqWw",
-								"description": "",
-								"enabled": true,
-								"warning": ""
-							}
-						],
-						"headers": "authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJUb3Bjb2RlciBVc2VyIiwiYWRtaW5pc3RyYXRvciJdLCJpc3MiOiJodHRwczovL2FwaS50b3Bjb2Rlci1kZXYuY29tIiwiaGFuZGxlIjoic3VzZXIxIiwiZXhwIjoxNTA5NTk3MjM4LCJ1c2VySWQiOiI0MDE1MzkzOCIsImlhdCI6MTUwOTU5NjYzOCwiZW1haWwiOiJtdHdvbWV5QGJlYWtzdGFyLmNvbSIsImp0aSI6ImZmNWY3YWEzLWE0MDktNDE4Ny1hYTBjLWZhZDVmMjI1YTE0NyJ9.WcDvq6bS2R1CMl1YWFzyiSjo0C801RNNS6ACqVRWqWw\n",
-						"data": "",
-						"method": "GET",
-						"dataMode": "raw"
-					},
-					"owner": 0
+					"request": "cb2299a5-dac7-4c40-80c4-7b1694138354",
+					"collection": "3f30c4e3-3b7a-491b-bdb2-6629d081a452"
 				}
 			],
 			"rawModeData": "",
-			"collection_id": "be0fac1b-3d54-0215-59e4-ed1be841a89e"
+			"headers": "Content-Type: application/json\nauthorization: Bearer {{TC_ADMIN_TOKEN}}\n",
+			"pathVariables": {}
 		},
 		{
-			"id": "f8bfa330-ac2e-f0fa-dae8-bb2bcdb3819f",
-			"headers": "Content-Type: application/json\nAuthorization: Bearer invalid\n",
+			"id": "cbc03cb1-6dfe-43fd-8e99-8c56923c2978",
+			"name": "markAsRead - not found",
+			"url": "{{URL}}/1111111/read",
+			"description": "",
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": false
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{TOKEN}}",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"method": "PUT",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": null,
+			"folder": "dbebd550-6c33-4778-b467-d56decf16c91",
+			"rawModeData": "",
+			"headers": "//Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
+			"pathVariables": {}
+		},
+		{
+			"id": "d293d2c5-230d-4f34-8c97-1adc1f2f89b4",
+			"name": "listNotifications - invalid limit",
+			"url": "{{URL}}/list?offset=0&limit=abc&type=notifications.connect.project.updated",
+			"description": "",
+			"data": [],
+			"dataMode": "raw",
 			"headerData": [
 				{
 					"key": "Content-Type",
@@ -713,30 +393,256 @@
 				},
 				{
 					"key": "Authorization",
-					"value": "Bearer invalid",
+					"value": "Bearer {{TOKEN}}",
 					"description": "",
 					"enabled": true
 				}
 			],
-			"url": "{{URL}}/notificationsettings",
-			"folder": "c54ef790-e9db-6bac-432b-80f10e9fd76a",
-			"queryParams": [],
-			"preRequestScript": null,
-			"pathVariables": {},
-			"pathVariableData": [],
 			"method": "GET",
+			"pathVariableData": [],
+			"queryParams": [
+				{
+					"key": "offset",
+					"value": "0",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "limit",
+					"value": "abc",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "type",
+					"value": "notifications.connect.project.updated",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "read",
+					"value": "false",
+					"equals": true,
+					"description": "",
+					"enabled": false
+				}
+			],
+			"auth": null,
+			"events": null,
+			"folder": "dbebd550-6c33-4778-b467-d56decf16c91",
+			"rawModeData": "",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
+			"pathVariables": {}
+		},
+		{
+			"id": "d57ba947-a5e7-410a-b978-76882f33c86e",
+			"name": "updateSettings",
+			"url": "{{URL}}/settings",
+			"description": "",
 			"data": [],
 			"dataMode": "raw",
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1509801668820,
-			"name": "getSettings - invalid token",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{TOKEN}}",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"method": "PUT",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": null,
+			"folder": null,
+			"rawModeData": "{\n    \"notifications\": {\n        \"notifications.connect.project.active\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.updated\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.member.left\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.paused\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.approved\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.fileUploaded\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.canceled\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.topic.created\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.member.copilotJoined\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.post.deleted\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.created\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.member.assignedAsOwner\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.completed\": {\n            \"web\": {\n                \"enabled\": \"yes\"\n            },\n            \"email\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.topic.deleted\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.post.created\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.member.joined\": {\n            \"web\": {\n                \"enabled\": \"yes\"\n            },\n            \"email\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.member.removed\": {\n            \"web\": {\n                \"enabled\": \"yes\"\n            },\n            \"email\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.specificationModified\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.member.managerJoined\": {\n            \"web\": {\n                \"enabled\": \"yes\"\n            },\n            \"email\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.submittedForReview\": {\n            \"web\": {\n                \"enabled\": \"yes\"\n            },\n            \"email\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.linkCreated\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.post.edited\": {\n            \"web\": {\n                \"enabled\": \"yes\"\n            },\n            \"email\": {\n                \"enabled\": \"yes\"\n            }\n        }\n    },\n    \"services\": {\n        \"email\": {\n            \"bundlePeriod\": \"every10minutes\"\n        }\n    }\n}",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
+			"pathVariables": {}
+		},
+		{
+			"id": "da23d550-55b3-4f7d-9131-735956d62f6d",
+			"name": "markAllRead - missing token",
+			"url": "{{URL}}/read",
 			"description": "",
-			"collectionId": "be0fac1b-3d54-0215-59e4-ed1be841a89e",
-			"responses": [],
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": false
+				}
+			],
+			"method": "PUT",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": null,
+			"folder": "dbebd550-6c33-4778-b467-d56decf16c91",
 			"rawModeData": "",
-			"collection_id": "be0fac1b-3d54-0215-59e4-ed1be841a89e"
+			"headers": "//Content-Type: application/json\n",
+			"pathVariables": {}
+		},
+		{
+			"id": "f2246cf7-7aae-4ea0-9d92-1d932d340302",
+			"name": "updateSettings - invalid body",
+			"url": "{{URL}}/settings",
+			"description": "",
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{TOKEN}}",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"method": "PUT",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": null,
+			"folder": "dbebd550-6c33-4778-b467-d56decf16c91",
+			"rawModeData": "[\n\t{\n\t\t\"wrong\": \"notifications.connect.project.created\",\n\t\t\"deliveryMethod\": 123,\n\t\t\"value\": \"on\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.project.created\",\n\t\t\"deliveryMethod\": \"sms\",\n\t\t\"value\": \"off\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.project.created\",\n\t\t\"deliveryMethod\": \"web\",\n\t\t\"value\": \"off\"\n\t},\n\t{\n\t\t\"topic\": \"notifications.connect.message.posted\",\n\t\t\"deliveryMethod\": \"email\",\n\t\t\"value\": \"off\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.message.posted\",\n\t\t\"deliveryMethod\": \"sms\",\n\t\t\"value\": \"on\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.message.posted\",\n\t\t\"deliveryMethod\": \"web\",\n\t\t\"value\": \"on\"\n\t}\n]",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
+			"pathVariables": {}
+		},
+		{
+			"id": "f3f3a847-46f6-4059-b167-b436078fb112",
+			"name": "listNotifications - invalid offset",
+			"url": "{{URL}}/list?offset=-1&limit=20&type=notifications.connect.project.updated",
+			"description": "",
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{TOKEN}}",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"method": "GET",
+			"pathVariableData": [],
+			"queryParams": [
+				{
+					"key": "offset",
+					"value": "-1",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "limit",
+					"value": "20",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "type",
+					"value": "notifications.connect.project.updated",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "read",
+					"value": "false",
+					"equals": true,
+					"description": "",
+					"enabled": false
+				}
+			],
+			"auth": null,
+			"events": null,
+			"folder": "dbebd550-6c33-4778-b467-d56decf16c91",
+			"rawModeData": "",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
+			"pathVariables": {}
+		},
+		{
+			"id": "fce69847-5bf8-4b07-bcaf-6352db4ba923",
+			"name": "listNotifications",
+			"url": "{{URL}}/list?offset=0&limit=20",
+			"description": "",
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{TOKEN}}",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"method": "GET",
+			"pathVariableData": [],
+			"queryParams": [
+				{
+					"key": "offset",
+					"value": "0",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "limit",
+					"value": "20",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "type",
+					"value": "notifications.connect.project.updated",
+					"equals": true,
+					"description": "",
+					"enabled": false
+				},
+				{
+					"key": "read",
+					"value": "false",
+					"equals": true,
+					"description": "",
+					"enabled": false
+				}
+			],
+			"auth": null,
+			"events": null,
+			"folder": null,
+			"rawModeData": "",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
+			"pathVariables": {}
 		}
 	]
 }
