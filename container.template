@@ -1,0 +1,136 @@
+{
+    "name": "%s",
+    "image": "%s.dkr.ecr.%s.amazonaws.com/%s:%s",
+    "essential": true,
+    "memory": 500,
+    "cpu": 100,
+    "environment": [
+      {
+        "name": "ENV",
+        "value": "%s"
+      },
+      {
+        "name": "KAFKA_CLIENT_CERT",
+        "value": "%s"
+      },
+      {
+        "name": "KAFKA_CLIENT_CERT_KEY",
+        "value": "%s"
+      },
+      {
+        "name": "KAFKA_GROUP_ID",
+        "value": "%s"
+      },
+      {
+        "name": "KAFKA_TOPIC_IGNORE_PREFIX",
+        "value": "%s"
+      },
+      {
+        "name": "KAFKA_URL",
+        "value": "%s"
+      },
+      {
+        "name": "DATABASE_URL",
+        "value": "%s"
+      },
+      {
+        "name": "authSecret",
+        "value": "%s"
+      },
+      {
+        "name": "TC_API_BASE_URL",
+        "value": "%s"
+      },
+      {
+        "name": "TC_API_V3_BASE_URL",
+        "value": "%s"
+      },
+      {
+        "name": "TC_API_V4_BASE_URL",
+        "value": "%s"
+      },
+      {
+        "name": "TC_API_V5_BASE_URL",
+        "value": "%s"
+      },
+      {
+        "name": "MESSAGE_API_BASE_URL",
+        "value": "%s"
+      },
+      {
+        "name": "ENABLE_EMAILS",
+        "value": "%s"
+      },
+      {
+        "name": "MENTION_EMAIL",
+        "value": "%s"
+      },
+      {
+        "name": "REPLY_EMAIL_PREFIX",
+        "value": "%s"
+      },
+      {
+        "name": "REPLY_EMAIL_DOMAIN",
+        "value": "%s"
+      },
+      {
+        "name": "ENABLE_DEV_MODE",
+        "value": "%s"
+      },
+      {
+        "name": "DEV_MODE_EMAIL",
+        "value": "%s"
+      },
+      {
+        "name": "LOG_LEVEL",
+        "value": "%s"
+      },
+      {
+        "name": "validIssuers",
+        "value": "%s"
+      },
+      {
+        "name": "PORT",
+        "value": "%s"
+      },
+      {
+        "name": "API_CONTEXT_PATH",
+        "value": "%s"
+      },
+      {
+        "name": "AUTH0_URL",
+        "value": "%s"
+      },
+      {
+        "name": "AUTH0_AUDIENCE",
+        "value": "%s"
+      },
+      {
+        "name": "AUTH0_CLIENT_ID",
+        "value": "%s"
+      },
+      {
+        "name": "AUTH0_CLIENT_SECRET",
+        "value": "%s"
+      },
+      {
+        "name": "TOKEN_CACHE_TIME",
+        "value": "%s"
+      }
+    ],
+    "portMappings": [
+      {
+        "hostPort": 0,
+        "containerPort": 4000,
+        "protocol": "tcp"
+      }
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "/aws/ecs/%s",
+        "awslogs-region": "%s",
+        "awslogs-stream-prefix": "%s_%s"
+      }
+    }
+  }
