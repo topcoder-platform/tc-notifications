@@ -1,4 +1,6 @@
 {
+   "family": "%s",
+   "requiresCompatibilities": ["EC2"],
     "name": "%s",
     "image": "%s.dkr.ecr.%s.amazonaws.com/%s:%s",
     "essential": true,

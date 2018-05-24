@@ -13,7 +13,7 @@ if [[ -z "$ENV" ]] ; then
         exit
 fi
 
-source buildvar.conf
+# source buildvar.conf
 
 AWS_REGION=$(eval "echo \$${ENV}_AWS_REGION")
 AWS_ACCESS_KEY_ID=$(eval "echo \$${ENV}_AWS_ACCESS_KEY_ID")
