@@ -14,7 +14,6 @@ if [[ -z "$ENV" ]] ; then
 fi
 
 source buildvar.conf
-source tc-notifications-buildsecvar.conf
 
 AWS_REGION=$(eval "echo \$${ENV}_AWS_REGION")
 AWS_ACCESS_KEY_ID=$(eval "echo \$${ENV}_AWS_ACCESS_KEY_ID")
