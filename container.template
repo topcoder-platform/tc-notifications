@@ -86,7 +86,7 @@
         "value": "%s"
       },
       {
-        "name": "validIssuers",
+        "name": "VALIDISSUERS",
         "value": "%s"
       },
       {
