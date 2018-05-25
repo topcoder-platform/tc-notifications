@@ -42,7 +42,7 @@ jobs:
            command: |
             echo "ntegration testing" 
             cp ./../buildscript/master_deploy.sh .
-            ./master_deploy.sh -d ECS -e DEV -t $CIRCLE_SHA1 -s GIT -p TDJSON
+            ./master_deploy.sh -d ECS -e DEV -t $CIRCLE_SHA1 -s GIT -p CONTAINER
 
 workflows:
   version: 2
