@@ -1,7 +1,5 @@
 {
     "name": "%s",
-    "family": "%s",
-    "requiresCompatibilities": ["EC2"],
     "image": "%s.dkr.ecr.%s.amazonaws.com/%s:%s",
     "essential": true,
     "memory": 500,
