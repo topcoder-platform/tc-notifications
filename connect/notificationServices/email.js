@@ -68,9 +68,10 @@ function handleScheduledEvents(events, setEventsStatus) {
         + ` with body ${JSON.stringify(eventMessage)} to bus api`);
 
       setEventsStatus(userEvents, SCHEDULED_EVENT_STATUS.COMPLETED);
-    }).catch(() => {
+    }).catch((error) => {
       logger.error(`Failed to send ${BUS_API_EVENT.EMAIL.BUNDLED} event`
         + ` with body ${JSON.stringify(eventMessage)} to bus api`);
+      logger.error(error);
 
       setEventsStatus(userEvents, SCHEDULED_EVENT_STATUS.FAILED);
     });
