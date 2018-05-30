@@ -1,9 +1,11 @@
 /**
  * Service to get data from TopCoder API
  */
+/* global M2m */
 const request = require('superagent');
 const config = require('./config');
 const _ = require('lodash');
+const { logger } = require('../index');
 
 /**
  * Get project details
@@ -45,7 +47,7 @@ const getRoleMembers = (roleId) => request
   .set('authorization', `Bearer ${config.TC_ADMIN_TOKEN}`)
   .then((res) => {
     if (!_.get(res, 'body.result.success')) {
-      throw new Error(`Failed to get role memebrs of role id: ${roleId}`);
+      throw new Error(`Failed to get role members of role id: ${roleId}`);
     }
 
     const members = _.get(res, 'body.result.content.subjects');
@@ -54,7 +56,7 @@ const getRoleMembers = (roleId) => request
   }).catch((err) => {
     const errorDetails = _.get(err, 'response.body.result.content.message');
     throw new Error(
-      `Failed to get role memebrs of role id: ${roleId}.` +
+      `Failed to get role members of role id: ${roleId}.` +
       (errorDetails ? ' Server response: ' + errorDetails : '')
     );
   });
@@ -125,7 +127,7 @@ const getUsersByHandle = (handles) => {
  *
  * @return {Promise}          promise resolved to topic details
  */
-const getTopic = (topicId, logger) => request
+const getTopic = (topicId) => request
   .get(`${config.MESSAGE_API_BASE_URL}/topics/${topicId}/read`)
   .set('accept', 'application/json')
   .set('authorization', `Bearer ${config.TC_ADMIN_TOKEN}`)

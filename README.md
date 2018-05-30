@@ -6,48 +6,75 @@
 - Heroku Toolbelt https://toolbelt.heroku.com
 - git
 - PostgreSQL 9.5
- 
+
 
 ## Configuration
+
+### Notification server
 Configuration for the notification server is at `config/default.js`.
 The following parameters can be set in config files or in env variables:
-- LOG_LEVEL: the log level
-- PORT: the notification server port
-- authSecret: TC auth secret
-- authDomain: TC auth domain
-- validIssuers: TC auth valid issuers
-- jwksUri: TC auth JWKS URI
-- DATABASE_URL: URI to PostgreSQL database
-- DATABASE_OPTIONS: database connection options
-- KAFKA_URL: comma separated Kafka hosts
-- KAFKA_TOPIC_IGNORE_PREFIX: ignore this prefix for topics in the Kafka
-- KAFKA_GROUP_ID: Kafka consumer group id
-- KAFKA_CLIENT_CERT: Kafka connection certificate, optional;
-    if not provided, then SSL connection is not used, direct insecure connection is used;
-    if provided, it can be either path to certificate file or certificate content
-- KAFKA_CLIENT_CERT_KEY: Kafka connection private key, optional;
-    if not provided, then SSL connection is not used, direct insecure connection is used;
-    if provided, it can be either path to private key file or private key content
-- BUS_API_BASE_URL: Bus API url
-- BUS_API_AUTH_TOKEN: Bus API auth token
-- REPLY_EMAIL_PREFIX: prefix of the genereated reply email address
-- REPLY_EMAIL_DOMAIN: email domain
-- DEFAULT_REPLY_EMAIL: default reply to email address, for example no-reply@topcoder.com
-- MENTION_EMAIL: recipient email used for email.project.post.mention event
+- **General**
+  - `LOG_LEVEL`: the log level
+  - `PORT`: the notification server port
+  - `DATABASE_URL`: URI to PostgreSQL database
+  - `DATABASE_OPTIONS`: database connection options
+- **JWT authentication**
+  - `AUTH_SECRET`: TC auth secret
+  - `VALID_ISSUERS`: TC auth valid issuers
+  - `JWKS_URI`: TC auth JWKS URI (need only for local deployment)
+- **KAFKA**
+  - `KAFKA_URL`: comma separated Kafka hosts
+  - `KAFKA_TOPIC_IGNORE_PREFIX`: ignore this prefix for topics in the Kafka
+  - `KAFKA_GROUP_ID`: Kafka consumer group id
+  - `KAFKA_CLIENT_CERT`: Kafka connection certificate, optional;
+      if not provided, then SSL connection is not used, direct insecure connection is used;
+      if provided, it can be either path to certificate file or certificate content
+  - `KAFKA_CLIENT_CERT_KEY`: Kafka connection private key, optional;
+      if not provided, then SSL connection is not used, direct insecure connection is used;
+      if provided, it can be either path to private key file or private key content
+- **Topcoder API**
+  - `TC_API_V5_BASE_URL`: the TopCoder API V5 base URL
+- **Notifications API**
+  - `API_CONTEXT_PATH`: path to serve API on
+- **Machine to machine auth0 token**
+  - `AUTH0_URL`: auth0 URL
+  - `AUTH0_AUDIENCE`: auth0 audience
+  - `TOKEN_CACHE_TIME`: time period of the cached token
+  - `AUTH0_CLIENT_ID`: auth0 client id
+  - `AUTH0_CLIENT_SECRET`: auth0 client secret
 
+### Connect notification server
 Configuration for the connect notification server is at `connect/config.js`.
 The following parameters can be set in config files or in env variables:
-- TC_API_V3_BASE_URL: the TopCoder API V3 base URL
-- TC_API_V4_BASE_URL: the TopCoder API V4 base URL
-- TC_ADMIN_TOKEN: the admin token to access TopCoder API - same for V3 and V4<br>
-  Also it has probably temporary variables of TopCoder role ids for 'Connect Manager', 'Connect Copilot' and 'administrator':
-- CONNECT_MANAGER_ROLE_ID: 8,
-- CONNECT_COPILOT_ROLE_ID: 4,
-- ADMINISTRATOR_ROLE_ID: 1<br>
-  Provided values are for development backend. For production backend they may be different.
-  These variables are currently being used to retrieve above role members using API V3 `/roles` endpoint. As soon as this endpoint is replaced with more suitable one, these variables has to be removed if no need anymore.
-- TCWEBSERVICE_ID - id of the BOT user which creates post with various events in discussions
-
+- **Topcoder API**
+  - `TC_API_V3_BASE_URL`: the TopCoder API V3 base URL
+  - `TC_API_V4_BASE_URL`: the TopCoder API V4 base URL
+  - `MESSAGE_API_BASE_URL`: the TopCoder message service API base URL
+  - `TC_ADMIN_TOKEN`: the admin token to access TopCoder API - same for V3 and V4
+- **Topcder specific**<br>
+    Also it has probably temporary variables of TopCoder role ids for 'Connect Manager', 'Connect Copilot' and 'administrator':
+  - `CONNECT_MANAGER_ROLE_ID`: 8,
+  - `CONNECT_COPILOT_ROLE_ID`: 4,
+  - `ADMINISTRATOR_ROLE_ID`: 1<br>
+    Provided values are for development backend. For production backend they may be different.
+    These variables are currently being used to retrieve above role members using API V3 `/roles` endpoint. As soon as this endpoint is replaced with more suitable one, these variables has to be removed if no need anymore.
+  - `TCWEBSERVICE_ID` - id of the BOT user which creates post with various events in discussions
+- **Machine to machine auth0 token**
+  - `AUTH0_URL`: auth0 URL
+  - `AUTH0_AUDIENCE`: auth0 audience
+  - `TOKEN_CACHE_TIME`: time period of the cached token
+  - `AUTH0_CLIENT_ID`: auth0 client id
+  - `AUTH0_CLIENT_SECRET`: auth0 client secret
+- **Email notification service**
+  - `ENV`: environment variable (used to generate reply emails)
+  - `AUTH_SECRET`: auth secret (used to sign reply emails)
+  - `ENABLE_EMAILS`: if email service has to be enabled
+  - `ENABLE_DEV_MODE`: send all emails to the `DEV_MODE_EMAIL` email address
+  - `DEV_MODE_EMAIL`: address to send all email when `ENABLE_DEV_MODE` is enabled
+  - `MENTION_EMAIL`: recipient email used for `notifications.action.email.connect.project.post.mention` event
+  - `REPLY_EMAIL_PREFIX`: prefix of the genereated reply email address
+  - `REPLY_EMAIL_DOMAIN`: email domain
+  - `DEFAULT_REPLY_EMAIL`: default reply to email address, for example no-reply@topcoder.com
 
 Note that the above two configuration are separate because the common notification server config
 will be deployed to a NPM package, the connect notification server will use that NPM package,
@@ -92,6 +119,11 @@ In case it expires, you may get a new token in this way:
   - `TC_API_V3_BASE_URL=https://api.topcoder-dev.com/v3`
   - `TC_ADMIN_TOKEN=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJUb3Bjb2RlciBVc2VyIiwiYWRtaW5pc3RyYXRvciJdLCJpc3MiOiJodHRwczovL2FwaS50b3Bjb2Rlci1kZXYuY29tIiwiaGFuZGxlIjoic3VzZXIxIiwiZXhwIjoxNTEzNDAxMjU4LCJ1c2VySWQiOiI0MDE1MzkzOCIsImlhdCI6MTUwOTYzNzYzOSwiZW1haWwiOiJtdHdvbWV5QGJlYWtzdGFyLmNvbSIsImp0aSI6IjIzZTE2YjA2LWM1NGItNDNkNS1iY2E2LTg0ZGJiN2JiNDA0NyJ9.REds35fdBvY7CMDGGFyT_tOD7DxGimFfVzIyEy9YA0Y` or follow section **TC API Admin Token** to obtain a new one if expired
   - `KAFKA_URL`, `KAFKA_CLIENT_CERT` and `KAFKA_CLIENT_CERT_KEY` get from [tc-bus-api readme](https://github.com/topcoder-platform/tc-bus-api/tree/dev)
+- if you are willing to use notifications API which is hosted by the notifications server locally, you will need to use some patched `tc-core-library-js` module, which skips verification of user token. Because we don't know Topcoder `AUTH_SECRET` locally. So you can install this fork:
+  ```
+  npm i https://github.com/maxceem/tc-core-library-js/tree/skip-validation
+  ```
+  **WARNING** do not push package.json with this dependency as it skips users token validation.
 - start local PostgreSQL db, create an empty database, update the config/default.js DATABASE_URL param to point to the db
 - install dependencies `npm i`
 - run code lint check `npm run lint`
@@ -130,5 +162,5 @@ In case it expires, you may get a new token in this way:
 ## Swagger
 
 Swagger API definition is provided at `docs/swagger_api.yaml`,
-you may check it at `http://editor.swagger.io`. 
+you may check it at `http://editor.swagger.io`.
 

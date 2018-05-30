@@ -1,3 +1,7 @@
+/**
+ * Bus API service
+ */
+/* global M2m */
 const request = require('superagent');
 const config = require('config');
 const _ = require('lodash');
@@ -7,7 +11,7 @@ const _ = require('lodash');
  *
  * @param  {Object} event event
  *
- * @return {Promise}          promise resolved to post event
+ * @return {Promise}      promise resolved to post event
  */
 const postEvent = (event) => request
   .post(`${config.TC_API_V5_BASE_URL}/bus/events`)

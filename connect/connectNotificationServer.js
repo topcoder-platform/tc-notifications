@@ -9,11 +9,12 @@ const config = require('./config');
 const notificationServer = require('../index');
 const _ = require('lodash');
 const service = require('./service');
-const { BUS_API_EVENT } = require('../src/constants')
+const { BUS_API_EVENT } = require('./constants');
 const EVENTS = require('./events-config').EVENTS;
 const TOPCODER_ROLE_RULES = require('./events-config').TOPCODER_ROLE_RULES;
 const PROJECT_ROLE_RULES = require('./events-config').PROJECT_ROLE_RULES;
 const PROJECT_ROLE_OWNER = require('./events-config').PROJECT_ROLE_OWNER;
+const emailNotificationServiceHandler = require('./notificationServices/email').handler;
 
 /**
  * Get TopCoder members notifications
@@ -62,14 +63,13 @@ const getTopCoderMembersNotifications = (eventConfig) => {
  * @return {Promise}            resolves to a list of notifications
  */
 const getNotificationsForMentionedUser = (eventConfig, content) => {
-  if (!eventConfig.toMentionedUsers) {
+  if (!eventConfig.toMentionedUsers || !content) {
     return Promise.resolve([]);
   }
 
   let notifications = [];
   // eslint-disable-next-line
-  const regexUserHandle = /title=\"@([a-zA-Z0-9-_.{}\[\]]+)\"|\[.*\]\(.*\"\@(.*)\"\)/g;
-  const handles = [];
+  const regexUserHandle = /title=\"@([a-zA-Z0-9-_.{}\[\]]+)\"|\[.*?\]\(.*?\"\@(.*?)\"\)/g;
   let matches = regexUserHandle.exec(content);
   while (matches) {
     const handle = matches[1] ? matches[1].toString() : matches[2].toString();
@@ -81,18 +81,22 @@ const getNotificationsForMentionedUser = (eventConfig, content) => {
       },
     });
     matches = regexUserHandle.exec(content);
-    handles.push(handle);
   }
   // only one per userHandle
   notifications = _.uniqBy(notifications, 'userHandle');
 
   return new Promise((resolve) => {
-    service.getUsersByHandle(handles).then((users) => {
-      _.map(notifications, (notification) => {
-        notification.userId = _.find(users, { handle: notification.userHandle }).userId.toString();
+    const handles = _.map(notifications, 'userHandle');
+    if (handles.length > 0) {
+      service.getUsersByHandle(handles).then((users) => {
+        _.forEach(notifications, (notification) => {
+          notification.userId = _.find(users, { handle: notification.userHandle }).userId.toString();
+        });
+        resolve(notifications);
       });
-      resolve(notifications);
-    });
+    } else {
+      resolve([]);
+    }
   });
 };
 
@@ -243,6 +247,7 @@ const excludeNotifications = (notifications, eventConfig, message, data) => {
   return Promise.all([
     getNotificationsForTopicStarter(excludeEventConfig, message.topicId),
     getNotificationsForUserId(excludeEventConfig, message.userId),
+    getNotificationsForMentionedUser(eventConfig, message.postContent),
     getProjectMembersNotifications(excludeEventConfig, project),
     getTopCoderMembersNotifications(excludeEventConfig),
   ]).then((notificationsPerSource) => (
@@ -296,7 +301,7 @@ const handler = (topic, message, callback) => {
       //       - check that event has everything required or throw error
       getNotificationsForTopicStarter(eventConfig, message.topicId),
       getNotificationsForUserId(eventConfig, message.userId),
-      message.postContent ? getNotificationsForMentionedUser(eventConfig, message.postContent) : Promise.resolve([]),
+      getNotificationsForMentionedUser(eventConfig, message.postContent),
       getProjectMembersNotifications(eventConfig, project),
       getTopCoderMembersNotifications(eventConfig),
     ]).then((notificationsPerSource) => (
@@ -343,6 +348,11 @@ const handler = (topic, message, callback) => {
 EVENTS.forEach(eventConfig => {
   notificationServer.addTopicHandler(eventConfig.type, handler);
 });
+
+// add notification service handlers
+if (config.ENABLE_EMAILS) {
+  notificationServer.addNotificationServiceHandler(emailNotificationServiceHandler);
+}
 
 // init database, it will clear and re-create all tables
 notificationServer
