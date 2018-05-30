@@ -82,7 +82,7 @@ workflows:
       - "build-dev":
           filters:
             branches:
-              only: [dev, 'feature/notification-email-improvements']
+              only: [dev, 'dev-without-m2mtoken-squashed']
       - "build-prod":
           filters:
             branches:
