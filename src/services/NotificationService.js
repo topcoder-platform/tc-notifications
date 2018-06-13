@@ -17,15 +17,33 @@ const DEFAULT_LIMIT = 10;
  * @returns {Object} the notification settings
  */
 function* getSettings(userId) {
-  const settings = yield models.NotificationSetting.findAll({ where: { userId } });
-  const result = {};
-  _.each(settings, (setting) => {
-    if (!result[setting.topic]) {
-      result[setting.topic] = {};
+  const notificationSettings = yield models.NotificationSetting.findAll({ where: { userId } });
+  const serviceSettings = yield models.ServiceSettings.findAll({ where: { userId } });
+
+  // format settings per notification type
+  const notifications = {};
+  _.each(notificationSettings, (setting) => {
+    if (!notifications[setting.topic]) {
+      notifications[setting.topic] = {};
     }
-    result[setting.topic][setting.deliveryMethod] = setting.value;
+    if (!notifications[setting.topic][setting.serviceId]) {
+      notifications[setting.topic][setting.serviceId] = {};
+    }
+    notifications[setting.topic][setting.serviceId][setting.name] = setting.value;
   });
-  return result;
+
+  // format settings per service
+  const services = {};
+  _.each(serviceSettings, (setting) => {
+    if (!services[setting.serviceId]) {
+      services[setting.serviceId] = {};
+    }
+    services[setting.serviceId][setting.name] = setting.value;
+  });
+  return {
+    notifications,
+    services,
+  };
 }
 
 getSettings.schema = {
@@ -37,9 +55,9 @@ getSettings.schema = {
  * @param {Object} entry the notification setting entry
  * @param {Number} userId the user id
  */
-function* saveSetting(entry, userId) {
+function* saveNotificationSetting(entry, userId) {
   const setting = yield models.NotificationSetting.findOne({ where: {
-    userId, topic: entry.topic, deliveryMethod: entry.deliveryMethod } });
+    userId, topic: entry.topic, serviceId: entry.serviceId, name: entry.name } });
   if (setting) {
     setting.value = entry.value;
     yield setting.save();
@@ -47,7 +65,29 @@ function* saveSetting(entry, userId) {
     yield models.NotificationSetting.create({
       userId,
       topic: entry.topic,
-      deliveryMethod: entry.deliveryMethod,
+      serviceId: entry.serviceId,
+      name: entry.name,
+      value: entry.value,
+    });
+  }
+}
+
+/**
+ * Save service setting entry. If the entry is not found, it will be created; otherwise it will be updated.
+ * @param {Object} entry the service setting entry
+ * @param {Number} userId the user id
+ */
+function* saveServiceSetting(entry, userId) {
+  const setting = yield models.ServiceSettings.findOne({ where: {
+    userId, serviceId: entry.serviceId, name: entry.name } });
+  if (setting) {
+    setting.value = entry.value;
+    yield setting.save();
+  } else {
+    yield models.ServiceSettings.create({
+      userId,
+      serviceId: entry.serviceId,
+      name: entry.name,
       value: entry.value,
     });
   }
@@ -59,20 +99,70 @@ function* saveSetting(entry, userId) {
  * @param {Number} userId the user id
  */
 function* updateSettings(data, userId) {
-  // there should be no duplicate (topic + deliveryMethod) pairs
-  const pairs = {};
-  _.each(data, (entry) => {
-    const key = `${entry.topic} | ${entry.deliveryMethod}`;
-    if (pairs[key]) {
+  // convert notification settings object to the list of entries
+  const notifications = [];
+  _.forOwn(data.notifications, (notification, topic) => {
+    _.forOwn(notification, (serviceSettings, serviceId) => {
+      _.forOwn(serviceSettings, (value, name) => {
+        notifications.push({
+          topic,
+          serviceId,
+          name,
+          value,
+        });
+      });
+    });
+  });
+
+  // validation
+  // there should be no duplicate (topic + serviceId + name)
+  const triples = {};
+  notifications.forEach((entry) => {
+    const key = `${entry.topic} | ${entry.serviceId} | ${entry.name}`;
+    if (triples[key]) {
       throw new errors.BadRequestError(`There are duplicate data for topic: ${
-        entry.topic}, deliveryMethod: ${entry.deliveryMethod}`);
+        entry.topic}, serviceId: ${entry.serviceId}, name: ${entry.name}`);
     }
-    pairs[key] = entry;
+    triples[key] = entry;
   });
 
   // save each entry in parallel
-  yield _.map(data, (entry) => saveSetting(entry, userId));
+  yield _.map(notifications, (entry) => saveNotificationSetting(entry, userId));
+
+  // convert services settings object the the list of entries
+  const services = [];
+  _.forOwn(data.services, (service, serviceId) => {
+    _.forOwn(service, (value, name) => {
+      services.push({
+        serviceId,
+        name,
+        value,
+      });
+    });
+  });
+
+  // validation
+  // there should be no duplicate (serviceId + name)
+  const paris = {};
+  services.forEach((entry) => {
+    const key = `${entry.serviceId} | ${entry.name}`;
+    if (paris[key]) {
+      throw new errors.BadRequestError('There are duplicate data for'
+        + ` serviceId: ${entry.serviceId}, name: ${entry.name}`);
+    }
+    paris[key] = entry;
+  });
+
+  yield _.map(services, (entry) => saveServiceSetting(entry, userId));
 }
+
+updateSettings.schema = {
+  data: Joi.object().keys({
+    notifications: Joi.object(),
+    services: Joi.object(),
+  }).required(),
+  userId: Joi.number().required(),
+};
 
 /**
  * List notifications.
@@ -87,14 +177,17 @@ function* updateSettings(data, userId) {
  */
 function* listNotifications(query, userId) {
   const settings = yield getSettings(userId);
+  const notificationSettings = settings.notifications;
 
   const filter = { where: {
     userId,
   }, offset: query.offset, limit: query.limit, order: [['createdAt', 'DESC']] };
-  if (_.keys(settings).length > 0) {
+  if (_.keys(notificationSettings).length > 0) {
     // only filter out notifications types which were explicitly set to 'no' - so we return notification by default
-    const notificationTypes = _.keys(settings).filter((notificationType) => settings[notificationType].web !== 'no');
-    filter.where.type = { $in: notificationTypes };
+    const notifications = _.keys(notificationSettings).filter((notificationType) =>
+      notificationSettings[notificationType].web.enabled !== 'no'
+    );
+    filter.where.type = { $in: notifications };
   }
   if (query.type) {
     filter.where.type = query.type;
@@ -201,15 +294,6 @@ function* markAsSeen(id, userId) {
 
 markAsSeen.schema = {
   id: Joi.string().required(),
-  userId: Joi.number().required(),
-};
-
-updateSettings.schema = {
-  data: Joi.array().min(1).items(Joi.object().keys({
-    topic: Joi.string().required(),
-    deliveryMethod: Joi.string().required(),
-    value: Joi.string().required(),
-  })).required(),
   userId: Joi.number().required(),
 };
 
