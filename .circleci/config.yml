@@ -7,6 +7,7 @@ jobs:
       - image: docker:17.06.1-ce-git
     steps:
       # Initialization.
+      - run: git clone --branch master https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
       - checkout
       - setup_remote_docker
       - run:
@@ -36,7 +37,11 @@ jobs:
             sudo pip install awscli --upgrade
 
       - deploy:
-          command: ./deploy.sh DEV $CIRCLE_SHA1
+          command: |
+            echo "ntegration testing" 
+            cp ./../buildscript/master_deply_v4.sh .
+            ./master_deply_v4.sh -d ECS -e DEV -t $CIRCLE_SHA1 -s lionking
+
 
   "build-prod":
     docker:
@@ -82,7 +87,7 @@ workflows:
       - "build-dev":
           filters:
             branches:
-              only: [dev]
+              only: [dev, dev_mstest_v2]
       - "build-prod":
           filters:
             branches:
