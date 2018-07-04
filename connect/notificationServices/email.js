@@ -37,7 +37,7 @@ function handleScheduledEvents(events, setEventsStatus) {
     eventMessage.replyTo = config.DEFAULT_REPLY_EMAIL;
     eventMessage.cc = [];
     eventMessage.from = {
-      name: config.DEFAULT_REPLY_EMAIL,
+      name: config.REPLY_EMAIL_FROM,
       email: config.DEFAULT_REPLY_EMAIL,
     };
 
@@ -176,7 +176,7 @@ function handler(topicName, messageJSON, notification) {
         cc,
         from: {
           name: notification.contents.userHandle,
-          email: config.REPLY_EMAIL_FROM,
+          email: config.DEFAULT_REPLY_EMAIL,
         },
         categories,
       };
