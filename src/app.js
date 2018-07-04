@@ -46,7 +46,8 @@ function startKafkaConsumer(handlers, notificationServiceHandlers) {
       // return null to ignore this message
       return null;
     }
-    const messageJSON = JSON.parse(message);
+    const busPayload = JSON.parse(message);
+    const messageJSON = busPayload.payload;
     const handlerAsync = Promise.promisify(handler);
     // use handler to create notification instances for each recipient
     return handlerAsync(topicName, messageJSON)
