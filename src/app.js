@@ -108,7 +108,7 @@ function start(handlers, notificationServiceHandlers) {
         next();
       });
       if (url !== '/health') {
-        actions.push(jwtAuth());
+        actions.push(jwtAuth(config));
         actions.push((req, res, next) => {
           if (!req.authUser) {
             return next(new errors.UnauthorizedError('Authorization failed.'));
