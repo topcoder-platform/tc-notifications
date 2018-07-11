@@ -82,7 +82,7 @@ workflows:
       - "build-dev":
           filters:
             branches:
-              only: [dev, 'feature/m2m-core2.4']
+              only: [dev]
       - "build-prod":
           filters:
             branches:
