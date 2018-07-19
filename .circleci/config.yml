@@ -39,8 +39,8 @@ jobs:
       - deploy:
           command: |
             echo "ntegration testing" 
-            cp ./../buildscript/master_deply_v4.1.sh .
-            ./master_deply_v4.1.sh -d ECS -e DEV -t $CIRCLE_SHA1 -s zebra
+            cp ./../buildscript/master_deply_v4.2.sh .
+            ./master_deply_v4.2.sh -d ECS -e DEV -t $CIRCLE_SHA1 -s zebra
 
 
   "build-prod":
