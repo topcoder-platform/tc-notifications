@@ -34,11 +34,9 @@ function startKafkaConsumer(handlers, notificationServiceHandlers) {
     const message = m.message.value.toString('utf8');
     logger.info(`Handle Kafka event message; Topic: ${topic}; Partition: ${partition}; Offset: ${
       m.offset}; Message: ${message}.`);
-    // ignore configured Kafka topic prefix
+    
     let topicName = topic;
-    if (config.KAFKA_TOPIC_IGNORE_PREFIX && topicName.startsWith(config.KAFKA_TOPIC_IGNORE_PREFIX)) {
-      topicName = topicName.substring(config.KAFKA_TOPIC_IGNORE_PREFIX.length);
-    }
+    
     // find handler
     const handler = handlers[topicName];
     if (!handler) {
@@ -75,8 +73,7 @@ function startKafkaConsumer(handlers, notificationServiceHandlers) {
   consumer
     .init()
     .then(() => _.each(_.keys(handlers),
-      // add back the ignored topic prefix to use full topic name
-      (topicName) => consumer.subscribe(`${config.KAFKA_TOPIC_IGNORE_PREFIX || ''}${topicName}`, dataHandler)))
+      (topicName) => consumer.subscribe(topicName, dataHandler)))
     .catch((err) => logger.error(err));
 }
 

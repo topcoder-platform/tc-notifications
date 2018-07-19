@@ -23,7 +23,6 @@ module.exports = {
   // which skips token validation when locally deployed
 
   KAFKA_URL: process.env.KAFKA_URL,
-  KAFKA_TOPIC_IGNORE_PREFIX: process.env.KAFKA_TOPIC_IGNORE_PREFIX,
   KAFKA_GROUP_ID: process.env.KAFKA_GROUP_ID,
   KAFKA_CLIENT_CERT: process.env.KAFKA_CLIENT_CERT ? process.env.KAFKA_CLIENT_CERT.replace('\\n', '\n') : null,
   KAFKA_CLIENT_CERT_KEY: process.env.KAFKA_CLIENT_CERT_KEY ?

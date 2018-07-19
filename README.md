@@ -24,7 +24,6 @@ The following parameters can be set in config files or in env variables:
   - `JWKS_URI`: TC auth JWKS URI (need only for local deployment)
 - **KAFKA**
   - `KAFKA_URL`: comma separated Kafka hosts
-  - `KAFKA_TOPIC_IGNORE_PREFIX`: ignore this prefix for topics in the Kafka
   - `KAFKA_GROUP_ID`: Kafka consumer group id
   - `KAFKA_CLIENT_CERT`: Kafka connection certificate, optional;
       if not provided, then SSL connection is not used, direct insecure connection is used;
@@ -97,7 +96,6 @@ You may reuse it during review.
 - for local development environment you can set variables as following:
   - `AUTH_SECRET`,`VALID_ISSUERS` can get from [tc-project-service config](https://github.com/topcoder-platform/tc-project-service/blob/dev/config/default.json)
   - `PORT=4000` because **connect-app** call this port by default
-  - `KAFKA_TOPIC_IGNORE_PREFIX=joan-26673.` (with point at the end)
   - `TC_API_V4_BASE_URL=https://api.topcoder-dev.com/v4`
   - `TC_API_V3_BASE_URL=https://api.topcoder-dev.com/v3`
   - `KAFKA_URL`, `KAFKA_CLIENT_CERT` and `KAFKA_CLIENT_CERT_KEY` get from [tc-bus-api readme](https://github.com/topcoder-platform/tc-bus-api/tree/dev)
