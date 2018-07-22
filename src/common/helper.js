@@ -1,6 +1,7 @@
 /**
  * Contains generic helper methods
  */
+
 'use strict';
 
 const _ = require('lodash');

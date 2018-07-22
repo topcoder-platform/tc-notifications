@@ -1,6 +1,7 @@
 /**
  * This module contains the winston logger configuration.
  */
+
 'use strict';
 
 const _ = require('lodash');
@@ -37,7 +38,7 @@ logger.logFullError = function (err, signature) { // eslint-disable-line
   }
   const args = Array.prototype.slice.call(arguments);
   args.shift();
-  logger.error.apply(logger, args);
+  logger.error(...args);
   logger.error(util.inspect(err));
   if (!err.logged) {
     logger.error(err.stack);
@@ -88,7 +89,7 @@ logger.decorateWithLogging = function (service) {
   }
   _.each(service, (method, name) => {
     const params = method.params || getParams(method);
-    service[name] = function*() {
+    service[name] = function* () {
       logger.debug('ENTER ' + name);
       logger.debug('input arguments');
       const args = Array.prototype.slice.call(arguments);
@@ -122,7 +123,7 @@ logger.decorateWithValidators = function (service) {
       return;
     }
     const params = getParams(method);
-    service[name] = function*() {
+    service[name] = function* () {
       const args = Array.prototype.slice.call(arguments);
       const value = _combineObject(params, args);
       const normalized = Joi.attempt(value, method.schema);

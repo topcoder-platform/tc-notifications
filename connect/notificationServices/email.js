@@ -4,7 +4,10 @@
 const _ = require('lodash');
 const jwt = require('jsonwebtoken');
 const co = require('co');
-const { logger, busService, eventScheduler, notificationService } = require('../../index');
+const {
+  logger, busService, eventScheduler, notificationService,
+} = require('../../index');
+
 const { createEventScheduler, SCHEDULED_EVENT_STATUS } = eventScheduler;
 
 const config = require('../config');
@@ -48,7 +51,8 @@ function handleScheduledEvents(events, setEventsStatus) {
     emailBody += '<ul>';
     _.values(eventsByTopics).forEach((topicEvents) => {
       emailBody += '<li>';
-      emailBody += `<a href="http://connect.topcoder.com/projects/${topicEvents[0].data.data.projectId}#feed-${topicEvents[0].data.data.topicId}"> ${topicEvents[0].data.data.topicTitle} </a>`;
+      emailBody += `<a href="http://connect.topcoder.com/projects/${topicEvents[0].data.data.projectId}#feed-`
+        + `${topicEvents[0].data.data.topicId}"> ${topicEvents[0].data.data.topicTitle} </a>`;
       emailBody += `<span style="color:#777777"> - ${topicEvents.length} updates</span>`;
       emailBody += '</li>';
     });
@@ -81,7 +85,7 @@ function handleScheduledEvents(events, setEventsStatus) {
 const scheduler = createEventScheduler(
   BUS_API_EVENT.EMAIL.BUNDLED,
   SCHEDULED_EVENT_PERIOD,
-  handleScheduledEvents
+  handleScheduledEvents,
 );
 
 /**
@@ -108,7 +112,7 @@ function handler(topicName, messageJSON, notification) {
     eventType = BUS_API_EVENT.EMAIL.MENTIONED_IN_POST;
   }
 
-  if (!!eventType) {
+  if (eventType) {
     return co(function* () {
       const settings = yield notificationService.getSettings(notification.userId);
 

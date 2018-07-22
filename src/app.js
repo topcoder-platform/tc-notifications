@@ -1,6 +1,7 @@
 /**
  * The application entry point
  */
+
 'use strict';
 
 require('./bootstrap');
@@ -10,11 +11,11 @@ const jwtAuth = require('tc-core-library-js').middleware.jwtAuthenticator;
 const _ = require('lodash');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const Kafka = require('no-kafka');
 const helper = require('./common/helper');
 const logger = require('./common/logger');
 const errors = require('./common/errors');
 const models = require('./models');
-const Kafka = require('no-kafka');
 
 /**
  * Start Kafka consumer.
@@ -51,7 +52,7 @@ function startKafkaConsumer(handlers, notificationServiceHandlers) {
     const handlerAsync = Promise.promisify(handler);
     // use handler to create notification instances for each recipient
     return handlerAsync(topicName, messageJSON)
-      .then((notifications) => Promise.all(_.map(notifications, (notification) => {
+      .then(notifications => Promise.all(_.map(notifications, (notification) => {
         // run other notification service handlers
         notificationServiceHandlers.forEach((notificationServiceHandler) => {
           notificationServiceHandler(topicName, messageJSON, notification);
@@ -69,15 +70,15 @@ function startKafkaConsumer(handlers, notificationServiceHandlers) {
       })))
       // commit offset
       .then(() => consumer.commitOffset({ topic, partition, offset: m.offset }))
-      .catch((err) => logger.error(err));
+      .catch(err => logger.error(err));
   });
 
   consumer
     .init()
     .then(() => _.each(_.keys(handlers),
       // add back the ignored topic prefix to use full topic name
-      (topicName) => consumer.subscribe(`${config.KAFKA_TOPIC_IGNORE_PREFIX || ''}${topicName}`, dataHandler)))
-    .catch((err) => logger.error(err));
+      topicName => consumer.subscribe(`${config.KAFKA_TOPIC_IGNORE_PREFIX || ''}${topicName}`, dataHandler)))
+    .catch(err => logger.error(err));
 }
 
 /**
@@ -99,6 +100,7 @@ function start(handlers, notificationServiceHandlers) {
   _.each(require('./routes'), (verbs, url) => {
     _.each(verbs, (def, verb) => {
       const actions = [];
+      // eslint-disable-next-line import/no-dynamic-require
       const method = require('./controllers/' + def.controller)[def.method];
       if (!method) {
         throw new Error(def.method + ' is undefined');
@@ -162,7 +164,7 @@ function start(handlers, notificationServiceHandlers) {
 
       startKafkaConsumer(handlers, notificationServiceHandlers);
     })
-    .catch((err) => logger.error(err));
+    .catch(err => logger.error(err));
 }
 
 // Exports

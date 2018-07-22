@@ -2,6 +2,7 @@
  * This script is used to generate JWT token for a user.
  * Usage: node test/token {user-id}
  */
+
 'use strict';
 
 const jwt = require('jsonwebtoken');

@@ -6,14 +6,20 @@
   "scripts": {
     "start": "node connect/connectNotificationServer",
     "lint": "eslint *.js src config test connect || true",
-    "lint:fix": "eslint *.js --fix src config test connect || true"
+    "lint:fix": "eslint *.js --fix src config test connect || true",
+    "build": "gulp build",
+    "watch": "gulp watch"
   },
   "author": "TCSCODER",
   "license": "none",
   "devDependencies": {
-    "eslint": "^2.8.0",
-    "eslint-config-airbnb-base": "^1.0.1",
-    "eslint-plugin-import": "^1.5.0"
+    "browser-sync": "^2.24.5",
+    "gulp": "^3.9.1",
+    "gulp-dest": "^0.2.3",
+    "gulp-inline-css": "^3.2.0",
+    "gulp-pug": "^3.3.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^3.1.0"
   },
   "dependencies": {
     "base-64": "^0.1.0",
@@ -25,6 +31,9 @@
     "cors": "^2.7.1",
     "express": "^4.14.0",
     "get-parameter-names": "^0.3.0",
+    "gulp-inline-source": "^3.2.0",
+    "gulp-replace": "^1.0.0",
+    "gulp-smoosher": "0.0.9",
     "joi": "^9.0.4",
     "jsonwebtoken": "^8.0.1",
     "jwks-rsa": "^1.2.1",

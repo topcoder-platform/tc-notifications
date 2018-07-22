@@ -13,9 +13,9 @@ const _ = require('lodash');
  *
  * @return {Promise}      promise resolved to post event
  */
-const postEvent = (event) => (
+const postEvent = event => (
   M2m.getMachineToken(config.AUTH0_CLIENT_ID, config.AUTH0_CLIENT_SECRET)
-    .then((token) => (
+    .then(token => (
       request
         .post(`${config.TC_API_V5_BASE_URL}/bus/events`)
         .set('Content-Type', 'application/json')
@@ -25,8 +25,8 @@ const postEvent = (event) => (
         .catch((err) => {
           const errorDetails = _.get(err, 'message');
           throw new Error(
-            `Failed to post event ${event}.` +
-            (errorDetails ? ' Server response: ' + errorDetails : '')
+            `Failed to post event ${event}.`
+            + (errorDetails ? ' Server response: ' + errorDetails : ''),
           );
         })
     ))

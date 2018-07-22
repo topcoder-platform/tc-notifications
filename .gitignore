@@ -4,3 +4,4 @@ node_modules
 log.txt
 .DS_Store
 dist
+src/emails/**/*.css
