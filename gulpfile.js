@@ -5,7 +5,7 @@ const inlineCss = require('gulp-inline-css');
 const rename = require('gulp-rename');
 const browserSync = require('browser-sync').create();
 
-// web preview base directoru
+// web preview base directory
 const baseDir = './dist/emails';
 
 // compile sass to css

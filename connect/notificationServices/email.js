@@ -12,6 +12,7 @@ const { createEventScheduler, SCHEDULED_EVENT_STATUS } = eventScheduler;
 
 const config = require('../config');
 const { BUS_API_EVENT, SCHEDULED_EVENT_PERIOD, SETTINGS_EMAIL_SERVICE_ID } = require('../constants');
+const { EVENT_BUNDLES } = require('../events-config');
 const helpers = require('../helpers');
 const service = require('../service');
 
@@ -62,18 +63,18 @@ function handleScheduledEvents(events, setEventsStatus) {
     eventMessage.data = { notificationsHTML: emailBody };
 
     busService.postEvent({
-      topic: BUS_API_EVENT.EMAIL.BUNDLED,
+      topic: BUS_API_EVENT.EMAIL.GENERAL,
       originator: 'tc-notifications',
       timestamp: (new Date()).toISOString(),
       'mime-type': 'application/json',
       payload: eventMessage,
     }).then(() => {
-      logger.info(`Successfully sent ${BUS_API_EVENT.EMAIL.BUNDLED} event`
+      logger.info(`Successfully sent ${BUS_API_EVENT.EMAIL.GENERAL} event`
         + ` with body ${JSON.stringify(eventMessage)} to bus api`);
 
       setEventsStatus(userEvents, SCHEDULED_EVENT_STATUS.COMPLETED);
     }).catch(() => {
-      logger.error(`Failed to send ${BUS_API_EVENT.EMAIL.BUNDLED} event`
+      logger.error(`Failed to send ${BUS_API_EVENT.EMAIL.GENERAL} event`
         + ` with body ${JSON.stringify(eventMessage)} to bus api`);
 
       setEventsStatus(userEvents, SCHEDULED_EVENT_STATUS.FAILED);
@@ -101,57 +102,81 @@ const scheduler = createEventScheduler(
 function handler(topicName, messageJSON, notification) {
   // if it's interesting event, create email event and send to bus api
   const notificationType = notification.newType || topicName;
-  logger.debug(`checking ${notificationType} notification ${JSON.stringify(notification)}`);
-  let eventType;
+  const eventType = BUS_API_EVENT.EMAIL.GENERAL;
 
-  if (notificationType === BUS_API_EVENT.CONNECT.TOPIC_CREATED) {
-    eventType = BUS_API_EVENT.EMAIL.TOPIC_CREATED;
-  } else if (notificationType === BUS_API_EVENT.CONNECT.POST_CREATED) {
-    eventType = BUS_API_EVENT.EMAIL.POST_CREATED;
-  } else if (notificationType === BUS_API_EVENT.CONNECT.MENTIONED_IN_POST) {
-    eventType = BUS_API_EVENT.EMAIL.MENTIONED_IN_POST;
-  }
+  return co(function* () {
+    const settings = yield notificationService.getSettings(notification.userId);
 
-  if (eventType) {
-    return co(function* () {
-      const settings = yield notificationService.getSettings(notification.userId);
+    // if email notification is explicitly disabled for current notification type do nothing
+    // by default we treat all notification types enabled
+    if (settings.notifications[notificationType]
+      && settings.notifications[notificationType][SETTINGS_EMAIL_SERVICE_ID]
+      && settings.notifications[notificationType][SETTINGS_EMAIL_SERVICE_ID].enabled === 'no'
+    ) {
+      logger.verbose(`Notification '${notificationType}' won't be sent by '${SETTINGS_EMAIL_SERVICE_ID}'`
+        + ` service to the userId '${notification.userId}' due to his notification settings.`);
+      return;
+    }
 
-      // if email notification is explicitly disabled for current notification type do nothing
-      // by default we treat all notification types enabled
-      if (settings.notifications[notificationType]
-        && settings.notifications[notificationType][SETTINGS_EMAIL_SERVICE_ID]
-        && settings.notifications[notificationType][SETTINGS_EMAIL_SERVICE_ID].enabled === 'no'
-      ) {
-        logger.verbose(`Notification '${notificationType}' won't be sent by '${SETTINGS_EMAIL_SERVICE_ID}'`
-          + ` service to the userId '${notification.userId}' due to his notification settings.`);
-        return;
-      }
+    // TODO: use this to pass data to local templates
+    const templateData = {};
 
-      const topicId = parseInt(messageJSON.topicId, 10);
-      const postId = messageJSON.postId ? parseInt(messageJSON.postId, 10) : null;
+    const users = yield service.getUsersById([notification.userId]);
+    logger.debug(`got users ${JSON.stringify(users)}`);
 
-      const users = yield service.getUsersById([notification.userId]);
-      logger.debug(`got users ${JSON.stringify(users)}`);
+    const user = users[0];
+    let userEmail = user.email;
+    if (config.ENABLE_DEV_MODE === 'true') {
+      userEmail = config.DEV_MODE_EMAIL;
+    }
+    const recipients = [userEmail];
 
-      const connectTopic = yield service.getTopic(topicId, logger);
+    const categories = [`${config.ENV}:${eventType}`.toLowerCase()];
+
+    const eventMessage = {
+      data: {
+        name: user.firstName + ' ' + user.lastName,
+        handle: user.handle,
+        post: helpers.markdownToHTML(messageJSON.postContent),
+        date: (new Date()).toISOString(),
+        projectName: notification.contents.projectName,
+        projectId: messageJSON.projectId,
+        authorHandle: notification.contents.userHandle,
+      },
+      recipients,
+      from: {
+        name: notification.contents.userHandle,
+        email: config.DEFAULT_REPLY_EMAIL,
+      },
+      categories,
+    };
+
+    let reference;
+    let referenceId;
+
+    if (_.includes(EVENT_BUNDLES.TOPICS_AND_POSTS.types, notificationType)) {
+      templateData.topicId = parseInt(messageJSON.topicId, 10);
+      templateData.postId = messageJSON.postId ? parseInt(messageJSON.postId, 10) : null;
+
+      eventMessage.data.topicId = templateData.topicId;
+      eventMessage.data.postId = templateData.postId;
+
+      reference = 'topic';
+      referenceId = templateData.topicId;
+
+      const connectTopic = yield service.getTopic(templateData.topicId, logger);
       logger.debug(`got topic ${JSON.stringify(connectTopic)}`);
 
-      const user = users[0];
-      let userEmail = user.email;
-      if (config.ENABLE_DEV_MODE === 'true') {
-        userEmail = config.DEV_MODE_EMAIL;
+      eventMessage.data.topicTitle = connectTopic.title || '';
+
+      if (notificationType === BUS_API_EVENT.CONNECT.POST.MENTION) {
+        eventMessage.cc = [config.MENTION_EMAIL];
       }
-      const recipients = [userEmail];
-      const cc = [];
-      if (eventType === BUS_API_EVENT.EMAIL.MENTIONED_IN_POST) {
-        cc.push(config.MENTION_EMAIL);
-      }
-      const categories = [`${config.ENV}:${eventType}`.toLowerCase()];
 
       // get jwt token then encode it with base64
       const body = {
         userId: parseInt(notification.userId, 10),
-        topicId,
+        topicId: templateData.topicId,
         userEmail: helpers.sanitizeEmail(user.email),
       };
       logger.debug('body', body);
@@ -160,67 +185,42 @@ function handler(topicName, messageJSON, notification) {
       const token = jwt.sign(body, config.AUTH_SECRET, { noTimestamp: true }).split('.')[2];
       logger.debug(`token: ${token}`);
 
-      const replyTo = `${config.REPLY_EMAIL_PREFIX}+${topicId}/${token}@${config.REPLY_EMAIL_DOMAIN}`;
+      eventMessage.replyTo = `${config.REPLY_EMAIL_PREFIX}+${templateData.topicId}/${token}@`
+        + config.REPLY_EMAIL_DOMAIN;
+    }
 
-      const eventMessage = {
-        data: {
-          name: user.firstName + ' ' + user.lastName,
-          handle: user.handle,
-          topicTitle: connectTopic.title || '',
-          post: helpers.markdownToHTML(messageJSON.postContent),
-          date: (new Date()).toISOString(),
-          projectName: notification.contents.projectName,
-          projectId: messageJSON.projectId,
-          topicId,
-          postId,
-          authorHandle: notification.contents.userHandle,
-        },
-        recipients,
-        replyTo,
-        cc,
-        from: {
-          name: notification.contents.userHandle,
-          email: config.DEFAULT_REPLY_EMAIL,
-        },
-        categories,
-      };
+    // if notifications has to be bundled
+    const bundlePeriod = settings.services[SETTINGS_EMAIL_SERVICE_ID]
+      && settings.services[SETTINGS_EMAIL_SERVICE_ID].bundlePeriod;
 
-      // if notifications has to be bundled
-      const bundlePeriod = settings.services[SETTINGS_EMAIL_SERVICE_ID]
-        && settings.services[SETTINGS_EMAIL_SERVICE_ID].bundlePeriod;
-
-      if (bundlePeriod) {
-        if (!SCHEDULED_EVENT_PERIOD[bundlePeriod]) {
-          throw new Error(`User's '${notification.userId}' setting for service`
-            + ` '${SETTINGS_EMAIL_SERVICE_ID}' option 'bundlePeriod' has unsupported value '${bundlePeriod}'.`);
-        }
-
-        // schedule event to be send later
-        scheduler.addEvent({
-          data: eventMessage,
-          period: bundlePeriod,
-          userId: notification.userId,
-          eventType,
-          reference: 'topic',
-          referenceId: topicId,
-        });
-      } else {
-        // send event to bus api
-        return busService.postEvent({
-          topic: eventType,
-          originator: 'tc-notifications',
-          timestamp: (new Date()).toISOString(),
-          'mime-type': 'application/json',
-          payload: eventMessage,
-        }).then(() => {
-          logger.info(`Successfully sent ${eventType} event with body ${JSON.stringify(eventMessage)} to bus api`);
-        });
+    if (bundlePeriod) {
+      if (!SCHEDULED_EVENT_PERIOD[bundlePeriod]) {
+        throw new Error(`User's '${notification.userId}' setting for service`
+          + ` '${SETTINGS_EMAIL_SERVICE_ID}' option 'bundlePeriod' has unsupported value '${bundlePeriod}'.`);
       }
-    });
-  }
 
-  // if no need to send emails, return resolved promise for consistency
-  return Promise.resolve();
+      // schedule event to be send later
+      scheduler.addEvent({
+        data: eventMessage,
+        period: bundlePeriod,
+        userId: notification.userId,
+        eventType,
+        reference,
+        referenceId,
+      });
+    } else {
+      // send event to bus api
+      return busService.postEvent({
+        topic: eventType,
+        originator: 'tc-notifications',
+        timestamp: (new Date()).toISOString(),
+        'mime-type': 'application/json',
+        payload: eventMessage,
+      }).then(() => {
+        logger.info(`Successfully sent ${eventType} event with body ${JSON.stringify(eventMessage)} to bus api`);
+      });
+    }
+  });
 }
 
 module.exports = {
