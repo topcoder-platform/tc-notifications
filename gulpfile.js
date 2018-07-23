@@ -2,7 +2,6 @@ const gulp = require('gulp');
 const sass = require('gulp-sass');
 const replace = require('gulp-replace');
 const inlineCss = require('gulp-inline-css');
-const rename = require('gulp-rename');
 const browserSync = require('browser-sync').create();
 
 // web preview base directory
