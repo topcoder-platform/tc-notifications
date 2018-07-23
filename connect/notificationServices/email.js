@@ -227,6 +227,10 @@ function handler(topicName, messageJSON, notification) {
         + config.REPLY_EMAIL_DOMAIN;
     }
 
+    if (messageJSON.fileName) {
+      eventMessage.data.fileName = messageJSON.fileName;
+    }
+
     // if notifications has to be bundled
     const bundlePeriod = settings.services[SETTINGS_EMAIL_SERVICE_ID]
       && settings.services[SETTINGS_EMAIL_SERVICE_ID].bundlePeriod;
