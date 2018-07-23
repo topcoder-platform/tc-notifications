@@ -4,6 +4,9 @@
 const _ = require('lodash');
 const jwt = require('jsonwebtoken');
 const co = require('co');
+const fs = require('fs');
+const path = require('path');
+const handlebars = require('handlebars');
 const {
   logger, busService, eventScheduler, notificationService,
 } = require('../../index');
@@ -12,9 +15,20 @@ const { createEventScheduler, SCHEDULED_EVENT_STATUS } = eventScheduler;
 
 const config = require('../config');
 const { BUS_API_EVENT, SCHEDULED_EVENT_PERIOD, SETTINGS_EMAIL_SERVICE_ID } = require('../constants');
-const { EVENT_BUNDLES } = require('../events-config');
+const { EVENTS, EVENT_BUNDLES } = require('../events-config');
 const helpers = require('../helpers');
 const service = require('../service');
+
+// compile all partials and register them
+EVENTS.forEach(event => handlebars.registerPartial(
+  event.type,
+  handlebars.compile(fs.readFileSync(path.join(process.cwd(), 'dist', 'emails', 'partials', event.template), 'utf8'))
+));
+
+// template used for all notification types (whether bundled or individual)
+const template = handlebars.compile(
+  fs.readFileSync(path.join(process.cwd(), 'dist', 'emails', 'template.html'), 'utf8')
+);
 
 /**
  * Handles due events which are passed by scheduler
@@ -33,6 +47,30 @@ function handleScheduledEvents(events, setEventsStatus) {
   const eventsByUsers = _.groupBy(events, 'userId');
 
   _.values(eventsByUsers).forEach((userEvents) => {
+    const bundleData = {
+      projects: _.chain(userEvents)
+        .groupBy('data.data.projectId')
+        .mapValues(projectUserEvents => ({
+          id: _.get(projectUserEvents, '[0].data.data.projectId'),
+          name: _.get(projectUserEvents, '[0].data.data.projectName'),
+          sections: _.chain(projectUserEvents)
+            .groupBy(value => _.chain(EVENT_BUNDLES)
+              .keys()
+              .filter(key => _.includes(_.get(EVENT_BUNDLES, `${key}.types`), _.get(value, 'data.data.type')))
+              .map(key => _.get(EVENT_BUNDLES, `${key}.title`))
+              .first()
+              .value())
+            .mapValues((groupedEvents, key) => ({
+              title: key,
+              notifications: _.map(groupedEvents, 'data.data'),
+            }))
+            .values()
+            .value(),
+        }))
+        .values()
+        .value(),
+    };
+
     // clone data to avoid circular object
     // we use common data from the first event
     const eventMessage = _.clone(userEvents[0].data);
@@ -45,22 +83,7 @@ function handleScheduledEvents(events, setEventsStatus) {
       email: config.DEFAULT_REPLY_EMAIL,
     };
 
-    // TODO: consider using templating engine to format the bundle email
-    // until there is Sendgrid support for loops in email templates
-    let emailBody = '<h3>Your recent updates on Topcoder Connect</h3>';
-    const eventsByTopics = _.groupBy(userEvents, 'data.data.topicId');
-    emailBody += '<ul>';
-    _.values(eventsByTopics).forEach((topicEvents) => {
-      emailBody += '<li>';
-      emailBody += `<a href="http://connect.topcoder.com/projects/${topicEvents[0].data.data.projectId}#feed-`
-        + `${topicEvents[0].data.data.topicId}"> ${topicEvents[0].data.data.topicTitle} </a>`;
-      emailBody += `<span style="color:#777777"> - ${topicEvents.length} updates</span>`;
-      emailBody += '</li>';
-    });
-    emailBody += '</ul>';
-
-    // data property we define as an array of data from each individual event
-    eventMessage.data = { notificationsHTML: emailBody };
+    eventMessage.data = { notificationsHTML: template(bundleData) };
 
     busService.postEvent({
       topic: BUS_API_EVENT.EMAIL.GENERAL,
@@ -88,6 +111,24 @@ const scheduler = createEventScheduler(
   SCHEDULED_EVENT_PERIOD,
   handleScheduledEvents,
 );
+
+/**
+ * Prepares data to be provided to the template to render a single notification.
+ *
+ * @param {Object} data the notification data
+ * @returns {Object}
+ */
+function wrapIndividualNotification(data) {
+  return {
+    projects: {
+      id: data.projectId,
+      name: data.projectName,
+      sections: {
+        notifications: data,
+      },
+    },
+  };
+}
 
 /**
  * Handler function which sends notification using email
@@ -118,9 +159,6 @@ function handler(topicName, messageJSON, notification) {
       return;
     }
 
-    // TODO: use this to pass data to local templates
-    const templateData = {};
-
     const users = yield service.getUsersById([notification.userId]);
     logger.debug(`got users ${JSON.stringify(users)}`);
 
@@ -137,11 +175,12 @@ function handler(topicName, messageJSON, notification) {
       data: {
         name: user.firstName + ' ' + user.lastName,
         handle: user.handle,
-        post: helpers.markdownToHTML(messageJSON.postContent),
         date: (new Date()).toISOString(),
         projectName: notification.contents.projectName,
         projectId: messageJSON.projectId,
         authorHandle: notification.contents.userHandle,
+        authorFullName: notification.contents.userFullName,
+        type: notificationType,
       },
       recipients,
       from: {
@@ -151,20 +190,19 @@ function handler(topicName, messageJSON, notification) {
       categories,
     };
 
-    let reference;
-    let referenceId;
+    // default values that get overridden when the notification is about topics/posts updates
+    let reference = 'project';
+    let referenceId = eventMessage.data.projectId;
 
     if (_.includes(EVENT_BUNDLES.TOPICS_AND_POSTS.types, notificationType)) {
-      templateData.topicId = parseInt(messageJSON.topicId, 10);
-      templateData.postId = messageJSON.postId ? parseInt(messageJSON.postId, 10) : null;
-
-      eventMessage.data.topicId = templateData.topicId;
-      eventMessage.data.postId = templateData.postId;
+      eventMessage.data.topicId = parseInt(messageJSON.topicId, 10);
+      eventMessage.data.postId = messageJSON.postId ? parseInt(messageJSON.postId, 10) : null;
+      eventMessage.data.post = helpers.markdownToHTML(messageJSON.postContent);
 
       reference = 'topic';
-      referenceId = templateData.topicId;
+      referenceId = eventMessage.data.topicId;
 
-      const connectTopic = yield service.getTopic(templateData.topicId, logger);
+      const connectTopic = yield service.getTopic(eventMessage.data.topicId, logger);
       logger.debug(`got topic ${JSON.stringify(connectTopic)}`);
 
       eventMessage.data.topicTitle = connectTopic.title || '';
@@ -176,7 +214,7 @@ function handler(topicName, messageJSON, notification) {
       // get jwt token then encode it with base64
       const body = {
         userId: parseInt(notification.userId, 10),
-        topicId: templateData.topicId,
+        topicId: eventMessage.data.topicId,
         userEmail: helpers.sanitizeEmail(user.email),
       };
       logger.debug('body', body);
@@ -185,7 +223,7 @@ function handler(topicName, messageJSON, notification) {
       const token = jwt.sign(body, config.AUTH_SECRET, { noTimestamp: true }).split('.')[2];
       logger.debug(`token: ${token}`);
 
-      eventMessage.replyTo = `${config.REPLY_EMAIL_PREFIX}+${templateData.topicId}/${token}@`
+      eventMessage.replyTo = `${config.REPLY_EMAIL_PREFIX}+${eventMessage.data.topicId}/${token}@`
         + config.REPLY_EMAIL_DOMAIN;
     }
 
@@ -199,7 +237,7 @@ function handler(topicName, messageJSON, notification) {
           + ` '${SETTINGS_EMAIL_SERVICE_ID}' option 'bundlePeriod' has unsupported value '${bundlePeriod}'.`);
       }
 
-      // schedule event to be send later
+      // schedule event to be sent later
       scheduler.addEvent({
         data: eventMessage,
         period: bundlePeriod,
@@ -209,6 +247,9 @@ function handler(topicName, messageJSON, notification) {
         referenceId,
       });
     } else {
+      // send single field "notificationsHTML" with the rendered template
+      eventMessage.data = { notificationsHTML: template(wrapIndividualNotification(eventMessage.data)) };
+
       // send event to bus api
       return busService.postEvent({
         topic: eventType,

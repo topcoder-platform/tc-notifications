@@ -49,92 +49,112 @@ const TOPCODER_ROLE_RULES = {
 const EVENTS = [
   // Outside project
   {
+    template: 'project-created.html',
     type: BUS_API_EVENT.CONNECT.PROJECT.CREATED,
     projectRoles: [PROJECT_ROLE_OWNER],
     exclude: {
       topcoderRoles: [ROLE_CONNECT_MANAGER, ROLE_ADMINISTRATOR],
     },
   }, {
+    template: 'project-submitted-for-review.html',
     type: BUS_API_EVENT.CONNECT.PROJECT.SUBMITTED_FOR_REVIEW,
     projectRoles: [PROJECT_ROLE_OWNER],
     topcoderRoles: [ROLE_CONNECT_MANAGER, ROLE_ADMINISTRATOR],
   }, {
+    template: 'project-approved.html',
     type: BUS_API_EVENT.CONNECT.PROJECT.APPROVED,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER],
     topcoderRoles: [ROLE_CONNECT_COPILOT, ROLE_ADMINISTRATOR],
   }, {
+    template: 'project-active.html',
     type: BUS_API_EVENT.CONNECT.PROJECT.ACTIVE,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER],
     topcoderRoles: [ROLE_ADMINISTRATOR],
   }, {
+    template: 'project-paused.html',
     type: BUS_API_EVENT.CONNECT.PROJECT.PAUSED,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER],
     topcoderRoles: [ROLE_ADMINISTRATOR],
   }, {
+    template: 'project-completed.html',
     type: BUS_API_EVENT.CONNECT.PROJECT.COMPLETED,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
     topcoderRoles: [ROLE_ADMINISTRATOR],
   }, {
+    template: 'project-canceled.html',
     type: BUS_API_EVENT.CONNECT.PROJECT.CANCELED,
     projectRoles: [PROJECT_ROLE_OWNER],
   },
 
   // User management
   {
+    template: 'member-joined.html',
     type: BUS_API_EVENT.CONNECT.MEMBER.JOINED,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER],
   }, {
+    template: 'member-left.html',
     type: BUS_API_EVENT.CONNECT.MEMBER.LEFT,
     version: 2,
     projectRoles: [PROJECT_ROLE_MANAGER],
   }, {
+    template: 'member-removed.html',
     type: BUS_API_EVENT.CONNECT.MEMBER.REMOVED,
     version: 2,
     projectRoles: [PROJECT_ROLE_MANAGER],
     toUserHandle: true,
   }, {
+    template: 'member-assigned-as-owner.html',
     type: BUS_API_EVENT.CONNECT.MEMBER.ASSIGNED_AS_OWNER,
     version: 2,
     projectRoles: [PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER],
     toUserHandle: true,
   }, {
+    template: 'member-copilot-joined.html',
     type: BUS_API_EVENT.CONNECT.MEMBER.COPILOT_JOINED,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER],
   }, {
+    template: 'member-manager-joined.html',
     type: BUS_API_EVENT.CONNECT.MEMBER.MANAGER_JOINED,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER],
   },
 
   // Project activity
   {
+    template: 'topic-created.html',
     type: BUS_API_EVENT.CONNECT.TOPIC.CREATED,
     version: 2,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
     toMentionedUsers: true,
   }, {
+    template: 'post-created.html',
     type: BUS_API_EVENT.CONNECT.POST.CREATED,
     version: 2,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
     toTopicStarter: true,
     toMentionedUsers: true,
   }, {
+    template: 'post-updated.html',
     type: BUS_API_EVENT.CONNECT.POST.UPDATED,
     version: 2,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
     toTopicStarter: true,
     toMentionedUsers: true,
   }, {
+    template: 'post-mention.html',
     type: BUS_API_EVENT.CONNECT.POST.MENTION,
   },
   {
+    template: 'project-link-created.html',
     type: BUS_API_EVENT.CONNECT.PROJECT.LINK_CREATED,
     version: 2,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
   }, {
+    template: 'project-file-uploaded.html',
     type: BUS_API_EVENT.CONNECT.PROJECT.FILE_UPLOADED,
     version: 2,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
   }, {
+    template: 'project-specification-modified.html',
     type: BUS_API_EVENT.CONNECT.PROJECT.SPECIFICATION_MODIFIED,
     version: 2,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],

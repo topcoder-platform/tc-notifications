@@ -19,7 +19,7 @@ gulp.task('compileSass', () => gulp
 
 // build complete HTML email template
 gulp.task('build', ['compileSass'], () => gulp
-  .src('src/emails/*.html')
+  .src('src/emails/**/*.html')
 
   // replace `.scss` file paths from template with compiled file paths
   .pipe(replace(/\/styles\/(.+)\.scss/ig, '/styles/$1.css'))
@@ -28,8 +28,6 @@ gulp.task('build', ['compileSass'], () => gulp
   // preserveMediaQueries not working
   .pipe(inlineCss({ preserveMediaQueries: true }))
 
-  // do not generate sub-folders inside dist folder
-  .pipe(rename({ dirname: '' }))
   .pipe(gulp.dest('dist/emails')));
 
 // browserSync task to launch preview server
