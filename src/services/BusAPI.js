@@ -26,7 +26,7 @@ const postEvent = event => (
           const errorDetails = _.get(err, 'message');
           throw new Error(
             `Failed to post event ${event}.`
-            + (errorDetails ? ' Server response: ' + errorDetails : ''),
+            + (errorDetails ? ' Server response: ' + errorDetails : '')
           );
         })
     ))

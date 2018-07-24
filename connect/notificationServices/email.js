@@ -22,12 +22,12 @@ const service = require('../service');
 // compile all partials and register them
 EVENTS.forEach(event => handlebars.registerPartial(
   event.type,
-  handlebars.compile(fs.readFileSync(path.join(process.cwd(), 'dist', 'emails', 'partials', event.template), 'utf8')),
+  handlebars.compile(fs.readFileSync(path.join(process.cwd(), 'dist', 'emails', 'partials', event.template), 'utf8'))
 ));
 
 // template used for all notification types (whether bundled or individual)
 const template = handlebars.compile(
-  fs.readFileSync(path.join(process.cwd(), 'dist', 'emails', 'template.html'), 'utf8'),
+  fs.readFileSync(path.join(process.cwd(), 'dist', 'emails', 'template.html'), 'utf8')
 );
 
 /**
@@ -109,7 +109,7 @@ function handleScheduledEvents(events, setEventsStatus) {
 const scheduler = createEventScheduler(
   BUS_API_EVENT.EMAIL.BUNDLED,
   SCHEDULED_EVENT_PERIOD,
-  handleScheduledEvents,
+  handleScheduledEvents
 );
 
 /**

@@ -9,6 +9,5 @@ WORKDIR /opt/app
 COPY . .
 RUN npm install
 RUN npm install dotenv --save
-RUN npm run build
 RUN npm test
 CMD ["npm", "start"]

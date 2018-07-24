@@ -29,7 +29,7 @@ const getProject = projectId => M2m.getMachineToken(config.AUTH0_CLIENT_ID, conf
       const errorDetails = _.get(err, 'response.body.result.content.message');
       throw new Error(
         `Failed to get project details of project id: ${projectId}.`
-            + (errorDetails ? ' Server response: ' + errorDetails : ''),
+            + (errorDetails ? ' Server response: ' + errorDetails : '')
       );
     }))
   .catch((err) => {
@@ -59,7 +59,7 @@ const getRoleMembers = roleId => M2m.getMachineToken(config.AUTH0_CLIENT_ID, con
       const errorDetails = _.get(err, 'response.body.result.content.message');
       throw new Error(
         `Failed to get role membrs of role id: ${roleId}.`
-            + (errorDetails ? ' Server response: ' + errorDetails : ''),
+            + (errorDetails ? ' Server response: ' + errorDetails : '')
       );
     }))
   .catch((err) => {
@@ -98,7 +98,7 @@ const getUsersById = (ids) => {
           || `Status code: ${err.response.statusCode}`;
         throw new Error(
           `Failed to get users by ids: ${ids}.`
-          + (errorDetails ? ' Server response: ' + errorDetails : ''),
+          + (errorDetails ? ' Server response: ' + errorDetails : '')
         );
       }));
 };
@@ -134,7 +134,7 @@ const getUsersByHandle = (handles) => {
           || `Status code: ${err.response.statusCode}`;
         throw new Error(
           `Failed to get users by handles: ${handles}.`
-          + (errorDetails ? ' Server response: ' + errorDetails : ''),
+          + (errorDetails ? ' Server response: ' + errorDetails : '')
         );
       }));
 };
@@ -164,7 +164,7 @@ const getTopic = (topicId, logger) => M2m.getMachineToken(config.AUTH0_CLIENT_ID
       const errorDetails = _.get(err, 'response.body.result.content.message');
       throw new Error(
         `Failed to get topic details of topic id: ${topicId}.`
-            + (errorDetails ? ' Server response: ' + errorDetails : ''),
+            + (errorDetails ? ' Server response: ' + errorDetails : '')
       );
     }))
   .catch((err) => {
