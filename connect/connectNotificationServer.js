@@ -75,7 +75,7 @@ const getNotificationsForMentionedUser = (eventConfig, content) => {
     const handle = matches[1] ? matches[1].toString() : matches[2].toString();
     notifications.push({
       userHandle: handle,
-      newType: BUS_API_EVENT.CONNECT.MENTIONED_IN_POST,
+      newType: BUS_API_EVENT.CONNECT.POST.MENTION,
       contents: {
         toUserHandle: true,
       },
@@ -285,7 +285,7 @@ const handler = (topic, message, callback) => {
 
   // filter out `notifications.connect.project.topic.created` events send by bot
   // because they create too much clutter and duplicate info
-  if (topic === BUS_API_EVENT.CONNECT.TOPIC_CREATED && message.userId.toString() === config.TCWEBSERVICE_ID) {
+  if (topic === BUS_API_EVENT.CONNECT.TOPIC.CREATED && message.userId.toString() === config.TCWEBSERVICE_ID) {
     return callback(null, []);
   }
 
