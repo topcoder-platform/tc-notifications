@@ -56,8 +56,11 @@ getSettings.schema = {
  * @param {Number} userId the user id
  */
 function* saveNotificationSetting(entry, userId) {
-  const setting = yield models.NotificationSetting.findOne({ where: {
-    userId, topic: entry.topic, serviceId: entry.serviceId, name: entry.name } });
+  const setting = yield models.NotificationSetting.findOne({
+    where: {
+      userId, topic: entry.topic, serviceId: entry.serviceId, name: entry.name,
+    },
+  });
   if (setting) {
     setting.value = entry.value;
     yield setting.save();
@@ -78,8 +81,9 @@ function* saveNotificationSetting(entry, userId) {
  * @param {Number} userId the user id
  */
 function* saveServiceSetting(entry, userId) {
-  const setting = yield models.ServiceSettings.findOne({ where: {
-    userId, serviceId: entry.serviceId, name: entry.name } });
+  const setting = yield models.ServiceSettings.findOne({
+    where: { userId, serviceId: entry.serviceId, name: entry.name },
+  });
   if (setting) {
     setting.value = entry.value;
     yield setting.save();
@@ -127,7 +131,7 @@ function* updateSettings(data, userId) {
   });
 
   // save each entry in parallel
-  yield _.map(notifications, (entry) => saveNotificationSetting(entry, userId));
+  yield _.map(notifications, entry => saveNotificationSetting(entry, userId));
 
   // convert services settings object the the list of entries
   const services = [];
@@ -153,7 +157,7 @@ function* updateSettings(data, userId) {
     paris[key] = entry;
   });
 
-  yield _.map(services, (entry) => saveServiceSetting(entry, userId));
+  yield _.map(services, entry => saveServiceSetting(entry, userId));
 }
 
 updateSettings.schema = {
@@ -179,14 +183,18 @@ function* listNotifications(query, userId) {
   const settings = yield getSettings(userId);
   const notificationSettings = settings.notifications;
 
-  const filter = { where: {
-    userId,
-  }, offset: query.offset, limit: query.limit, order: [['createdAt', 'DESC']] };
+  const filter = {
+    where: {
+      userId,
+    },
+    offset: query.offset,
+    limit: query.limit,
+    order: [['createdAt', 'DESC']],
+  };
   if (_.keys(notificationSettings).length > 0) {
     // only filter out notifications types which were explicitly set to 'no' - so we return notification by default
-    const notifications = _.keys(notificationSettings).filter((notificationType) =>
-      notificationSettings[notificationType].web.enabled !== 'no'
-    );
+    const notifications = _.keys(notificationSettings)
+      .filter(notificationType => notificationSettings[notificationType].web.enabled !== 'no');
     filter.where.type = { $in: notifications };
   }
   if (query.type) {
@@ -196,7 +204,7 @@ function* listNotifications(query, userId) {
     filter.where.read = (query.read === 'true');
   }
   const docs = yield models.Notification.findAndCountAll(filter);
-  const items = _.map(docs.rows, r => {
+  const items = _.map(docs.rows, (r) => {
     const item = r.toJSON();
     // id and userId are BIGINT in database, sequelize maps them to string values,
     // convert them back to Number values

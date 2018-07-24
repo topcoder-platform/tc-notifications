@@ -1,17 +1,19 @@
 /**
  * This is entry point of the TopCoder notification server module.
  */
+
 'use strict';
 
 const config = require('config');
 const _ = require('lodash');
-const errors = require('./src/common/errors');
 const tcCoreLibAuth = require('tc-core-library-js').auth;
+const errors = require('./src/common/errors');
 // some useful components to exposure
 const logger = require('./src/common/logger');
 const busService = require('./src/services/BusAPI');
 const eventScheduler = require('./src/services/EventScheduler');
 const notificationService = require('./src/services/NotificationService');
+
 global.M2m = tcCoreLibAuth.m2m(config);
 
 // key is topic name, e.g. 'notifications.connect.project.created';

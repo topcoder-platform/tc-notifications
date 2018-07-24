@@ -1,19 +1,19 @@
 /**
  * This is TopCoder connect notification server.
  */
+
 'use strict';
 
 global.Promise = require('bluebird');
 
+const _ = require('lodash');
 const config = require('./config');
 const notificationServer = require('../index');
-const _ = require('lodash');
 const service = require('./service');
 const { BUS_API_EVENT } = require('./constants');
-const EVENTS = require('./events-config').EVENTS;
-const TOPCODER_ROLE_RULES = require('./events-config').TOPCODER_ROLE_RULES;
-const PROJECT_ROLE_RULES = require('./events-config').PROJECT_ROLE_RULES;
-const PROJECT_ROLE_OWNER = require('./events-config').PROJECT_ROLE_OWNER;
+const {
+  EVENTS, PROJECT_ROLE_OWNER, PROJECT_ROLE_RULES, TOPCODER_ROLE_RULES,
+} = require('./events-config');
 const emailNotificationServiceHandler = require('./notificationServices/email').handler;
 
 /**
@@ -75,7 +75,7 @@ const getNotificationsForMentionedUser = (eventConfig, content) => {
     const handle = matches[1] ? matches[1].toString() : matches[2].toString();
     notifications.push({
       userHandle: handle,
-      newType: BUS_API_EVENT.CONNECT.MENTIONED_IN_POST,
+      newType: BUS_API_EVENT.CONNECT.POST.MENTION,
       contents: {
         toUserHandle: true,
       },
@@ -118,8 +118,8 @@ const getProjectMembersNotifications = (eventConfig, project) => {
     let notifications = [];
     const projectMembers = _.get(project, 'members', []);
 
-    eventConfig.projectRoles.forEach(projectRole => {
-      const roleNotifications = _.filter(projectMembers, PROJECT_ROLE_RULES[projectRole]).map((projectMember) => ({
+    eventConfig.projectRoles.forEach((projectRole) => {
+      const roleNotifications = _.filter(projectMembers, PROJECT_ROLE_RULES[projectRole]).map(projectMember => ({
         userId: projectMember.userId.toString(),
         contents: {
           projectRole,
@@ -250,11 +250,11 @@ const excludeNotifications = (notifications, eventConfig, message, data) => {
     getNotificationsForMentionedUser(eventConfig, message.postContent),
     getProjectMembersNotifications(excludeEventConfig, project),
     getTopCoderMembersNotifications(excludeEventConfig),
-  ]).then((notificationsPerSource) => (
+  ]).then(notificationsPerSource => (
     _.uniqBy(_.flatten(notificationsPerSource), 'userId')
   )).then((excludedNotifications) => {
     const excludedUserIds = _.map(excludedNotifications, 'userId');
-    const filteredNotifications = notifications.filter((notification) => (
+    const filteredNotifications = notifications.filter(notification => (
       !_.includes(excludedUserIds, notification.userId)
     ));
 
@@ -273,7 +273,7 @@ notificationServer.setConfig({ LOG_LEVEL: 'debug' });
 // the message is JSON event message,
 // the callback is function(error, userIds), where userIds is an array of user ids to receive notifications
 const handler = (topic, message, callback) => {
-  const projectId = message.projectId;
+  const { projectId } = message;
   if (!projectId) {
     return callback(new Error('Missing projectId in the event message.'));
   }
@@ -285,12 +285,12 @@ const handler = (topic, message, callback) => {
 
   // filter out `notifications.connect.project.topic.created` events send by bot
   // because they create too much clutter and duplicate info
-  if (topic === BUS_API_EVENT.CONNECT.TOPIC_CREATED && message.userId.toString() === config.TCWEBSERVICE_ID) {
+  if (topic === BUS_API_EVENT.CONNECT.TOPIC.CREATED && message.userId.toString() === config.TCWEBSERVICE_ID) {
     return callback(null, []);
   }
 
   // get project details
-  service.getProject(projectId).then(project => {
+  service.getProject(projectId).then((project) => {
     let allNotifications = [];
 
     Promise.all([
@@ -304,11 +304,11 @@ const handler = (topic, message, callback) => {
       getNotificationsForMentionedUser(eventConfig, message.postContent),
       getProjectMembersNotifications(eventConfig, project),
       getTopCoderMembersNotifications(eventConfig),
-    ]).then((notificationsPerSource) => (
+    ]).then(notificationsPerSource => (
       // first found notification for one user will be send, the rest ignored
       // NOTE all userId has to be string
       _.uniqBy(_.flatten(notificationsPerSource), 'userId')
-    )).then((notifications) => (
+    )).then(notifications => (
       excludeNotifications(notifications, eventConfig, message, {
         project,
       })
@@ -324,28 +324,30 @@ const handler = (topic, message, callback) => {
         return service.getUsersById(ids);
       }
       return [];
-    }).then((users) => {
-      _.map(allNotifications, (notification) => {
-        notification.version = eventConfig.version;
-        notification.contents.projectName = project.name;
-        // if found a user then add user handle
-        if (users.length) {
-          notification.contents.userHandle = users[0].handle;
-          notification.contents.userFullName = `${users[0].firstName} ${users[0].lastName}`;
-          notification.contents.userEmail = users[0].email;
-        }
+    })
+      .then((users) => {
+        _.map(allNotifications, (notification) => {
+          notification.version = eventConfig.version;
+          notification.contents.projectName = project.name;
+          // if found a user then add user handle
+          if (users.length) {
+            notification.contents.userHandle = users[0].handle;
+            notification.contents.userFullName = `${users[0].firstName} ${users[0].lastName}`;
+            notification.contents.userEmail = users[0].email;
+          }
+        });
+        callback(null, allNotifications);
+      })
+      .catch((err) => {
+        callback(err);
       });
-      callback(null, allNotifications);
-    }).catch((err) => {
-      callback(err);
-    });
   }).catch((err) => {
     callback(err);
   });
 };
 
 // init all events
-EVENTS.forEach(eventConfig => {
+EVENTS.forEach((eventConfig) => {
   notificationServer.addTopicHandler(eventConfig.type, handler);
 });
 
@@ -358,7 +360,7 @@ if (config.ENABLE_EMAILS) {
 notificationServer
   .initDatabase()
   .then(() => notificationServer.start())
-  .catch((e) => console.log(e)); // eslint-disable-line no-console
+  .catch(e => console.log(e)); // eslint-disable-line no-console
 
 // if no need to init database, then directly start the server:
 // notificationServer.start();

@@ -77,7 +77,7 @@ class EventScheduler {
               SCHEDULED_EVENT_STATUS.FAILED,
             ],
           },
-        }).then((events) => this.handler(events, EventScheduler.setEventsStatus));
+        }).then(events => this.handler(events, EventScheduler.setEventsStatus));
       });
     });
   }

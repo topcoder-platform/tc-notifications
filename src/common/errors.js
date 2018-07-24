@@ -1,6 +1,7 @@
 /**
  * This file defines application errors.
  */
+
 'use strict';
 
 const util = require('util');

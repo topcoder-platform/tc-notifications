@@ -10,7 +10,7 @@ const Remarkable = require('remarkable');
  * @param {Object} options - optional additional data
  *
  * @return {Object} ContentState
-**/
+ */
 const markdownToHTML = (markdown) => {
   const md = new Remarkable('full', {
     html: true,

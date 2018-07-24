@@ -15,6 +15,7 @@ const Sequelize = require('sequelize');
 const logger = require('../common/logger');
 
 Sequelize.Promise = require('bluebird');
+
 let sequelizeInstance = null;
 
 /**

@@ -1,0 +1,587 @@
+body {
+  // width: 850px;
+  background-color: $background-color;
+  margin: 0 auto !important;
+}
+
+// basic rules for all tags used
+table, tr, td, img {
+  margin: 0;
+  padding: 0;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+table.container, table.footer-container {
+  margin: 0 auto !important;
+}
+
+// main container
+.container {
+  background-color: $background-color;
+  width: 100%;
+  color: $main-font-color;
+  .content-row {
+    border-radius: 6px;
+    .content {
+      border-radius: 6px;
+      .main {
+        border-radius: 6px;
+        &.with-shadow {
+          box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+      }
+      .last-row {
+        border-bottom-left-radius: 6px;
+        border-bottom-right-radius: 6px;
+        table, tr, td {
+          border-bottom-left-radius: 6px;
+          border-bottom-right-radius: 6px;
+        }
+      }
+    }
+    .space {
+      padding: 5px !important;
+    }
+  }
+}
+
+// main container ends
+
+.main {
+  background-color: $white-background;
+  width: 600px;
+  .main-child {
+    width: 600px;
+  }
+}
+
+// top head
+.top-head {
+  height: 75px;
+  background-color: $background-color;
+  table {
+    height: 75px;
+  }
+  tr {
+    td {
+      text-transform: uppercase;
+      img {
+        // outlook hack
+        display: block;
+        width: 54px;
+        height: 35px;
+      }
+    }
+    .logo-box {
+      width: 54px;
+    }
+    .main-heading {
+      width: 492px;
+      font-size: 13px;
+      color: $main-heading-color;
+      text-align: center;
+    }
+    .dummy-head-child {
+      width: 54px;
+    }
+  }
+}
+
+// top head ends
+
+// heading
+.heading {
+  height: 60px;
+  background-color: $main-font-color;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+
+  td {
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+  }
+  table {
+    height: 60px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    background-color: $main-font-color;
+    tr {
+      border-top-left-radius: 6px;
+      border-top-right-radius: 6px;
+    }
+    td {
+      color: $heading-color;
+      font-size: 20px;
+      font-weight: normal;
+      text-align: center;
+    }
+  }
+}
+
+// heaing ends
+
+// post head
+.post-head {
+  height: 60px;
+  background-color: $grey-background;
+  table {
+    height: 60px;
+    background-color: $grey-background;
+    td {
+      // min-height: 60px;
+      color: $main-font-color;
+      font-size: 15px;
+    }
+    .empty-child-one {
+      width: 20px;
+    }
+    .empty-child-two {
+      width: 10px;
+    }
+    .comment-box {
+      width: 16px;
+      img {
+        width: 16px;
+        height: 16px;
+        display: block;
+        vertical-align: middle;
+        margin: auto;
+      }
+    }
+  }
+
+}
+
+// post head ends
+
+//all empty are empty rows
+//10 represents 10px height
+.empty-10 {
+  height: 10px;
+  table {
+    height: 10px;
+    background-color: $white-background;
+  }
+}
+
+.empty-30 {
+  height: 30px;
+  table {
+    height: 30px;
+    background-color: $white-background;
+  }
+}
+
+.empty-20 {
+  height: 20px;
+  table {
+    height: 20px;
+  }
+}
+
+.empty-50 {
+  height: 50px;
+  table {
+    height: 50px;
+    background-color: $white-background;
+  }
+}
+
+.empty-40 {
+  height: 40px;
+  table {
+    height: 40px;
+    background-color: $white-background;
+  }
+}
+
+.empty-15 {
+  height: 15px;
+  table {
+    height: 15px;
+    background-color: $white-background;
+  }
+}
+
+// emptys end
+
+// post details
+.post-details {
+  .main-child {
+    background-color: $white-background;
+    .empty-child-one {
+      width: 20px;
+    }
+    .empty-child-two {
+      width: 10px;
+    }
+    .dude-box {
+      width: 40px;
+      img {
+        height: 40px;
+        width: 40px;
+        display: block;
+        margin: auto;
+        border-radius: 50%;
+      }
+    }
+    .dummy-child {
+      width: 20px;
+    }
+    .successfull {
+      font-size: 13px;
+      color: $main-font-color;
+      line-height: 20px;
+    }
+    td {
+      vertical-align: top;
+    }
+    table {
+      tr {
+        height: 20px;
+        td {
+          vertical-align: middle;
+        }
+      }
+      .row-child-one {
+        span {
+          color: $grey-color;
+        }
+      }
+      .row-child-two {
+        span {
+          color: $blue-color;
+        }
+      }
+      .empty-child-one {
+        height: 20px;
+      }
+      td {
+        vertical-align: top;
+        font-size: 13px;
+        color: $main-font-color;
+        line-height: 20px;
+        a {
+          text-decoration: none;
+          font-size: 13px;
+          color: $grey-hyperlink;
+          line-height: 20px;
+        }
+      }
+
+    }
+  }
+}
+
+// post details ends
+
+.images {
+  table {
+    background-color: $white-background;
+    img {
+      height: 150px;
+      width: 150px;
+    }
+
+    .empty-child-one {
+      width: 20px;
+    }
+  }
+}
+
+// buttons
+//button-row
+.button-row {
+  height: 30px;
+  .main-child {
+    background-color: $white-background;
+    height: 30px;
+    .empty-child-one {
+      // width: 216px;
+    }
+    .second-child {
+      // width: 167px;
+      border-radius: 4px;
+      vertical-align: middle;
+      background-color: $button-color;
+      height: 30px;
+      a {
+        // width: 167px;
+        height: 30px;
+        border-radius: 4px;
+        text-align: center;
+        text-decoration: none;
+        display: block;
+        background-color: $button-color;
+        table {
+          background-color: $button-color;
+          border-radius: 4px;
+          height: 30px;
+          td {
+            height: 30px;
+            background-color: $button-color;
+            border-radius: 4px;
+            // width: 167px;
+            vertical-align: middle;
+            text-align: center;
+            color: $white-background;
+            font-size: 13px;
+          }
+        }
+      }
+    }
+  }
+}
+
+// button-row ends
+
+// button-one and button-three
+.button-one, .button-three {
+  .main-child {
+    .empty-child-one {
+      width: 216px;
+    }
+    .second-child {
+      width: 167px;
+      a {
+        width: 167px;
+        table {
+          td {
+            width: 167px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.button-two {
+  .main-child {
+    .empty-child-one {
+      width: 211px;
+    }
+    .second-child {
+      width: 178px;
+      a {
+        width: 178px;
+        table {
+          td {
+            width: 178px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.button-four {
+  .main-child {
+    .empty-child-one {
+      width: 210px;
+    }
+    .second-child {
+      width: 180px;
+      a {
+        width: 180px;
+        table {
+          td {
+            width: 180px;
+          }
+        }
+      }
+    }
+  }
+}
+
+// buttons end
+
+// links
+.copy-link {
+  height: 20px;
+  table {
+    height: 20px;
+    background-color: $white-background;
+    td {
+      width: 600px;
+      height: 20px;
+      text-align: center;
+      color: $grey-hyperlink;
+      font-size: 11px;
+      a {
+        text-decoration: none;
+        font-size: 11px;
+        color: $grey-hyperlink;
+        text-align: center;
+      }
+    }
+  }
+}
+
+.more-links {
+  height: 20px;
+  table {
+    height: 20px;
+    background-color: $white-background;
+    td {
+      width: 600px;
+      height: 20px;
+      text-align: center;
+      a {
+        text-decoration: none;
+        font-size: 13px;
+        color: $main-font-color;
+        text-align: center;
+      }
+    }
+  }
+}
+
+// links end
+
+//footer
+.footer-container {
+  background-color: $background-color;
+  width: 100%;
+  color: $main-font-color;
+  .empty-21 {
+    height: 20px;
+    table {
+      height: 20px;
+    }
+  }
+
+  .footer {
+    .footer-space {
+      padding: 5px !important;
+    }
+
+    .footer-content {
+      vertical-align: middle;
+      table {
+        width: 400px;
+        td {
+          width: 400px;
+          text-align: center;
+          color: $grey-hyperlink;
+          font-size: 11px;
+          text-align: center;
+          line-height: 15px;
+          &.html-entities {
+            color: $grey-hyperlink;
+          }
+          a {
+            font-size: 11px;
+            text-align: center;
+            line-height: 15px;
+            text-decoration: none;
+            color: $blue-color;
+          }
+        }
+      }
+    }
+  }
+}
+
+// footer ends
+
+//responsive
+// mobile css
+
+/*remved only*/
+@media screen and (max-width: 480px) {
+
+  body {
+    width: 375px !important;
+    color: red;
+  }
+
+  .container {
+    width: 375px !important;
+    tr.content-row {
+      td.space {
+        padding: 0 !important;
+        width: 10px !important;
+      }
+    }
+  }
+
+  .main {
+    width: 355px !important;
+    table.main-child {
+      width: 355px !important;
+    }
+  }
+
+  .top-head {
+    height: 65px !important;
+    table {
+      height: 65px !important;
+    }
+    tr {
+      .main-heading {
+        width: 301px !important;
+      }
+      .dummy-head-child {
+        width: 0 !important;
+      }
+    }
+  }
+
+  .heading {
+    table {
+      td {
+        font-size: 15px !important;
+      }
+    }
+  }
+
+  .post-head {
+    height: 70px !important;
+    table {
+      height: 70px !important;
+      .empty-child-one {
+        width: 15px !important;
+      }
+    }
+
+  }
+
+  .empty-50 {
+    height: 30px !important;
+    table {
+      height: 30px !important;
+    }
+  }
+
+  .post-details {
+    .main-child {
+      .empty-child-one {
+        width: 15px !important;
+      }
+    }
+  }
+
+  .footer-container {
+    width: 375px !important;
+    .footer {
+      .footer-space {
+        padding: 0 !important;
+        width: 10px !important;
+      }
+
+      .footer-content {
+        table {
+          width: 355px !important;
+          td {
+            width: 355px !important;
+          }
+        }
+      }
+    }
+  }
+}
+
+// mobile css ends

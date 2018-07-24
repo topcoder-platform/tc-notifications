@@ -1,6 +1,7 @@
 /**
  * Contains endpoints related to notification functionalities.
  */
+
 'use strict';
 
 const NotificationService = require('../services/NotificationService');

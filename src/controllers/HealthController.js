@@ -1,6 +1,7 @@
 /**
  * Contains endpoints related to service health
  */
+
 'use strict';
 
 /**

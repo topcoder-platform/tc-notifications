@@ -2,6 +2,7 @@
  * Configuration of connect events
  */
 const config = require('./config');
+const { BUS_API_EVENT } = require('./constants');
 
 // project member role names
 const PROJECT_ROLE_OWNER = 'owner';
@@ -48,102 +49,176 @@ const TOPCODER_ROLE_RULES = {
 const EVENTS = [
   // Outside project
   {
-    type: 'notifications.connect.project.created',
+    template: 'project-created.html',
+    type: BUS_API_EVENT.CONNECT.PROJECT.CREATED,
     projectRoles: [PROJECT_ROLE_OWNER],
     exclude: {
       topcoderRoles: [ROLE_CONNECT_MANAGER, ROLE_ADMINISTRATOR],
     },
   }, {
-    type: 'notifications.connect.project.submittedForReview',
+    template: 'project-submitted-for-review.html',
+    type: BUS_API_EVENT.CONNECT.PROJECT.SUBMITTED_FOR_REVIEW,
     projectRoles: [PROJECT_ROLE_OWNER],
     topcoderRoles: [ROLE_CONNECT_MANAGER, ROLE_ADMINISTRATOR],
   }, {
-    type: 'notifications.connect.project.approved',
+    template: 'project-approved.html',
+    type: BUS_API_EVENT.CONNECT.PROJECT.APPROVED,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER],
     topcoderRoles: [ROLE_CONNECT_COPILOT, ROLE_ADMINISTRATOR],
   }, {
-    type: 'notifications.connect.project.active',
+    template: 'project-active.html',
+    type: BUS_API_EVENT.CONNECT.PROJECT.ACTIVE,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER],
     topcoderRoles: [ROLE_ADMINISTRATOR],
   }, {
-    type: 'notifications.connect.project.paused',
+    template: 'project-paused.html',
+    type: BUS_API_EVENT.CONNECT.PROJECT.PAUSED,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER],
     topcoderRoles: [ROLE_ADMINISTRATOR],
   }, {
-    type: 'notifications.connect.project.completed',
+    template: 'project-completed.html',
+    type: BUS_API_EVENT.CONNECT.PROJECT.COMPLETED,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
     topcoderRoles: [ROLE_ADMINISTRATOR],
   }, {
-    type: 'notifications.connect.project.canceled',
+    template: 'project-canceled.html',
+    type: BUS_API_EVENT.CONNECT.PROJECT.CANCELED,
     projectRoles: [PROJECT_ROLE_OWNER],
   },
 
   // User management
   {
-    type: 'notifications.connect.project.member.joined',
+    template: 'member-joined.html',
+    type: BUS_API_EVENT.CONNECT.MEMBER.JOINED,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER],
   }, {
-    type: 'notifications.connect.project.member.left',
+    template: 'member-left.html',
+    type: BUS_API_EVENT.CONNECT.MEMBER.LEFT,
     version: 2,
     projectRoles: [PROJECT_ROLE_MANAGER],
   }, {
-    type: 'notifications.connect.project.member.removed',
+    template: 'member-removed.html',
+    type: BUS_API_EVENT.CONNECT.MEMBER.REMOVED,
     version: 2,
     projectRoles: [PROJECT_ROLE_MANAGER],
     toUserHandle: true,
   }, {
-    type: 'notifications.connect.project.member.assignedAsOwner',
+    template: 'member-assigned-as-owner.html',
+    type: BUS_API_EVENT.CONNECT.MEMBER.ASSIGNED_AS_OWNER,
     version: 2,
     projectRoles: [PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER],
     toUserHandle: true,
   }, {
-    type: 'notifications.connect.project.member.copilotJoined',
+    template: 'member-copilot-joined.html',
+    type: BUS_API_EVENT.CONNECT.MEMBER.COPILOT_JOINED,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER],
   }, {
-    type: 'notifications.connect.project.member.managerJoined',
+    template: 'member-manager-joined.html',
+    type: BUS_API_EVENT.CONNECT.MEMBER.MANAGER_JOINED,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER],
   },
 
   // Project activity
   {
-    type: 'notifications.connect.project.topic.created',
+    template: 'topic-created.html',
+    type: BUS_API_EVENT.CONNECT.TOPIC.CREATED,
     version: 2,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
     toMentionedUsers: true,
   }, {
-    type: 'notifications.connect.project.post.created',
-    version: 2,
-    projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
-    toTopicStarter: true,
-    toMentionedUsers: true,
-  }, {
-    type: 'notifications.connect.project.post.edited',
+    template: 'post-created.html',
+    type: BUS_API_EVENT.CONNECT.POST.CREATED,
     version: 2,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
     toTopicStarter: true,
     toMentionedUsers: true,
   }, {
-    type: 'notifications.connect.project.post.mention',
+    template: 'post-updated.html',
+    type: BUS_API_EVENT.CONNECT.POST.UPDATED,
+    version: 2,
+    projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
+    toTopicStarter: true,
+    toMentionedUsers: true,
+  }, {
+    template: 'post-mention.html',
+    type: BUS_API_EVENT.CONNECT.POST.MENTION,
   },
   {
-    type: 'notifications.connect.project.linkCreated',
+    template: 'project-link-created.html',
+    type: BUS_API_EVENT.CONNECT.PROJECT.LINK_CREATED,
     version: 2,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
   }, {
-    type: 'notifications.connect.project.fileUploaded',
+    template: 'project-file-uploaded.html',
+    type: BUS_API_EVENT.CONNECT.PROJECT.FILE_UPLOADED,
     version: 2,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
   }, {
-    type: 'notifications.connect.project.specificationModified',
+    template: 'project-specification-modified.html',
+    type: BUS_API_EVENT.CONNECT.PROJECT.SPECIFICATION_MODIFIED,
     version: 2,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
   },
 ];
 
+const EVENT_BUNDLES = {
+  TOPICS_AND_POSTS: {
+    title: 'New posts and replies',
+    types: [
+      BUS_API_EVENT.CONNECT.TOPIC.CREATED,
+      BUS_API_EVENT.CONNECT.POST.CREATED,
+      BUS_API_EVENT.CONNECT.POST.UPDATED,
+      BUS_API_EVENT.CONNECT.POST.MENTION,
+    ],
+  },
+  PROJECT_STATUS: {
+    title: 'Project status changes',
+    types: [
+      BUS_API_EVENT.CONNECT.PROJECT.ACTIVE,
+      BUS_API_EVENT.CONNECT.PROJECT.APPROVED,
+      BUS_API_EVENT.CONNECT.PROJECT.CANCELED,
+      BUS_API_EVENT.CONNECT.PROJECT.COMPLETED,
+      BUS_API_EVENT.CONNECT.PROJECT.CREATED,
+      BUS_API_EVENT.CONNECT.PROJECT.PAUSED,
+      BUS_API_EVENT.CONNECT.PROJECT.SUBMITTED_FOR_REVIEW,
+    ],
+  },
+  PROJECT_SPECIFICATION: {
+    title: 'Project specification changes',
+    types: [
+      BUS_API_EVENT.CONNECT.PROJECT.SPECIFICATION_MODIFIED,
+    ],
+  },
+  PROJECT_FILES: {
+    title: 'File uploads',
+    types: [
+      BUS_API_EVENT.CONNECT.PROJECT.FILE_UPLOADED,
+    ],
+  },
+  PROJECT_LINKS: {
+    title: 'New project links',
+    types: [
+      BUS_API_EVENT.CONNECT.PROJECT.LINK_CREATED,
+    ],
+  },
+  PROJECT_TEAM: {
+    title: 'Team changes',
+    types: [
+      BUS_API_EVENT.CONNECT.MEMBER.ASSIGNED_AS_OWNER,
+      BUS_API_EVENT.CONNECT.MEMBER.COPILOT_JOINED,
+      BUS_API_EVENT.CONNECT.MEMBER.JOINED,
+      BUS_API_EVENT.CONNECT.MEMBER.LEFT,
+      BUS_API_EVENT.CONNECT.MEMBER.MANAGER_JOINED,
+      BUS_API_EVENT.CONNECT.MEMBER.REMOVED,
+    ],
+  },
+};
+
 module.exports = {
   PROJECT_ROLE_RULES,
   TOPCODER_ROLE_RULES,
   EVENTS,
+  EVENT_BUNDLES,
 
   PROJECT_ROLE_OWNER,
   PROJECT_ROLE_COPILOT,
