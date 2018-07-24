@@ -9,8 +9,8 @@
  * @version     1.0
  */
 
-const DataTypes = require('sequelize/lib/data-types');
 const sequelize = require('./datasource').getSequelize();
+const DataTypes = require('sequelize/lib/data-types');
 
 const Notification = require('./Notification')(sequelize, DataTypes);
 const NotificationSetting = require('./NotificationSetting')(sequelize, DataTypes);
