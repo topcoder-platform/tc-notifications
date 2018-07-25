@@ -6,7 +6,7 @@ jobs:
     docker:
       - image: docker:17.06.1-ce-git
     steps:
-      # Initialization.
+      # Initialization
       - run: git clone --branch master https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
       - checkout
       - setup_remote_docker
@@ -40,7 +40,7 @@ jobs:
           command: |
             echo "ntegration testing" 
             cp ./../buildscript/master_deply_v4.2.sh .
-            ./master_deply_v4.2.sh -d ECS -e DEV -t $CIRCLE_SHA1 -s sample123
+            ./master_deply_v4.2.sh -d ECS -e DEV -t $CIRCLE_SHA1 -s zebra
 
 
   "build-prod":
