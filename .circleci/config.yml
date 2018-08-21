@@ -7,7 +7,6 @@ jobs:
       - image: docker:17.06.1-ce-git
     steps:
       # Initialization
-      - run: git clone --branch master https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
       - checkout
       - setup_remote_docker
       - run:
@@ -35,13 +34,13 @@ jobs:
           command: |
             apk add --no-cache jq py-pip sudo
             sudo pip install awscli --upgrade
-
-      - deploy:
-          command: |
-            echo "ntegration testing" 
-            cp ./../buildscript/master_deply_v4.2.sh .
-            ./master_deply_v4.2.sh -d ECS -e DEV -t $CIRCLE_SHA1 -s zebra
-
+            
+       - deploy:
+           name: Running MasterScript
+           command: |
+             git clone --branch master https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
+             cp ./../buildscript/master_deply_v4.2.sh .
+             ./master_deply_v4.2.sh -d ECS -e DEV -t $CIRCLE_SHA1 -s zebra
 
   "build-prod":
     docker:
