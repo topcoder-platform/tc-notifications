@@ -46,8 +46,6 @@ module.exports = {
     EMAIL: {
       // TODO: after a proper named email topic is created, this is being used as the email event's topic
       GENERAL: 'notifications.action.email.connect.project.specificationModified',
-      // this is only used as a schedulerId when creating scheduled data for bundled emails
-      BUNDLED: 'notifications.action.email.connect.project.bundled',
     },
   },
 };
