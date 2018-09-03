@@ -34,9 +34,9 @@ function startKafkaConsumer(handlers, notificationServiceHandlers) {
     const message = m.message.value.toString('utf8');
     logger.info(`Handle Kafka event message; Topic: ${topic}; Partition: ${partition}; Offset: ${
       m.offset}; Message: ${message}.`);
-    
-    let topicName = topic;
-    
+
+    const topicName = topic;
+
     // find handler
     const handler = handlers[topicName];
     if (!handler) {

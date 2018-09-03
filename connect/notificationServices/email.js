@@ -6,7 +6,6 @@ const jwt = require('jsonwebtoken');
 const co = require('co');
 const fs = require('fs');
 const path = require('path');
-const handlebars = require('handlebars');
 const { logger, busService, eventScheduler, notificationService } = require('../../index');
 const { createEventScheduler, SCHEDULED_EVENT_STATUS } = eventScheduler;
 
@@ -16,16 +15,51 @@ const { EVENTS, EVENT_BUNDLES } = require('../events-config');
 const helpers = require('../helpers');
 const service = require('../service');
 
-// compile all partials and register them
-EVENTS.forEach(event => handlebars.registerPartial(
-  event.type,
-  handlebars.compile(fs.readFileSync(path.join(process.cwd(), 'dist', 'emails', 'partials', event.template), 'utf8'))
-));
 
-// template used for all notification types (whether bundled or individual)
-const template = handlebars.compile(
-  fs.readFileSync(path.join(process.cwd(), 'dist', 'emails', 'template.html'), 'utf8')
-);
+function replacePlaceholders(term,data){
+  let placeholders = term.match(/<[a-zA-Z]+>/g);
+  let ret = term;
+  if (placeholders && placeholders.length){
+    _(placeholders).each(p=>{
+      let values = _.map(data,p.slice(1, -1));
+      const total = values.length;
+      let replacement = values.length < 3 ? 
+                          values.join(', ') : 
+                          values.slice(0,2).join(', ') +' and ' + (total-3) +'others';
+      ret = ret.replace(p, values.join(', '));
+    })
+  }
+  return ret;
+}
+
+function getSections(projectUserEvents){
+  let sections = [];
+  _.chain(projectUserEvents)
+  .groupBy(value => getEventGroupKey(value))
+  .forIn((value,key)=>{
+    if (!EVENT_BUNDLES[key].groupBy){
+      sections.push({
+        title:replacePlaceholders(EVENT_BUNDLES[key].title,_(value).map(g=>g.data.data).value()),
+        [key]:true,
+        notifications: _(value).map(v=>v.data.data).value()
+      });
+    } else {
+      _.chain(value).groupBy(n=>n.data.data[EVENT_BUNDLES[key].groupBy]).forIn((groupValue,groupKey)=>{
+        
+        let title = EVENT_BUNDLES[key].title;
+        title = replacePlaceholders(title,_(groupValue).map(g=>g.data.data).value());
+        sections.push({
+          title,
+          [key]:true,
+          notifications: _(groupValue).map(g=>g.data.data).value()
+        });
+      }).value();
+    }
+  }).value();
+
+
+  return sections;
+}
 
 /**
  * Handles due events which are passed by scheduler
@@ -45,24 +79,14 @@ function handleScheduledEvents(events, setEventsStatus) {
 
   _.values(eventsByUsers).forEach((userEvents) => {
     const bundleData = {
+      subject: 'Your Topcoder project updates',
+      connectURL: config.CONNECT_URL,
       projects: _.chain(userEvents)
         .groupBy('data.data.projectId')
         .mapValues(projectUserEvents => ({
           id: _.get(projectUserEvents, '[0].data.data.projectId'),
           name: _.get(projectUserEvents, '[0].data.data.projectName'),
-          sections: _.chain(projectUserEvents)
-            .groupBy(value => _.chain(EVENT_BUNDLES)
-              .keys()
-              .filter(key => _.includes(_.get(EVENT_BUNDLES, `${key}.types`), _.get(value, 'data.data.type')))
-              .map(key => _.get(EVENT_BUNDLES, `${key}.title`))
-              .first()
-              .value())
-            .mapValues((groupedEvents, key) => ({
-              title: key,
-              notifications: _.map(groupedEvents, 'data.data'),
-            }))
-            .values()
-            .value(),
+          sections: getSections(projectUserEvents)
         }))
         .values()
         .value(),
@@ -80,7 +104,7 @@ function handleScheduledEvents(events, setEventsStatus) {
       email: config.DEFAULT_REPLY_EMAIL,
     };
 
-    eventMessage.data = { notificationsHTML: template(bundleData) };
+    eventMessage.data = bundleData;
 
     busService.postEvent({
       topic: BUS_API_EVENT.EMAIL.GENERAL,
@@ -109,6 +133,15 @@ const scheduler = createEventScheduler(
   handleScheduledEvents
 );
 
+function getEventGroupKey(value) {
+  let key = _.chain(EVENT_BUNDLES)
+    .keys()
+    .find(key => _.includes(_.get(EVENT_BUNDLES, `${key}.types`), _.get(value, 'data.data.type')))
+    .value();
+    if (!key) return 'DEFAULT';
+    return key;
+}
+
 /**
  * Prepares data to be provided to the template to render a single notification.
  *
@@ -116,14 +149,17 @@ const scheduler = createEventScheduler(
  * @returns {Object}
  */
 function wrapIndividualNotification(data) {
+  const key = getEventGroupKey(data);
+  const subject = replacePlaceholders(EVENT_BUNDLES[key].subject,[data.data.data]);
+
   return {
-    projects: {
-      id: data.projectId,
-      name: data.projectName,
-      sections: {
-        notifications: data,
-      },
-    },
+    subject,
+    connectURL: config.CONNECT_URL,
+    projects: [{
+      id: data.data.data.projectId,
+      name: data.data.data.projectName,
+      sections: getSections([data]),
+    }],
   };
 }
 
@@ -170,6 +206,7 @@ function handler(topicName, messageJSON, notification) {
 
     const eventMessage = {
       data: {
+        ...notification.contents,
         name: user.firstName + ' ' + user.lastName,
         handle: user.handle,
         date: (new Date()).toISOString(),
@@ -177,6 +214,7 @@ function handler(topicName, messageJSON, notification) {
         projectId: messageJSON.projectId,
         authorHandle: notification.contents.userHandle,
         authorFullName: notification.contents.userFullName,
+        photoURL: notification.contents.photoURL,
         type: notificationType,
       },
       recipients,
@@ -186,6 +224,8 @@ function handler(topicName, messageJSON, notification) {
       },
       categories,
     };
+    eventMessage.data[eventMessage.data.type]=true;
+    
 
     // default values that get overridden when the notification is about topics/posts updates
     let reference = 'project';
@@ -194,15 +234,12 @@ function handler(topicName, messageJSON, notification) {
     if (_.includes(EVENT_BUNDLES.TOPICS_AND_POSTS.types, notificationType)) {
       eventMessage.data.topicId = parseInt(messageJSON.topicId, 10);
       eventMessage.data.postId = messageJSON.postId ? parseInt(messageJSON.postId, 10) : null;
-      eventMessage.data.post = helpers.markdownToHTML(messageJSON.postContent);
+      if (messageJSON.postContent){
+        eventMessage.data.post = helpers.markdownToHTML(messageJSON.postContent);
+      }
 
       reference = 'topic';
       referenceId = eventMessage.data.topicId;
-
-      const connectTopic = yield service.getTopic(eventMessage.data.topicId, logger);
-      logger.debug(`got topic ${JSON.stringify(connectTopic)}`);
-
-      eventMessage.data.topicTitle = connectTopic.title || '';
 
       if (notificationType === BUS_API_EVENT.CONNECT.POST.MENTION) {
         eventMessage.cc = [config.MENTION_EMAIL];
@@ -249,7 +286,8 @@ function handler(topicName, messageJSON, notification) {
       });
     } else {
       // send single field "notificationsHTML" with the rendered template
-      eventMessage.data = { notificationsHTML: template(wrapIndividualNotification(eventMessage.data)) };
+      eventMessage.data = wrapIndividualNotification({data:eventMessage});
+      console.log(eventMessage.data.contents);
 
       // send event to bus api
       return busService.postEvent({

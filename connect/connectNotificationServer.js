@@ -328,11 +328,13 @@ const handler = (topic, message, callback) => {
       _.map(allNotifications, (notification) => {
         notification.version = eventConfig.version;
         notification.contents.projectName = project.name;
+        notification.contents.timestamp = (new Date()).toISOString();
         // if found a user then add user handle
         if (users.length) {
           notification.contents.userHandle = users[0].handle;
           notification.contents.userFullName = `${users[0].firstName} ${users[0].lastName}`;
           notification.contents.userEmail = users[0].email;
+          notification.contents.photoURL = users[0].photoURL;
         }
       });
       callback(null, allNotifications);
