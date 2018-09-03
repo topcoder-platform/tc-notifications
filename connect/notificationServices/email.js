@@ -207,7 +207,6 @@ function handler(topicName, messageJSON, notification) {
 
     const eventMessage = {
       data: {
-        ...notification.contents,
         name: user.firstName + ' ' + user.lastName,
         handle: user.handle,
         date: (new Date()).toISOString(),
@@ -227,6 +226,7 @@ function handler(topicName, messageJSON, notification) {
       categories,
     };
     eventMessage.data[eventMessage.data.type]=true;
+    _.assign(eventMessage.data,notification.contents);
     
 
     // default values that get overridden when the notification is about topics/posts updates
