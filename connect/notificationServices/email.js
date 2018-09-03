@@ -98,6 +98,7 @@ function handleScheduledEvents(events, setEventsStatus) {
 
     // update common values for bundled email
     eventMessage.replyTo = config.DEFAULT_REPLY_EMAIL;
+    eventMessage.version="v3";
     eventMessage.cc = [];
     eventMessage.from = {
       name: config.REPLY_EMAIL_FROM,
@@ -218,6 +219,7 @@ function handler(topicName, messageJSON, notification) {
         type: notificationType,
       },
       recipients,
+      version:"v3",
       from: {
         name: notification.contents.userHandle,
         email: config.DEFAULT_REPLY_EMAIL,
