@@ -1,0 +1,368 @@
+body {
+  font-family: Helvetica, sans-serif; }
+
+.container {
+  font-family: Helvetica, sans-serif; }
+
+.footer-container {
+  font-family: Helvetica, sans-serif; }
+
+body {
+  background-color: #EBEBEB;
+  margin: 0 auto !important; }
+
+table, tr, td, img {
+  margin: 0;
+  padding: 0; }
+
+table {
+  border-collapse: collapse; }
+
+table.container, table.footer-container {
+  margin: 0 auto !important; }
+
+.container {
+  background-color: #EBEBEB;
+  width: 100%;
+  color: #151516; }
+  .container .content-row {
+    border-radius: 6px; }
+    .container .content-row .content {
+      border-radius: 6px; }
+      .container .content-row .content .main {
+        border-radius: 6px; }
+        .container .content-row .content .main.with-shadow {
+          box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2); }
+      .container .content-row .content .last-row {
+        border-bottom-left-radius: 6px;
+        border-bottom-right-radius: 6px; }
+        .container .content-row .content .last-row table, .container .content-row .content .last-row tr, .container .content-row .content .last-row td {
+          border-bottom-left-radius: 6px;
+          border-bottom-right-radius: 6px; }
+    .container .content-row .space {
+      padding: 5px !important; }
+
+.main {
+  background-color: #FFFFFF;
+  width: 600px; }
+  .main .main-child {
+    width: 600px; }
+
+.top-head {
+  height: 75px;
+  background-color: #EBEBEB; }
+  .top-head table {
+    height: 75px; }
+  .top-head tr td {
+    text-transform: uppercase; }
+    .top-head tr td img {
+      display: block;
+      width: 54px;
+      height: 35px; }
+  .top-head tr .logo-box {
+    width: 54px; }
+  .top-head tr .main-heading {
+    width: 492px;
+    font-size: 13px;
+    color: #404041;
+    text-align: center; }
+  .top-head tr .dummy-head-child {
+    width: 54px; }
+
+.heading {
+  height: 60px;
+  background-color: #151516;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px; }
+  .heading td {
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px; }
+  .heading table {
+    height: 60px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    background-color: #151516; }
+    .heading table tr {
+      border-top-left-radius: 6px;
+      border-top-right-radius: 6px; }
+    .heading table td {
+      color: #EDEDF2;
+      font-size: 20px;
+      font-weight: normal;
+      text-align: center; }
+
+.post-head {
+  height: 60px;
+  background-color: #FAFAFB; }
+  .post-head table {
+    height: 60px;
+    background-color: #FAFAFB; }
+    .post-head table td {
+      color: #151516;
+      font-size: 15px; }
+    .post-head table .empty-child-one {
+      width: 20px; }
+    .post-head table .empty-child-two {
+      width: 10px; }
+    .post-head table .comment-box {
+      width: 16px; }
+      .post-head table .comment-box img {
+        width: 16px;
+        height: 16px;
+        display: block;
+        vertical-align: middle;
+        margin: auto; }
+
+.empty-10 {
+  height: 10px; }
+  .empty-10 table {
+    height: 10px;
+    background-color: #FFFFFF; }
+
+.empty-30 {
+  height: 30px; }
+  .empty-30 table {
+    height: 30px;
+    background-color: #FFFFFF; }
+
+.empty-20 {
+  height: 20px; }
+  .empty-20 table {
+    height: 20px; }
+
+.empty-50 {
+  height: 50px; }
+  .empty-50 table {
+    height: 50px;
+    background-color: #FFFFFF; }
+
+.empty-40 {
+  height: 40px; }
+  .empty-40 table {
+    height: 40px;
+    background-color: #FFFFFF; }
+
+.empty-15 {
+  height: 15px; }
+  .empty-15 table {
+    height: 15px;
+    background-color: #FFFFFF; }
+
+.post-details .main-child {
+  background-color: #FFFFFF; }
+  .post-details .main-child .empty-child-one {
+    width: 20px; }
+  .post-details .main-child .empty-child-two {
+    width: 10px; }
+  .post-details .main-child .dude-box {
+    width: 40px; }
+    .post-details .main-child .dude-box img {
+      height: 40px;
+      width: 40px;
+      display: block;
+      margin: auto;
+      border-radius: 50%; }
+  .post-details .main-child .dummy-child {
+    width: 20px; }
+  .post-details .main-child .successfull {
+    font-size: 13px;
+    color: #151516;
+    line-height: 20px; }
+  .post-details .main-child td {
+    vertical-align: top; }
+  .post-details .main-child table tr {
+    height: 20px; }
+    .post-details .main-child table tr td {
+      vertical-align: middle; }
+  .post-details .main-child table .row-child-one span {
+    color: #888894; }
+  .post-details .main-child table .row-child-two span {
+    color: #006DEA; }
+  .post-details .main-child table .empty-child-one {
+    height: 20px; }
+  .post-details .main-child table td {
+    vertical-align: top;
+    font-size: 13px;
+    color: #151516;
+    line-height: 20px; }
+    .post-details .main-child table td a {
+      text-decoration: none;
+      font-size: 13px;
+      color: #808080;
+      line-height: 20px; }
+
+.images table {
+  background-color: #FFFFFF; }
+  .images table img {
+    height: 150px;
+    width: 150px; }
+  .images table .empty-child-one {
+    width: 20px; }
+
+.button-row {
+  height: 30px; }
+  .button-row .main-child {
+    background-color: #FFFFFF;
+    height: 30px; }
+    .button-row .main-child .second-child {
+      border-radius: 4px;
+      vertical-align: middle;
+      background-color: #0681FF;
+      height: 30px; }
+      .button-row .main-child .second-child a {
+        height: 30px;
+        border-radius: 4px;
+        text-align: center;
+        text-decoration: none;
+        display: block;
+        background-color: #0681FF; }
+        .button-row .main-child .second-child a table {
+          background-color: #0681FF;
+          border-radius: 4px;
+          height: 30px; }
+          .button-row .main-child .second-child a table td {
+            height: 30px;
+            background-color: #0681FF;
+            border-radius: 4px;
+            vertical-align: middle;
+            text-align: center;
+            color: #FFFFFF;
+            font-size: 13px; }
+
+.button-one .main-child .empty-child-one, .button-three .main-child .empty-child-one {
+  width: 216px; }
+
+.button-one .main-child .second-child, .button-three .main-child .second-child {
+  width: 167px; }
+  .button-one .main-child .second-child a, .button-three .main-child .second-child a {
+    width: 167px; }
+    .button-one .main-child .second-child a table td, .button-three .main-child .second-child a table td {
+      width: 167px; }
+
+.button-two .main-child .empty-child-one {
+  width: 211px; }
+
+.button-two .main-child .second-child {
+  width: 178px; }
+  .button-two .main-child .second-child a {
+    width: 178px; }
+    .button-two .main-child .second-child a table td {
+      width: 178px; }
+
+.button-four .main-child .empty-child-one {
+  width: 210px; }
+
+.button-four .main-child .second-child {
+  width: 180px; }
+  .button-four .main-child .second-child a {
+    width: 180px; }
+    .button-four .main-child .second-child a table td {
+      width: 180px; }
+
+.copy-link {
+  height: 20px; }
+  .copy-link table {
+    height: 20px;
+    background-color: #FFFFFF; }
+    .copy-link table td {
+      width: 600px;
+      height: 20px;
+      text-align: center;
+      color: #808080;
+      font-size: 11px; }
+      .copy-link table td a {
+        text-decoration: none;
+        font-size: 11px;
+        color: #808080;
+        text-align: center; }
+
+.more-links {
+  height: 20px; }
+  .more-links table {
+    height: 20px;
+    background-color: #FFFFFF; }
+    .more-links table td {
+      width: 600px;
+      height: 20px;
+      text-align: center; }
+      .more-links table td a {
+        text-decoration: none;
+        font-size: 13px;
+        color: #151516;
+        text-align: center; }
+
+.footer-container {
+  background-color: #EBEBEB;
+  width: 100%;
+  color: #151516; }
+  .footer-container .empty-21 {
+    height: 20px; }
+    .footer-container .empty-21 table {
+      height: 20px; }
+  .footer-container .footer .footer-space {
+    padding: 5px !important; }
+  .footer-container .footer .footer-content {
+    vertical-align: middle; }
+    .footer-container .footer .footer-content table {
+      width: 400px; }
+      .footer-container .footer .footer-content table td {
+        width: 400px;
+        text-align: center;
+        color: #808080;
+        font-size: 11px;
+        text-align: center;
+        line-height: 15px; }
+        .footer-container .footer .footer-content table td.html-entities {
+          color: #808080; }
+        .footer-container .footer .footer-content table td a {
+          font-size: 11px;
+          text-align: center;
+          line-height: 15px;
+          text-decoration: none;
+          color: #006DEA; }
+
+/*remved only*/
+@media screen and (max-width: 480px) {
+  body {
+    width: 375px !important;
+    color: red; }
+  .container {
+    width: 375px !important; }
+    .container tr.content-row td.space {
+      padding: 0 !important;
+      width: 10px !important; }
+  .main {
+    width: 355px !important; }
+    .main table.main-child {
+      width: 355px !important; }
+  .top-head {
+    height: 65px !important; }
+    .top-head table {
+      height: 65px !important; }
+    .top-head tr .main-heading {
+      width: 301px !important; }
+    .top-head tr .dummy-head-child {
+      width: 0 !important; }
+  .heading table td {
+    font-size: 15px !important; }
+  .post-head {
+    height: 70px !important; }
+    .post-head table {
+      height: 70px !important; }
+      .post-head table .empty-child-one {
+        width: 15px !important; }
+  .empty-50 {
+    height: 30px !important; }
+    .empty-50 table {
+      height: 30px !important; }
+  .post-details .main-child .empty-child-one {
+    width: 15px !important; }
+  .footer-container {
+    width: 375px !important; }
+    .footer-container .footer .footer-space {
+      padding: 0 !important;
+      width: 10px !important; }
+    .footer-container .footer .footer-content table {
+      width: 355px !important; }
+      .footer-container .footer .footer-content table td {
+        width: 355px !important; } }
