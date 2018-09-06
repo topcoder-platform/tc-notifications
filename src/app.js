@@ -50,6 +50,7 @@ function startKafkaConsumer(handlers, notificationServiceHandlers) {
     // use handler to create notification instances for each recipient
     return handlerAsync(topicName, messageJSON)
       .then((notifications) => Promise.all(_.map(notifications, (notification) => {
+        notification.contents = _.extend({}, messageJSON, notification.contents);
         // run other notification service handlers
         notificationServiceHandlers.forEach((notificationServiceHandler) => {
           notificationServiceHandler(topicName, messageJSON, notification);
@@ -60,7 +61,7 @@ function startKafkaConsumer(handlers, notificationServiceHandlers) {
           userId: notification.userId,
           type: notification.newType || topicName,
           version: notification.version || null,
-          contents: _.extend({}, messageJSON, notification.contents),
+          contents: notification.contents,
           read: false,
           seen: false,
         });
