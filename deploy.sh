@@ -172,7 +172,7 @@ make_task_def(){
       },
       {
         "name": "CONNECT_URL",
-        "value": "%s",
+        "value": "%s"
       },
       {
         "name": "ENABLE_EMAILS",
