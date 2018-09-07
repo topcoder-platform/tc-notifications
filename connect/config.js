@@ -40,5 +40,5 @@ module.exports = {
   REPLY_EMAIL_FROM: process.env.REPLY_EMAIL_FROM,
   DEFAULT_REPLY_EMAIL: process.env.DEFAULT_REPLY_EMAIL,
 
-  CONNECT_URL: process.env.CONNECT_URL || 'http://www.connect.topcoder-dev.com',
+  CONNECT_URL: process.env.CONNECT_URL || 'https://connect.topcoder-dev.com',
 };
