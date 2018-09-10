@@ -10,4 +10,5 @@ COPY . .
 RUN npm install
 RUN npm install dotenv --save
 RUN npm test
+RUN cd emails && npm install && npm run build && cd ..
 CMD ["npm", "start"]
