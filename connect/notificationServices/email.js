@@ -198,6 +198,9 @@ function handler(topicName, messageJSON, notification) {
 
     const user = users[0];
     let userEmail = user.email;
+    if (!userEmail) {
+      logger.error(`Email not received for user: ${user.id}`);
+    }
     if (config.ENABLE_DEV_MODE === 'true') {
       userEmail = config.DEV_MODE_EMAIL;
     }
