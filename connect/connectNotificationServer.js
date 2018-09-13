@@ -90,7 +90,8 @@ const getNotificationsForMentionedUser = (eventConfig, content) => {
     if (handles.length > 0) {
       service.getUsersByHandle(handles).then((users) => {
         _.forEach(notifications, (notification) => {
-          notification.userId = _.find(users, { handle: notification.userHandle }).userId.toString();
+          const mentionedUser = _.find(users, { handle: notification.userHandle });
+          notification.userId = mentionedUser ? mentionedUser.userId.toString() : notification.userHandle;
         });
         resolve(notifications);
       });
@@ -360,7 +361,10 @@ if (config.ENABLE_EMAILS) {
 notificationServer
   .initDatabase()
   .then(() => notificationServer.start())
-  .catch((e) => console.log(e)); // eslint-disable-line no-console
+  .catch((e) => {
+    console.log(e); // eslint-disable-line no-console
+    notificationServer.logger.error('Notification server errored out');
+  });
 
 // if no need to init database, then directly start the server:
 // notificationServer.start();
