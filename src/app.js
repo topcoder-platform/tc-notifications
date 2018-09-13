@@ -68,14 +68,20 @@ function startKafkaConsumer(handlers, notificationServiceHandlers) {
       })))
       // commit offset
       .then(() => consumer.commitOffset({ topic, partition, offset: m.offset }))
-      .catch((err) => logger.error(err));
+      .catch((err) => {
+        logger.error('Kafka dataHandler failed');
+        logger.error(err);
+      });
   });
 
   consumer
     .init()
     .then(() => _.each(_.keys(handlers),
       (topicName) => consumer.subscribe(topicName, dataHandler)))
-    .catch((err) => logger.error(err));
+    .catch((err) => {
+      logger.error('Kafka Consumer failed');
+      logger.error(err);
+    });
 }
 
 /**
