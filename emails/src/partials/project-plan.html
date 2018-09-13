@@ -45,28 +45,28 @@
                                 Your project has made some progress
                             {{/if}}
                             {{#if [notifications.connect.project.phase.transition.active]}}
-                                Phase <strong>{{phaseName}}</strong> is activated
+                                Phase <strong>{{updatedPhase.name}}</strong> is activated
                             {{/if}}
                             {{#if [notifications.connect.project.phase.transition.completed]}}
-                                Phase <strong>{{phaseName}}</strong> is completed
+                                Phase <strong>{{updatedPhase.name}}</strong> is completed
                             {{/if}}
                             {{#if [notifications.connect.project.phase.update.payment]}}
-                                Payments updated for phase <strong>{{phaseName}}</strong>
+                                Payments updated for phase <strong>{{updatedPhase.name}}</strong>
                             {{/if}}
                             {{#if [notifications.connect.project.phase.update.progress]}}
-                                Phase <strong>{{phaseName}}</strong> has made some progress
+                                Phase <strong>{{updatedPhase.name}}</strong> has made some progress
                             {{/if}}
                             {{#if [notifications.connect.project.phase.update.scope]}}
-                                Scope of the phase <strong>{{phaseName}}</strong> updated
+                                Scope of the phase <strong>{{updatedPhase.name}}</strong> updated
                             {{/if}}
                             {{#if [notifications.connect.project.phase.milestone.transition.active]}}
-                                A milestone is activated in phase <strong>{{phaseName}}</strong>
+                                A milestone is activated in phase <strong>{{updatedPhase.name}}</strong>
                             {{/if}}
                             {{#if [notifications.connect.project.phase.milestone.transition.completed]}}
-                                A milestone is completed in phase <strong>{{phaseName}}</strong>
+                                A milestone is completed in phase <strong>{{updatedPhase.name}}</strong>
                             {{/if}}
                             {{#if [notifications.connect.project.phase.milestone.waiting.customer]}}
-                                We are waiting for your input at a milestone in the phase <strong>{{phaseName}}</strong>
+                                We are waiting for your input at a milestone in the phase <strong>{{updatedPhase.name}}</strong>
                             {{/if}}
                         </td>
                     </tr>
@@ -95,7 +95,7 @@
             <td class="second-child" align="center">
             <a href="{{@root.connectURL}}/projects/{{notifications.[0].projectId}}/plan">
                 <table>
-                <tr><td align="center">View project plan on Connect</td></tr>
+                <tr><td align="center">View plan on Connect</td></tr>
                 </table>  
             </a>
             </td>
