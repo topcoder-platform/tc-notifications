@@ -10,7 +10,12 @@ const { logger, busService, eventScheduler, notificationService } = require('../
 const { createEventScheduler, SCHEDULED_EVENT_STATUS } = eventScheduler;
 
 const config = require('../config');
-const { BUS_API_EVENT, SCHEDULED_EVENT_PERIOD, SETTINGS_EMAIL_SERVICE_ID } = require('../constants');
+const {
+  BUS_API_EVENT,
+  SCHEDULED_EVENT_PERIOD,
+  SETTINGS_EMAIL_SERVICE_ID,
+  SETTINGS_EMAIL_BUNDLING_SERVICE_ID
+} = require('../constants');
 const { EVENTS, EVENT_BUNDLES } = require('../events-config');
 const helpers = require('../helpers');
 const service = require('../service');
@@ -271,9 +276,12 @@ function handler(topicName, messageJSON, notification) {
     }
 
     // if notifications has to be bundled
-    const bundlePeriod = _.get(settings, `services.${SETTINGS_EMAIL_SERVICE_ID}.${notificationType}.bundlePeriod`);
+    const bundlingEnabled = _.get(settings, `notifications.${notificationType}.${SETTINGS_EMAIL_BUNDLING_SERVICE_ID}.enabled`, 'no')
+    const bundlePeriod = _.get(settings, `services.${SETTINGS_EMAIL_SERVICE_ID}.bundlePeriod`);
+    logger.debug(bundlingEnabled, 'bundlingEnabled');
+    logger.debug(bundlePeriod, 'bundlePeriod');
 
-    if (bundlePeriod) {
+    if (bundlingEnabled === 'yes' && bundlePeriod) {
       if (!SCHEDULED_EVENT_PERIOD[bundlePeriod]) {
         throw new Error(`User's '${notification.userId}' setting for service`
           + ` '${SETTINGS_EMAIL_SERVICE_ID}' option 'bundlePeriod' has unsupported value '${bundlePeriod}'.`);
