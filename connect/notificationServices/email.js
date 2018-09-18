@@ -276,7 +276,7 @@ function handler(topicName, messageJSON, notification) {
     }
 
     // if notifications has to be bundled
-    const bundlingEnabled = _.get(settings, `notifications.${notificationType}.${SETTINGS_EMAIL_BUNDLING_SERVICE_ID}.enabled`, 'no')
+    const bundlingEnabled = _.get(settings, `notifications['${notificationType}'].${SETTINGS_EMAIL_BUNDLING_SERVICE_ID}.enabled`, 'no')
     const bundlePeriod = _.get(settings, `services.${SETTINGS_EMAIL_SERVICE_ID}.bundlePeriod`);
     logger.debug(bundlingEnabled, 'bundlingEnabled');
     logger.debug(bundlePeriod, 'bundlePeriod');
