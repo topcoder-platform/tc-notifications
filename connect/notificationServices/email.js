@@ -271,8 +271,7 @@ function handler(topicName, messageJSON, notification) {
     }
 
     // if notifications has to be bundled
-    const bundlePeriod = settings.services[SETTINGS_EMAIL_SERVICE_ID]
-      && settings.services[SETTINGS_EMAIL_SERVICE_ID].bundlePeriod;
+    const bundlePeriod = _.get(settings, `services.${SETTINGS_EMAIL_SERVICE_ID}.${notificationType}.bundlePeriod`);
 
     if (bundlePeriod) {
       if (!SCHEDULED_EVENT_PERIOD[bundlePeriod]) {
