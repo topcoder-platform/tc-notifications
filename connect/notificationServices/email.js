@@ -241,7 +241,9 @@ function handler(topicName, messageJSON, notification) {
     let reference = 'project';
     let referenceId = eventMessage.data.projectId;
 
+    let messagingEvent = false;
     if (_.includes(EVENT_BUNDLES.TOPICS_AND_POSTS.types, notificationType)) {
+      messagingEvent = true;
       eventMessage.data.topicId = parseInt(messageJSON.topicId, 10);
       eventMessage.data.postId = messageJSON.postId ? parseInt(messageJSON.postId, 10) : null;
       if (messageJSON.postContent){
@@ -276,10 +278,16 @@ function handler(topicName, messageJSON, notification) {
     }
 
     // if notifications has to be bundled
-    const bundlingEnabled = _.get(settings, `notifications['${notificationType}'].${SETTINGS_EMAIL_BUNDLING_SERVICE_ID}.enabled`, 'no')
-    const bundlePeriod = _.get(settings, `services.${SETTINGS_EMAIL_SERVICE_ID}.bundlePeriod`);
-    logger.debug(bundlingEnabled, 'bundlingEnabled');
-    logger.debug(bundlePeriod, 'bundlePeriod');
+    let bundlingEnabled = _.get(settings, `notifications['${notificationType}'].${SETTINGS_EMAIL_BUNDLING_SERVICE_ID}.enabled`);
+    let bundlePeriod = _.get(settings, `services.${SETTINGS_EMAIL_SERVICE_ID}.bundlePeriod`);
+    // if bundling is not explicitly set and the event is not a messaging event, assume bundling enabled
+    if (!bundlingEnabled && !messagingEvent) {
+      bundlingEnabled = 'yes';
+      // if bundle period is not set, assume it to be daily for default case
+      bundlePeriod = !bundlePeriod ? 'daily' : bundlePeriod;
+    }
+    logger.debug('bundlingEnabled=>', bundlingEnabled);
+    logger.debug('bundlePeriod=>', bundlePeriod);
 
     if (bundlingEnabled === 'yes' && bundlePeriod) {
       if (!SCHEDULED_EVENT_PERIOD[bundlePeriod]) {
