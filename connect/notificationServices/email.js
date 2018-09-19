@@ -75,6 +75,7 @@ function getSections(projectUserEvents){
  * @param {Function} setEventsStatus function which sets statuses of processed events
  */
 function handleScheduledEvents(events, setEventsStatus) {
+  logger.debug(`Received ${events.length} events for digest emails`);
   // do nothing if there are no due events
   if (events.length === 0) {
     return;
