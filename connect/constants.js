@@ -41,7 +41,7 @@ module.exports = {
       },
       PROJECT_PLAN: {
         READY: 'notifications.connect.project.planReady',
-        MODIFIED: 'notifications.connect.project.planModified',
+        MODIFIED: 'notifications.connect.project.plan.updated',
         PROGRESS_UPDATED: 'notifications.connect.project.progressModified',
         PHASE_ACTIVATED: 'notifications.connect.project.phase.transition.active',
         PHASE_COMPLETED: 'notifications.connect.project.phase.transition.completed',
