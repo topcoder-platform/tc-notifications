@@ -48,7 +48,7 @@ function startKafkaConsumer(handlers, notificationServiceHandlers) {
     const messageJSON = busPayload.payload;
     const handlerAsync = Promise.promisify(handler);
     // use handler to create notification instances for each recipient
-    return handlerAsync(topicName, messageJSON)
+    return handlerAsync(topicName, messageJSON, logger)
       .then((notifications) => Promise.all(_.map(notifications, (notification) => {
         notification.contents = _.extend({}, messageJSON, notification.contents);
         // run other notification service handlers

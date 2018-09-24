@@ -272,8 +272,9 @@ notificationServer.setConfig({ LOG_LEVEL: 'debug' });
 // it is defined as: function(topic, message, callback),
 // the topic is topic name,
 // the message is JSON event message,
+// logger object used to log in parent thread
 // the callback is function(error, userIds), where userIds is an array of user ids to receive notifications
-const handler = (topic, message, callback) => {
+const handler = (topic, message, logger, callback) => {
   const projectId = message.projectId;
   if (!projectId) {
     return callback(new Error('Missing projectId in the event message.'));
@@ -286,7 +287,9 @@ const handler = (topic, message, callback) => {
 
   // filter out `notifications.connect.project.topic.created` events send by bot
   // because they create too much clutter and duplicate info
-  if (topic === BUS_API_EVENT.CONNECT.TOPIC.CREATED && message.userId.toString() === config.TCWEBSERVICE_ID) {
+  const botIds = [config.TCWEBSERVICE_ID, config.CODERBOT_USER_ID];
+  if (topic === BUS_API_EVENT.CONNECT.TOPIC.CREATED && botIds.contains(message.userId.toString())) {
+    logger.info(`Ignoring, to avoid noise, Bot topic ${topic}`);
     return callback(null, []);
   }
 
