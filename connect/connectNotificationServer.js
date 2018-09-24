@@ -85,7 +85,7 @@ const getNotificationsForMentionedUser = (eventConfig, content) => {
   // only one per userHandle
   notifications = _.uniqBy(notifications, 'userHandle');
 
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => { // eslint-disable-line no-unused-vars
     const handles = _.map(notifications, 'userHandle');
     if (handles.length > 0) {
       service.getUsersByHandle(handles).then((users) => {
