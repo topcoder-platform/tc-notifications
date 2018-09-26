@@ -4,6 +4,7 @@ module.exports = {
     every10minutes: '*/10 * * * *',
     hourly: '0 * * * *',
     daily: '0 7 * * *', // every day at 7am
+    everyOtherDay: '0 7 */2 * *', // every other day at 7 am
     weekly: '0 7 * * 6', // every Saturday at 7am
   },
 
@@ -59,8 +60,8 @@ module.exports = {
     },
     EMAIL: {
       // TODO: after a proper named email topic is created, this is being used as the email event's topic
-      GENERAL: 'notifications.action.email.connect.project.specificationModified',
-      BUNDLED: 'notifications.action.email.connect.project.specificationModified',
+      GENERAL: 'notifications.action.email.connect.project.notifications.generic',
+      BUNDLED: 'notifications.action.email.connect.project.notifications.bundled',
     },
   },
 };
