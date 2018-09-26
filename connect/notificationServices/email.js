@@ -279,18 +279,15 @@ function handler(topicName, messageJSON, notification) {
     }
 
     // if notifications has to be bundled
-    let bundlingEnabled = _.get(settings, `notifications['${notificationType}'].${SETTINGS_EMAIL_BUNDLING_SERVICE_ID}.enabled`);
-    let bundlePeriod = _.get(settings, `services.${SETTINGS_EMAIL_SERVICE_ID}.bundlePeriod`);
+    let bundlePeriod = _.get(settings, `notifications['${notificationType}'].${SETTINGS_EMAIL_SERVICE_ID}.bundlePeriod`);
     // if bundling is not explicitly set and the event is not a messaging event, assume bundling enabled
-    if (!bundlingEnabled && !messagingEvent) {
-      bundlingEnabled = 'yes';
+    if (!bundlePeriod && !messagingEvent) {
       // if bundle period is not set, assume it to be daily for default case
       bundlePeriod = !bundlePeriod ? 'daily' : bundlePeriod;
     }
-    logger.debug('bundlingEnabled=>', bundlingEnabled);
     logger.debug('bundlePeriod=>', bundlePeriod);
 
-    if (bundlingEnabled === 'yes' && bundlePeriod) {
+    if (bundlePeriod) {
       if (!SCHEDULED_EVENT_PERIOD[bundlePeriod]) {
         throw new Error(`User's '${notification.userId}' setting for service`
           + ` '${SETTINGS_EMAIL_SERVICE_ID}' option 'bundlePeriod' has unsupported value '${bundlePeriod}'.`);
