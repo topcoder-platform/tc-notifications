@@ -280,6 +280,7 @@ function handler(topicName, messageJSON, notification) {
 
     // if notifications has to be bundled
     let bundlePeriod = _.get(settings, `notifications['${notificationType}'].${SETTINGS_EMAIL_SERVICE_ID}.bundlePeriod`);
+    bundlePeriod = bundlePeriod && bundlePeriod.trim().length > 0 ? bundlePeriod : null;
     // if bundling is not explicitly set and the event is not a messaging event, assume bundling enabled
     if (!bundlePeriod && !messagingEvent) {
       // if bundle period is not set, assume it to be daily for default case
