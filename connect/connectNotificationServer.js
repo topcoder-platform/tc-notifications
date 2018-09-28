@@ -75,7 +75,7 @@ const getNotificationsForMentionedUser = (eventConfig, content) => {
     const handle = matches[1] ? matches[1].toString() : matches[2].toString();
     notifications.push({
       userHandle: handle,
-      newType: BUS_API_EVENT.CONNECT.MENTIONED_IN_POST,
+      newType: BUS_API_EVENT.CONNECT.POST.MENTION,
       contents: {
         toUserHandle: true,
       },
@@ -85,12 +85,13 @@ const getNotificationsForMentionedUser = (eventConfig, content) => {
   // only one per userHandle
   notifications = _.uniqBy(notifications, 'userHandle');
 
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => { // eslint-disable-line no-unused-vars
     const handles = _.map(notifications, 'userHandle');
     if (handles.length > 0) {
       service.getUsersByHandle(handles).then((users) => {
         _.forEach(notifications, (notification) => {
-          notification.userId = _.find(users, { handle: notification.userHandle }).userId.toString();
+          const mentionedUser = _.find(users, { handle: notification.userHandle });
+          notification.userId = mentionedUser ? mentionedUser.userId.toString() : notification.userHandle;
         });
         resolve(notifications);
       });
@@ -271,8 +272,9 @@ notificationServer.setConfig({ LOG_LEVEL: 'debug' });
 // it is defined as: function(topic, message, callback),
 // the topic is topic name,
 // the message is JSON event message,
+// logger object used to log in parent thread
 // the callback is function(error, userIds), where userIds is an array of user ids to receive notifications
-const handler = (topic, message, callback) => {
+const handler = (topic, message, logger, callback) => {
   const projectId = message.projectId;
   if (!projectId) {
     return callback(new Error('Missing projectId in the event message.'));
@@ -285,7 +287,9 @@ const handler = (topic, message, callback) => {
 
   // filter out `notifications.connect.project.topic.created` events send by bot
   // because they create too much clutter and duplicate info
-  if (topic === BUS_API_EVENT.CONNECT.TOPIC_CREATED && message.userId.toString() === config.TCWEBSERVICE_ID) {
+  const botIds = [config.TCWEBSERVICE_ID, config.CODERBOT_USER_ID];
+  if (topic === BUS_API_EVENT.CONNECT.TOPIC.CREATED && botIds.contains(message.userId.toString())) {
+    logger.info(`Ignoring, to avoid noise, Bot topic ${topic}`);
     return callback(null, []);
   }
 
@@ -328,11 +332,13 @@ const handler = (topic, message, callback) => {
       _.map(allNotifications, (notification) => {
         notification.version = eventConfig.version;
         notification.contents.projectName = project.name;
+        notification.contents.timestamp = (new Date()).toISOString();
         // if found a user then add user handle
         if (users.length) {
           notification.contents.userHandle = users[0].handle;
           notification.contents.userFullName = `${users[0].firstName} ${users[0].lastName}`;
           notification.contents.userEmail = users[0].email;
+          notification.contents.photoURL = users[0].photoURL;
         }
       });
       callback(null, allNotifications);
@@ -358,7 +364,10 @@ if (config.ENABLE_EMAILS) {
 notificationServer
   .initDatabase()
   .then(() => notificationServer.start())
-  .catch((e) => console.log(e)); // eslint-disable-line no-console
+  .catch((e) => {
+    console.log(e); // eslint-disable-line no-console
+    notificationServer.logger.error('Notification server errored out');
+  });
 
 // if no need to init database, then directly start the server:
 // notificationServer.start();
