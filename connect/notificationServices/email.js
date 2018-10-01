@@ -288,7 +288,7 @@ function handler(topicName, messageJSON, notification) {
     }
     logger.debug('bundlePeriod=>', bundlePeriod);
 
-    if (bundlePeriod) {
+    if (bundlePeriod && "immediately" !== bundlePeriod) {
       if (!SCHEDULED_EVENT_PERIOD[bundlePeriod]) {
         throw new Error(`User's '${notification.userId}' setting for service`
           + ` '${SETTINGS_EMAIL_SERVICE_ID}' option 'bundlePeriod' has unsupported value '${bundlePeriod}'.`);
