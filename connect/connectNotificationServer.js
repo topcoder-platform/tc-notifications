@@ -288,7 +288,7 @@ const handler = (topic, message, logger, callback) => {
   // filter out `notifications.connect.project.topic.created` events send by bot
   // because they create too much clutter and duplicate info
   const botIds = [config.TCWEBSERVICE_ID, config.CODERBOT_USER_ID];
-  if (topic === BUS_API_EVENT.CONNECT.TOPIC.CREATED && botIds.contains(message.userId.toString())) {
+  if (topic === BUS_API_EVENT.CONNECT.TOPIC.CREATED && botIds.indexOf(message.userId.toString()) !== -1) {
     logger.info(`Ignoring, to avoid noise, Bot topic ${topic}`);
     return callback(null, []);
   }
