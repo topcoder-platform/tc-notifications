@@ -119,8 +119,8 @@ make_task_def(){
     "name": "%s",
     "image": "%s.dkr.ecr.%s.amazonaws.com/%s:%s",
     "essential": true,
-    "memory": 500,
-    "cpu": 100,
+    "memory": 1536,
+    "cpu": 768,
     "environment": [
       {
         "name": "ENV",
