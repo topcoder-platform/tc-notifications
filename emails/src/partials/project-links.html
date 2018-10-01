@@ -1,0 +1,51 @@
+{{#if [PROJECT_LINKS]}}
+
+
+<link rel="stylesheet" type="text/css" href="../styles/main.scss">
+<tr class="post-head">
+  <td class="main-td">
+    <table class="main-child">
+      <tr>
+        <td class="empty-child-one"></td>
+        <td class="comment-box"><img src="https://image.ibb.co/etWM7J/comment.jpg" alt="IMG"></td>
+        <td class="empty-child-two"></td>
+        <td>
+            {{title}}
+        </td>
+      </tr>
+    </table>
+  </td>
+</tr>
+
+<tr class="empty-50">
+    <td class="main-td">
+        <table class="main-child">
+        <tr><td></td></tr>
+        </table>  
+    </td>
+</tr>
+<tr class="button-row button-one">
+    <td class="main-td">
+        <table class="main-child">
+        <tr>
+            <td class="empty-child-one"></td>
+            <td class="second-child" align="center">
+            <a href="{{@root.connectURL}}/projects/{{notifications.[0].projectId}}">
+                <table>
+                <tr><td align="center">View project on Connect</td></tr>
+                </table>  
+            </a>
+            </td>
+            <td class="empty-child-one"></td>
+        </tr>
+        </table>
+    </td>
+</tr>
+<tr class="empty-20">
+    <td class="main-td">
+        <table class="main-child">
+        <tr><td></td></tr>
+        </table>  
+    </td>
+</tr>
+{{/if}}

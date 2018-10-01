@@ -1,0 +1,99 @@
+{{#if [PROJECT_TEAM]}}
+
+
+<link rel="stylesheet" type="text/css" href="../styles/main.scss">
+<tr class="post-head">
+  <td class="main-td">
+    <table class="main-child">
+      <tr>
+        <td class="empty-child-one"></td>
+        <td class="comment-box"><img src="https://image.ibb.co/etWM7J/comment.jpg" alt="IMG"></td>
+        <td class="empty-child-two"></td>
+        <td>
+            {{title}}
+        </td>
+      </tr>
+    </table>
+  </td>
+</tr>
+
+<tr class="empty-20">
+    <td class="main-td">
+        <table class="main-child">
+        <tr><td></td></tr>
+        </table>  
+    </td>
+</tr>
+
+{{#each notifications}}
+<tr class="post-details">
+    <td class="main-td">
+        <table class="main-child">
+        <tr>
+            <td>
+                <table>
+                    <tr class="row-child-one" height="20">
+                        <td class="empty-child-one"></td>
+                        <td>
+                        {{#if [notifications.connect.project.member.assignedAsOwner]}}
+                            <strong>{{userFullName}}</strong> assigned as project owner
+                        {{/if}}
+                        {{#if [notifications.connect.project.member.copilotJoined]}}
+                            <strong>{{userFullName}}</strong> joined the project as Copilot
+                        {{/if}}
+                        {{#if [notifications.connect.project.member.managerJoined]}}
+                            <strong>{{userFullName}}</strong> joined the project as Manager
+                        {{/if}}
+                        {{#if [notifications.connect.project.member.removed]}}
+                            <strong>{{userFullName}}</strong> left the project
+                        {{/if}}
+                        {{#if [notifications.connect.project.member.left]}}
+                            <strong>{{userFullName}}</strong> left the project
+                        {{/if}}
+                        {{#if [notifications.connect.project.member.joined]}}
+                            <strong>{{userFullName}}</strong> joined the project
+                        {{/if}}
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        </table>  
+    </td>
+</tr>
+{{/each}}
+
+
+
+<tr class="empty-50">
+    <td class="main-td">
+        <table class="main-child">
+        <tr><td></td></tr>
+        </table>  
+    </td>
+</tr>
+<tr class="button-row button-one">
+    <td class="main-td">
+        <table class="main-child">
+        <tr>
+            <td class="empty-child-one"></td>
+            <td class="second-child" align="center">
+            <a href="{{@root.connectURL}}/projects/{{notifications.[0].projectId}}">
+                <table>
+                <tr><td align="center">View project on Connect</td></tr>
+                </table>  
+            </a>
+            </td>
+            <td class="empty-child-one"></td>
+        </tr>
+        </table>
+    </td>
+</tr>
+<tr class="empty-20">
+    <td class="main-td">
+        <table class="main-child">
+        <tr><td></td></tr>
+        </table>  
+    </td>
+</tr>
+{{/if}}

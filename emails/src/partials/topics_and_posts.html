@@ -1,0 +1,212 @@
+{{#if [TOPICS_AND_POSTS]}}
+
+    <link rel="stylesheet" type="text/css" href="../styles/main.scss">
+
+    <tr class="post-head">
+        <td class="main-td">
+            <table class="main-child">
+            <tr>
+                <td class="empty-child-one"></td>
+                <td class="comment-box"><img src="https://image.ibb.co/etWM7J/comment.jpg" alt="IMG"></td>
+                <td class="empty-child-two"></td>
+                <td>
+                <strong>{{title}}</a>.
+                </td>
+            </tr>
+            </table>
+        </td>
+    </tr>
+    <tr class="empty-20">
+        <td class="main-td">
+            <table class="main-child">
+            <tr><td></td></tr>
+            </table>  
+        </td>
+    </tr>
+
+    {{#each notifications}}
+        {{#if [notifications.connect.project.post.created]}}
+            <tr class="post-details">
+                <td class="main-td">
+                    <table class="main-child">
+                    <tr>
+                        <td class="empty-child-one"></td>
+                        <td class="dude-box"><img src="{{photoURL}}" width="40px" height="40px" alt="{{authorFullName}}"></td>
+                        <td class="empty-child-two"></td>
+                        <td>
+                        <table>
+                            <tr class="row-child-one" height="20">
+                            <td><strong>{{authorFullName}} &middot; </strong><span> {{timestamp}}</span></td>
+                            </tr>
+                            <tr class="row-child-two"><td>{{{post}}}</td></tr>
+                        </table>
+                        </td>
+                        <td class="empty-child-one"></td>
+                    </tr>
+                    </table>  
+                </td>
+            </tr>
+        {{/if}}
+        {{#if [notifications.connect.project.topic.created]}}
+            <tr class="post-details">
+                <td class="main-td">
+                    <table class="main-child">
+                    <tr>
+                        <td class="empty-child-one"></td>
+                        <td class="dude-box"><img src="{{photoURL}}" width="40px" height="40px" alt="{{authorFullName}}"></td>
+                        <td class="empty-child-two"></td>
+                        <td>
+                        <table>
+                            <tr class="row-child-one" height="20">
+                            <td><strong>{{authorFullName}} &middot; </strong><span> {{timestamp}}</span></td>
+                            </tr>
+                            <tr class="row-child-two"><td>{{{post}}}</td></tr>
+                        </table>
+                        </td>
+                        <td class="empty-child-one"></td>
+                    </tr>
+                    </table>  
+                </td>
+            </tr>
+        {{/if}}
+        {{#if [notifications.connect.project.topic.deleted]}}
+            <tr class="post-details">
+                <td class="main-td">
+                    <table class="main-child">
+                    <tr>
+                        <td class="empty-child-one"></td>
+                        <td class="dude-box"><img src="{{photoURL}}" width="40px" height="40px" alt="{{authorFullName}}"></td>
+                        <td class="empty-child-two"></td>
+                        <td>
+                        <table>
+                            <tr class="row-child-one" height="20">
+                            <td><strong>{{authorFullName}} &middot; </strong><span> {{timestamp}}</span> deleted a topic</td>
+                            </tr>
+                            <tr class="row-child-two"><td>{{{post}}}</td></tr>
+                        </table>
+                        </td>
+                        <td class="empty-child-one"></td>
+                    </tr>
+                    </table>  
+                </td>
+            </tr>
+        {{/if}}
+        {{#if [notifications.connect.project.post.mention]}}
+            <tr class="post-details">
+                <td class="main-td">
+                    <table class="main-child">
+                    <tr>
+                        <td class="empty-child-one"></td>
+                        <td class="dude-box"><img src="{{photoURL}}" width="40px" height="40px" alt="{{authorFullName}}"></td>
+                        <td class="empty-child-two"></td>
+                        <td>
+                        <table>
+                            <tr class="row-child-one" height="20">
+                            <td><strong>{{authorFullName}} &middot; </strong><span> {{timestamp}}</span></td>
+                            </tr>
+                            <tr class="row-child-two"><td>{{{post}}}</td></tr>
+                        </table>
+                        </td>
+                        <td class="empty-child-one"></td>
+                    </tr>
+                    </table>  
+                </td>
+            </tr>
+        {{/if}}
+        {{#if [notifications.connect.project.post.edited]}}
+            <tr class="post-details">
+                <td class="main-td">
+                    <table class="main-child">
+                    <tr>
+                        <td class="empty-child-one"></td>
+                        <td class="dude-box"><img src="{{photoURL}}" width="40px" height="40px" alt="{{authorFullName}}"></td>
+                        <td class="empty-child-two"></td>
+                        <td>
+                        <table>
+                            <tr class="row-child-one" height="20">
+                            <td><strong>{{authorFullName}} &middot; </strong><span> {{timestamp}}</span></td>
+                            </tr>
+                            <tr class="row-child-two"><td>{{{post}}}</td></tr>
+                        </table>
+                        </td>
+                        <td class="empty-child-one"></td>
+                    </tr>
+                    </table>  
+                </td>
+            </tr>
+        {{/if}}
+        {{#if [notifications.connect.project.post.deleted]}}
+            <tr class="post-details">
+                <td class="main-td">
+                    <table class="main-child">
+                    <tr>
+                        <td class="empty-child-one"></td>
+                        <td class="dude-box"><img src="{{photoURL}}" width="40px" height="40px" alt="{{authorFullName}}"></td>
+                        <td class="empty-child-two"></td>
+                        <td>
+                        <table>
+                            <tr class="row-child-one" height="20">
+                            <td><strong>{{authorFullName}} &middot; </strong><span> {{timestamp}}</span><span> deleted a post</span></td>
+                            </tr>
+                        </table>
+                        </td>
+                        <td class="empty-child-one"></td>
+                    </tr>
+                    </table>  
+                </td>
+            </tr>
+        {{/if}}
+    {{/each}}
+    <tr class="empty-50">
+        <td class="main-td">
+            <table class="main-child">
+            <tr><td></td></tr>
+            </table>  
+        </td>
+    </tr>
+    <tr class="button-row button-one">
+        <td class="main-td">
+            <table class="main-child">
+            <tr>
+                <td class="empty-child-one"></td>
+                <td class="second-child" align="center">
+                <a href="{{@root.connectURL}}/projects/{{notifications.[0].projectId}}#feed-{{notifications.[0].topicId}}">
+                    <table>
+                    <tr><td align="center">View post on Connect</td></tr>
+                    </table>  
+                </a>
+                </td>
+                <td class="empty-child-one"></td>
+            </tr>
+            </table>
+        </td>
+    </tr>
+    <tr class="empty-20">
+        <td class="main-td">
+            <table class="main-child">
+            <tr><td></td></tr>
+            </table>  
+        </td>
+    </tr>
+    <tr class="copy-link">
+        <td class="main-td">
+            <table class="main-child">
+            <tr><td>copy-paste to view in your browser:</td></tr>
+            </table>  
+        </td>
+    </tr>
+    <tr class="copy-link">
+        <td class="main-td">
+            <table class="main-child">
+            <tr><td><a href="{{@root.connectURL}}/projects/{{notifications.[0].projectId}}#feed-{{notifications.[0].topicId}}">{{@root.connectURL}}/projects/{{notifications.[0].projectId}}#feed-{{notifications.[0].topicId}}</a></td></tr>
+            </table>  
+        </td>
+    </tr>
+    <tr class="empty-40">
+        <td class="main-td">
+            <table class="main-child">
+            <tr><td></td></tr>
+            </table>  
+        </td>
+    </tr>
+{{/if}}

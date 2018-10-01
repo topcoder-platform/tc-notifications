@@ -1,0 +1,30 @@
+{
+    "name": "html-email",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "build": "gulp build",
+        "watch": "gulp watch"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "browser-sync": "^2.24.5",
+        "gulp": "^3.9.1",
+        "gulp-concat": "^2.6.1",
+        "gulp-dest": "^0.2.3",
+        "gulp-inline-css": "^3.2.0",
+        "gulp-pug": "^3.3.0",
+        "gulp-rename": "^1.2.2",
+        "gulp-sass": "^3.1.0",
+        "handlebars": "^4.0.11"
+    },
+    "dependencies": {
+        "gulp-inline-source": "^3.2.0",
+        "gulp-replace": "^1.0.0",
+        "gulp-smoosher": "0.0.9",
+        "through2": "^2.0.3"
+    }
+}

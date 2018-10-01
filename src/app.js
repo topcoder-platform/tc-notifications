@@ -34,9 +34,9 @@ function startKafkaConsumer(handlers, notificationServiceHandlers) {
     const message = m.message.value.toString('utf8');
     logger.info(`Handle Kafka event message; Topic: ${topic}; Partition: ${partition}; Offset: ${
       m.offset}; Message: ${message}.`);
-    
-    let topicName = topic;
-    
+
+    const topicName = topic;
+
     // find handler
     const handler = handlers[topicName];
     if (!handler) {
@@ -48,8 +48,9 @@ function startKafkaConsumer(handlers, notificationServiceHandlers) {
     const messageJSON = busPayload.payload;
     const handlerAsync = Promise.promisify(handler);
     // use handler to create notification instances for each recipient
-    return handlerAsync(topicName, messageJSON)
+    return handlerAsync(topicName, messageJSON, logger)
       .then((notifications) => Promise.all(_.map(notifications, (notification) => {
+        notification.contents = _.extend({}, messageJSON, notification.contents);
         // run other notification service handlers
         notificationServiceHandlers.forEach((notificationServiceHandler) => {
           notificationServiceHandler(topicName, messageJSON, notification);
@@ -60,21 +61,27 @@ function startKafkaConsumer(handlers, notificationServiceHandlers) {
           userId: notification.userId,
           type: notification.newType || topicName,
           version: notification.version || null,
-          contents: _.extend({}, messageJSON, notification.contents),
+          contents: notification.contents,
           read: false,
           seen: false,
         });
       })))
       // commit offset
       .then(() => consumer.commitOffset({ topic, partition, offset: m.offset }))
-      .catch((err) => logger.error(err));
+      .catch((err) => {
+        logger.error('Kafka dataHandler failed');
+        logger.error(err);
+      });
   });
 
   consumer
     .init()
     .then(() => _.each(_.keys(handlers),
       (topicName) => consumer.subscribe(topicName, dataHandler)))
-    .catch((err) => logger.error(err));
+    .catch((err) => {
+      logger.error('Kafka Consumer failed');
+      logger.error(err);
+    });
 }
 
 /**

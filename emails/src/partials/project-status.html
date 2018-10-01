@@ -1,0 +1,102 @@
+{{#if [PROJECT_STATUS]}}
+
+
+<link rel="stylesheet" type="text/css" href="../styles/main.scss">
+<tr class="post-head">
+  <td class="main-td">
+    <table class="main-child">
+      <tr>
+        <td class="empty-child-one"></td>
+        <td class="comment-box"><img src="https://image.ibb.co/etWM7J/comment.jpg" alt="IMG"></td>
+        <td class="empty-child-two"></td>
+        <td>
+            {{title}}
+        </td>
+      </tr>
+    </table>
+  </td>
+</tr>
+
+<tr class="empty-20">
+    <td class="main-td">
+        <table class="main-child">
+        <tr><td></td></tr>
+        </table>  
+    </td>
+</tr>
+
+{{#each notifications}}
+<tr class="post-details">
+    <td class="main-td">
+        <table class="main-child">
+        <tr>
+            <td>
+                <table>
+                    <tr class="row-child-one" height="20">
+                        <td class="empty-child-one"></td>
+                        <td>
+                            {{#if [notifications.connect.project.active]}}
+                            We reviewed your project and have successfully launched it on our network. Now the copilots would be assigned according to your techincal specification, and they will proceed to building the work specification for the first phase. During this time they might ask you further questions in regards with the details of your system, in order for us to build a really great app.
+                            {{/if}}
+                            {{#if [notifications.connect.project.approved]}}
+                                Your project is now approved
+                            {{/if}}
+                            {{#if [notifications.connect.project.canceled]}}
+                                Your project is now canceled
+                            {{/if}}
+                            {{#if [notifications.connect.project.completed]}}
+                                Your project is now complete
+                            {{/if}}
+                            {{#if [notifications.connect.project.created]}}
+                                Your project is created
+                            {{/if}}
+                            {{#if [notifications.connect.project.paused]}}
+                                Your project is now paused
+                            {{/if}}
+                            {{#if [notifications.connect.project.submittedForReview]}}
+                                Your project is now submitted for review
+                            {{/if}}
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        </table>  
+    </td>
+</tr>
+{{/each}}
+
+
+
+<tr class="empty-50">
+    <td class="main-td">
+        <table class="main-child">
+        <tr><td></td></tr>
+        </table>  
+    </td>
+</tr>
+<tr class="button-row button-one">
+    <td class="main-td">
+        <table class="main-child">
+        <tr>
+            <td class="empty-child-one"></td>
+            <td class="second-child" align="center">
+            <a href="{{@root.connectURL}}/projects/{{notifications.[0].projectId}}">
+                <table>
+                <tr><td align="center">View project on Connect</td></tr>
+                </table>  
+            </a>
+            </td>
+            <td class="empty-child-one"></td>
+        </tr>
+        </table>
+    </td>
+</tr>
+<tr class="empty-20">
+    <td class="main-td">
+        <table class="main-child">
+        <tr><td></td></tr>
+        </table>  
+    </td>
+</tr>
+{{/if}}

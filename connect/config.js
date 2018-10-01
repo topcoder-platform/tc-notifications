@@ -17,6 +17,7 @@ module.exports = {
   ADMINISTRATOR_ROLE_ID: 1,
   // id of the BOT user which creates post with various events in discussions
   TCWEBSERVICE_ID: process.env.TCWEBSERVICE_ID || '22838965',
+  CODERBOT_USER_ID: process.env.CODERBOT_USER_ID || 'CoderBot',
 
   // Configuration for generating machine to machine auth0 token.
   // The token will be used for calling another internal API.
@@ -39,4 +40,6 @@ module.exports = {
   REPLY_EMAIL_DOMAIN: process.env.REPLY_EMAIL_DOMAIN,
   REPLY_EMAIL_FROM: process.env.REPLY_EMAIL_FROM,
   DEFAULT_REPLY_EMAIL: process.env.DEFAULT_REPLY_EMAIL,
+
+  CONNECT_URL: process.env.CONNECT_URL || 'https://connect.topcoder-dev.com',
 };
