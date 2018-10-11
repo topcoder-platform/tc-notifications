@@ -35,13 +35,13 @@
                     <tr class="row-child-one" height="20">
                         <td class="empty-child-one"></td>
                         <td>
-                            {{#if [notifications.connect.project.planReady]}}
+                            {{#if [connect.action.project.plan.ready]}}
                                 Project plan is ready for your project
                             {{/if}}
-                            {{#if [notifications.connect.project.plan.updated]}}
+                            {{#if [connect.action.project.plan.updated]}}
                                 Project plan is modified for your project
                             {{/if}}
-                            {{#if [notifications.connect.project.progressModified]}}
+                            {{#if [connect.action.project.updated.progress]}}
                                 Your project has made some progress
                             {{/if}}
                             {{#if [notifications.connect.project.phase.transition.active]}}
@@ -59,13 +59,13 @@
                             {{#if [notifications.connect.project.phase.update.scope]}}
                                 Scope of the phase <strong>{{updatedPhase.name}}</strong> updated
                             {{/if}}
-                            {{#if [notifications.connect.project.phase.milestone.transition.active]}}
+                            {{#if [connect.action.timeline.milestone.transition.active]}}
                                 A milestone is activated in phase <strong>{{updatedPhase.name}}</strong>
                             {{/if}}
-                            {{#if [notifications.connect.project.phase.milestone.transition.completed]}}
+                            {{#if [connect.action.timeline.milestone.transition.completed]}}
                                 A milestone is completed in phase <strong>{{updatedPhase.name}}</strong>
                             {{/if}}
-                            {{#if [notifications.connect.project.phase.milestone.waiting.customer]}}
+                            {{#if [connect.action.timeline.milestone.waiting.customer]}}
                                 We are waiting for your input at a milestone in the phase <strong>{{updatedPhase.name}}</strong>
                             {{/if}}
                         </td>
