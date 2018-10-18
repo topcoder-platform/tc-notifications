@@ -89,7 +89,7 @@ const getUsersById = (ids) => {
     })
     .then((token) => {
       return request
-      .get(`${config.TC_API_V3_BASE_URL}/members/_search?fields=userId,email,handle,firstName,lastName,photoURL&query=${query}`)
+      .get(`${config.TC_API_V3_BASE_URL}/members/_search?fields=userId,email,handle,firstName,lastName,photoURL,status&query=${query}`)
       .set('accept', 'application/json')
       .set('authorization', `Bearer ${token}`)
       .then((res) => {

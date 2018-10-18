@@ -11,6 +11,7 @@ module.exports = {
   // email service id for settings
   SETTINGS_EMAIL_SERVICE_ID: 'email',
   SETTINGS_EMAIL_BUNDLING_SERVICE_ID: 'emailBundling',
+  ACTIVE_USER_STATUSES: ['ACTIVE'],
 
   BUS_API_EVENT: {
     CONNECT: {

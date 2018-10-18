@@ -14,7 +14,7 @@ const {
   BUS_API_EVENT,
   SCHEDULED_EVENT_PERIOD,
   SETTINGS_EMAIL_SERVICE_ID,
-  SETTINGS_EMAIL_BUNDLING_SERVICE_ID
+  ACTIVE_USER_STATUSES
 } = require('../constants');
 const { EVENTS, EVENT_BUNDLES } = require('../events-config');
 const helpers = require('../helpers');
@@ -200,12 +200,20 @@ function handler(topicName, messageJSON, notification) {
     }
 
     const users = yield service.getUsersById([notification.userId]);
-    logger.debug(`got users ${JSON.stringify(users)}`);
+    logger.verbose(`got users ${JSON.stringify(users)}`);
 
-    const user = users[0];
-    let userEmail = user.email;
+    const user = users && users.length > 0 ? users[0] : null;
+    let userEmail = _.get(user, 'email');
     if (!userEmail) {
       logger.error(`Email not received for user: ${user.id}`);
+      return;
+    }
+    const userStatus = _.get(user, 'status');
+    // don't send email notification for inactive users, ideally we should not have generated
+    // notifications for inactive users, however, for now handling it here as safe gaurd
+    if (userStatus && ACTIVE_USER_STATUSES.indexOf(userStatus) === -1) {
+      logger.error(`Notification generated for inactive user, ignoring`);
+      return;
     }
     if (config.ENABLE_DEV_MODE === 'true') {
       userEmail = config.DEV_MODE_EMAIL;
