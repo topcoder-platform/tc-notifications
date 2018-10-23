@@ -54,6 +54,7 @@ module.exports = {
         MILESTONE_ACTIVATED: 'connect.action.timeline.milestone.transition.active',
         MILESTONE_COMPLETED: 'connect.action.timeline.milestone.transition.completed',
         WAITING_FOR_CUSTOMER_INPUT: 'connect.action.timeline.milestone.waiting.customer',
+        TIMELINE_ADJUSTED: 'connect.action.timeline.adjusted',
       },
       TOPIC: {
         CREATED: 'notifications.connect.project.topic.created',
