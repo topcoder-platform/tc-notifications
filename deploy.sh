@@ -298,10 +298,10 @@ check_service_status() {
 configure_aws_cli
 push_ecr_image
 
-deploy_cluster AWS_ECS_SERVICE_API "npm" "run" "startAPI"
+deploy_cluster $AWS_ECS_SERVICE_API "npm" "run" "startAPI"
 
-deploy_cluster AWS_ECS_SERVICE_CONSUMERS "npm" "run" "start"
+deploy_cluster $AWS_ECS_SERVICE_CONSUMERS "npm" "run" "start"
 
-check_service_status AWS_ECS_SERVICE_API
+check_service_status $AWS_ECS_SERVICE_API
 
-check_service_status AWS_ECS_SERVICE_CONSUMERS
+check_service_status $AWS_ECS_SERVICE_CONSUMERS
