@@ -29,7 +29,8 @@ AWS_SECRET_ACCESS_KEY=$(eval "echo \$${ENV}_AWS_SECRET_ACCESS_KEY")
 AWS_ACCOUNT_ID=$(eval "echo \$${ENV}_AWS_ACCOUNT_ID")
 AWS_REPOSITORY=$(eval "echo \$${ENV}_AWS_REPOSITORY")
 AWS_ECS_CLUSTER=$(eval "echo \$${ENV}_AWS_ECS_CLUSTER")
-AWS_ECS_SERVICE=$(eval "echo \$${ENV}_AWS_ECS_SERVICE")
+AWS_ECS_SERVICE_API=$(eval "echo \$${ENV}_AWS_ECS_SERVICE")
+AWS_ECS_SERVICE_CONSUMERS=$(eval "echo \$${ENV}_AWS_ECS_SERVICE_CONSUMERS")
 
 KAFKA_CLIENT_CERT=$(eval "echo \$${ENV}_KAFKA_CLIENT_CERT")
 KAFKA_CLIENT_CERT_KEY=$(eval "echo \$${ENV}_KAFKA_CLIENT_CERT_KEY")
@@ -98,9 +99,9 @@ deploy_cluster() {
 
     #family="nginx-api-dev-task"
 
-    make_task_def
-    register_definition
-    update_result=$(aws ecs update-service --cluster $AWS_ECS_CLUSTER --service $AWS_ECS_SERVICE --task-definition $revision )
+    make_task_def $1 $2 $3 $4
+    register_definition $1
+    update_result=$(aws ecs update-service --cluster $AWS_ECS_CLUSTER --service $1 --task-definition $revision )
     #echo $update_result
     result=$(echo $update_result | $JQ '.service.taskDefinition' )
     echo $result
@@ -119,8 +120,9 @@ make_task_def(){
     "name": "%s",
     "image": "%s.dkr.ecr.%s.amazonaws.com/%s:%s",
     "essential": true,
-    "memory": 1536,
-    "cpu": 768,
+    "memory": 768,
+    "cpu": 512,
+    "entryPoint": ["%s", "%s", "%s"],
     "environment": [
       {
         "name": "ENV",
@@ -261,11 +263,11 @@ make_task_def(){
   }
 ]'
 
-	task_def=$(printf "$task_template" $AWS_ECS_CONTAINER_NAME $AWS_ACCOUNT_ID $AWS_REGION $AWS_REPOSITORY $TAG $ENV "$KAFKA_CLIENT_CERT" "$KAFKA_CLIENT_CERT_KEY" $KAFKA_GROUP_ID $KAFKA_URL $DATABASE_URL $AUTHSECRET $TC_API_BASE_URL $TC_API_V3_BASE_URL $TC_API_V4_BASE_URL $TC_API_V5_BASE_URL $MESSAGE_API_BASE_URL $CONNECT_URL $ENABLE_EMAILS $MENTION_EMAIL $REPLY_EMAIL_PREFIX $REPLY_EMAIL_DOMAIN $REPLY_EMAIL_FROM $DEFAULT_REPLY_EMAIL $ENABLE_DEV_MODE $DEV_MODE_EMAIL $LOG_LEVEL $VALID_ISSUERS $PORT "$API_CONTEXT_PATH" "$AUTH0_URL" "$AUTH0_AUDIENCE" $AUTH0_CLIENT_ID "$AUTH0_CLIENT_SECRET" $TOKEN_CACHE_TIME $AWS_ECS_CLUSTER $AWS_REGION $AWS_ECS_CLUSTER $ENV)
+	task_def=$(printf "$task_template" $1 $AWS_ACCOUNT_ID $AWS_REGION $AWS_REPOSITORY $TAG $2 $3 $4 $ENV "$KAFKA_CLIENT_CERT" "$KAFKA_CLIENT_CERT_KEY" $KAFKA_GROUP_ID $KAFKA_URL $DATABASE_URL $AUTHSECRET $TC_API_BASE_URL $TC_API_V3_BASE_URL $TC_API_V4_BASE_URL $TC_API_V5_BASE_URL $MESSAGE_API_BASE_URL $CONNECT_URL $ENABLE_EMAILS $MENTION_EMAIL $REPLY_EMAIL_PREFIX $REPLY_EMAIL_DOMAIN $REPLY_EMAIL_FROM $DEFAULT_REPLY_EMAIL $ENABLE_DEV_MODE $DEV_MODE_EMAIL $LOG_LEVEL $VALID_ISSUERS $PORT "$API_CONTEXT_PATH" "$AUTH0_URL" "$AUTH0_AUDIENCE" $AUTH0_CLIENT_ID "$AUTH0_CLIENT_SECRET" $TOKEN_CACHE_TIME $AWS_ECS_CLUSTER $AWS_REGION $AWS_ECS_CLUSTER $ENV)
 }
 
 register_definition() {
-    if revision=$(aws ecs register-task-definition --container-definitions "$task_def" --family $family | $JQ '.taskDefinition.taskDefinitionArn'); then
+    if revision=$(aws ecs register-task-definition --container-definitions "$task_def" --family $1 2> /dev/null | $JQ '.taskDefinition.taskDefinitionArn'); then
         echo "Revision: $revision"
     else
         echo "Failed to register task definition"
@@ -277,13 +279,13 @@ register_definition() {
 check_service_status() {
         counter=0
 	sleep 60
-        servicestatus=`aws ecs describe-services --service $AWS_ECS_SERVICE --cluster $AWS_ECS_CLUSTER | $JQ '.services[].events[0].message'`
+        servicestatus=`aws ecs describe-services --service $1 --cluster $AWS_ECS_CLUSTER | $JQ '.services[].events[0].message'`
         while [[ $servicestatus != *"steady state"* ]]
         do
            echo "Current event message : $servicestatus"
            echo "Waiting for 30 seconds to check the service status...."
            sleep 30
-           servicestatus=`aws ecs describe-services --service $AWS_ECS_SERVICE --cluster $AWS_ECS_CLUSTER | $JQ '.services[].events[0].message'`
+           servicestatus=`aws ecs describe-services --service $1 --cluster $AWS_ECS_CLUSTER | $JQ '.services[].events[0].message'`
            counter=`expr $counter + 1`
            if [[ $counter -gt $COUNTER_LIMIT ]] ; then
                 echo "Service does not reach steady state within 10 minutes. Please check"
@@ -295,5 +297,11 @@ check_service_status() {
 
 configure_aws_cli
 push_ecr_image
-deploy_cluster
-check_service_status
+
+deploy_cluster $AWS_ECS_SERVICE_API "npm" "run" "startAPI"
+
+deploy_cluster $AWS_ECS_SERVICE_CONSUMERS "npm" "run" "start"
+
+check_service_status $AWS_ECS_SERVICE_API
+
+check_service_status $AWS_ECS_SERVICE_CONSUMERS
