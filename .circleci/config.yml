@@ -82,7 +82,7 @@ workflows:
       - "build-dev":
           filters:
             branches:
-              only: [dev, 'feature/multi-service-deployment']
+              only: [dev]
       - "build-prod":
           filters:
             branches:
