@@ -95,15 +95,24 @@ function getAllHandlers() {
 }
 
 /**
- * Start the notification server.
+ * Start the notification API server.
  */
-function start() {
+function startAPI() {
+  // load app only after config is set
+  const app = require('./src/app');
+  app.start();
+}
+
+/**
+ * Start the event bus consumer.
+ */
+function startKafkaConsumers() {
   if (_.isEmpty(handlers)) {
     throw new errors.ValidationError('Missing handler(s).');
   }
   // load app only after config is set
   const app = require('./src/app');
-  app.start(handlers, notificationServiceHandlers);
+  app.startKafkaConsumer(handlers, notificationServiceHandlers);
 }
 
 /**
@@ -122,7 +131,8 @@ module.exports = {
   addTopicHandler,
   removeTopicHandler,
   getAllHandlers,
-  start,
+  startAPI,
+  startKafkaConsumers,
   initDatabase,
   addNotificationServiceHandler,
 
