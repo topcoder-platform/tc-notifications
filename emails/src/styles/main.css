@@ -210,24 +210,16 @@ table.container, table.footer-container {
       background-color: #0681FF;
       height: 30px; }
       .button-row .main-child .second-child a {
-        height: 30px;
         border-radius: 4px;
         text-align: center;
         text-decoration: none;
         display: block;
-        background-color: #0681FF; }
-        .button-row .main-child .second-child a table {
-          background-color: #0681FF;
-          border-radius: 4px;
-          height: 30px; }
-          .button-row .main-child .second-child a table td {
-            height: 30px;
-            background-color: #0681FF;
-            border-radius: 4px;
-            vertical-align: middle;
-            text-align: center;
-            color: #FFFFFF;
-            font-size: 13px; }
+        background-color: #0681FF;
+        padding-top: 6px;
+        padding-bottom: 5px;
+        text-align: center;
+        color: #FFFFFF;
+        font-size: 13px; }
 
 .button-one .main-child .empty-child-one, .button-three .main-child .empty-child-one {
   width: 216px; }
@@ -236,8 +228,6 @@ table.container, table.footer-container {
   width: 167px; }
   .button-one .main-child .second-child a, .button-three .main-child .second-child a {
     width: 167px; }
-    .button-one .main-child .second-child a table td, .button-three .main-child .second-child a table td {
-      width: 167px; }
 
 .button-two .main-child .empty-child-one {
   width: 211px; }
@@ -246,8 +236,6 @@ table.container, table.footer-container {
   width: 178px; }
   .button-two .main-child .second-child a {
     width: 178px; }
-    .button-two .main-child .second-child a table td {
-      width: 178px; }
 
 .button-four .main-child .empty-child-one {
   width: 210px; }
@@ -256,8 +244,6 @@ table.container, table.footer-container {
   width: 180px; }
   .button-four .main-child .second-child a {
     width: 180px; }
-    .button-four .main-child .second-child a table td {
-      width: 180px; }
 
 .copy-link {
   height: 20px; }
