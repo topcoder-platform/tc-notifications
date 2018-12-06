@@ -310,27 +310,16 @@ table.container, table.footer-container {
       height: 30px;
       a {
         // width: 167px;
-        height: 30px;
         border-radius: 4px;
         text-align: center;
         text-decoration: none;
         display: block;
         background-color: $button-color;
-        table {
-          background-color: $button-color;
-          border-radius: 4px;
-          height: 30px;
-          td {
-            height: 30px;
-            background-color: $button-color;
-            border-radius: 4px;
-            // width: 167px;
-            vertical-align: middle;
-            text-align: center;
-            color: $white-background;
-            font-size: 13px;
-          }
-        }
+        padding-top: 6px;
+        padding-bottom: 5px;
+        text-align: center;
+        color: $white-background;
+        font-size: 13px;
       }
     }
   }
@@ -348,11 +337,6 @@ table.container, table.footer-container {
       width: 167px;
       a {
         width: 167px;
-        table {
-          td {
-            width: 167px;
-          }
-        }
       }
     }
   }
@@ -367,11 +351,6 @@ table.container, table.footer-container {
       width: 178px;
       a {
         width: 178px;
-        table {
-          td {
-            width: 178px;
-          }
-        }
       }
     }
   }
@@ -386,11 +365,6 @@ table.container, table.footer-container {
       width: 180px;
       a {
         width: 180px;
-        table {
-          td {
-            width: 180px;
-          }
-        }
       }
     }
   }
