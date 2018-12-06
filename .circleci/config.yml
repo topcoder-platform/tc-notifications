@@ -82,7 +82,7 @@ workflows:
       - "build-dev":
           filters:
             branches:
-              only: [dev, architectt1-feature/emailTemplatesClean]
+              only: [dev]
       - "build-prod":
           filters:
             branches:
