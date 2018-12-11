@@ -361,13 +361,13 @@ if (config.ENABLE_EMAILS) {
 }
 
 // init database, it will clear and re-create all tables
-notificationServer
-  .initDatabase()
-  .then(() => notificationServer.start())
-  .catch((e) => {
-    console.log(e); // eslint-disable-line no-console
-    notificationServer.logger.error('Notification server errored out');
-  });
+// notificationServer
+//   .initDatabase()
+//   .then(() => notificationServer.startKafkaConsumers())
+//   .catch((e) => {
+//     console.log(e); // eslint-disable-line no-console
+//     notificationServer.logger.error('Notification server errored out');
+//   });
 
 // if no need to init database, then directly start the server:
-// notificationServer.start();
+notificationServer.startKafkaConsumers();

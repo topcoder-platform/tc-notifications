@@ -11,6 +11,7 @@ module.exports = {
   // email service id for settings
   SETTINGS_EMAIL_SERVICE_ID: 'email',
   SETTINGS_EMAIL_BUNDLING_SERVICE_ID: 'emailBundling',
+  ACTIVE_USER_STATUSES: ['ACTIVE'],
 
   BUS_API_EVENT: {
     CONNECT: {
@@ -38,7 +39,7 @@ module.exports = {
         LINK_CREATED: 'notifications.connect.project.linkCreated',
         PAUSED: 'notifications.connect.project.paused',
         SUBMITTED_FOR_REVIEW: 'notifications.connect.project.submittedForReview',
-        SPECIFICATION_MODIFIED: 'connect.action.project.product.update.spec',
+        SPECIFICATION_MODIFIED: 'connect.action.project.updated.spec',
       },
       PROJECT_PLAN: {
         READY: 'connect.action.project.plan.ready',
@@ -49,9 +50,11 @@ module.exports = {
         PHASE_PAYMENT_UPDATED: 'notifications.connect.project.phase.update.payment',
         PHASE_PROGRESS_UPDATED: 'notifications.connect.project.phase.update.progress',
         PHASE_SCOPE_UPDATED: 'notifications.connect.project.phase.update.scope',
+        PHASE_PRODUCT_SPEC_UPDATED: 'connect.action.project.product.update.spec',
         MILESTONE_ACTIVATED: 'connect.action.timeline.milestone.transition.active',
         MILESTONE_COMPLETED: 'connect.action.timeline.milestone.transition.completed',
         WAITING_FOR_CUSTOMER_INPUT: 'connect.action.timeline.milestone.waiting.customer',
+        TIMELINE_ADJUSTED: 'connect.action.timeline.adjusted',
       },
       TOPIC: {
         CREATED: 'notifications.connect.project.topic.created',

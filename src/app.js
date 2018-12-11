@@ -17,7 +17,7 @@ const models = require('./models');
 const Kafka = require('no-kafka');
 
 /**
- * Start Kafka consumer.
+ * Start Kafka consumer for event bus events.
  * @param {Object} handlers                    the handlers
  * @param {Array}  notificationServiceHandlers list of notification service handlers
  */
@@ -74,6 +74,7 @@ function startKafkaConsumer(handlers, notificationServiceHandlers) {
       });
   });
 
+  
   consumer
     .init()
     .then(() => _.each(_.keys(handlers),
@@ -85,11 +86,9 @@ function startKafkaConsumer(handlers, notificationServiceHandlers) {
 }
 
 /**
- * Start the notification server.
- * @param {Object} handlers                    the handlers
- * @param {Array}  notificationServiceHandlers list of notification service handlers
+ * Start the notifications API server.
  */
-function start(handlers, notificationServiceHandlers) {
+function start() {
   const app = express();
   app.set('port', config.PORT);
 
@@ -157,19 +156,21 @@ function start(handlers, notificationServiceHandlers) {
     }
   });
 
-  models
-    .init()
-    .then(() => {
-      app.listen(app.get('port'), () => {
-        logger.info(`Express server listening on port ${app.get('port')}`);
-      });
-
-      startKafkaConsumer(handlers, notificationServiceHandlers);
-    })
-    .catch((err) => logger.error(err));
+  // models
+  //   .init()
+  //   .then(() => {
+  //     app.listen(app.get('port'), () => {
+  //       logger.info(`Express server listening on port ${app.get('port')}`);
+  //     });
+  //   })
+  //   .catch((err) => logger.error(err));
+  app.listen(app.get('port'), () => {
+    logger.info(`Express server listening on port ${app.get('port')}`);
+  });
 }
 
 // Exports
 module.exports = {
   start,
+  startKafkaConsumer,
 };

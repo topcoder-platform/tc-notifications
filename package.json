@@ -5,6 +5,7 @@
   "main": "./index.js",
   "scripts": {
     "start": "node connect/connectNotificationServer",
+    "startAPI": "node index-api",
     "lint": "eslint *.js src config test connect || true",
     "lint:fix": "eslint *.js --fix src config test connect || true",
     "postinstall": "npm run build",
