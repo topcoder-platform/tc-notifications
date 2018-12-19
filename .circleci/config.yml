@@ -82,7 +82,7 @@ workflows:
       - "build-dev":
           filters:
             branches:
-              only: [dev, 'feature/auth0-proxy-server']
+              only: [dev]
       - "build-prod":
           filters:
             branches:
