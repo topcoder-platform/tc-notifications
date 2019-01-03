@@ -1,18 +1,18 @@
 version: 2
 
 jobs:
-  # Build & Deploy against development backend rer
+  # Build & Deploy against development backend rerr
   "build-dev":
     docker:
       - image: docker:17.06.1-ce-git
     steps:
-      # Initialization.
+      # Initialization
       - checkout
       - setup_remote_docker
       - run:
           name: Installation of build dependencies.
-          command: apk add --no-cache bash
-
+          command: apk add --no-cache bash openssl
+ 
       # Restoration of node_modules from cache.
       - restore_cache:
           key: docker-tc-notify-{{ checksum "package-lock.json" }}
@@ -28,16 +28,20 @@ jobs:
           paths:
             - node_modules
 
-      # Deployment.
+      # Deployment.
       - run:
           name: Installing AWS client
           command: |
             apk add --no-cache jq py-pip sudo
             sudo pip install awscli --upgrade
-
+            
       - deploy:
-          command: ./deploy.sh DEV $CIRCLE_SHA1
-
+          name: Running MasterScript
+          command: |
+            git clone --branch master https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
+            cp ./../buildscript/master_deply_v4.2.sh .
+            ./master_deply_v4.2.sh -d ECS -e DEV -t $CIRCLE_SHA1 -s zebra
+            
   "build-prod":
     docker:
       - image: docker:17.06.1-ce-git
@@ -64,13 +68,12 @@ jobs:
           paths:
             - node_modules
 
-      # Deployment.
+      # Deployment.
       - run:
           name: Installing AWS client
           command: |
             apk add --no-cache jq py-pip sudo
             sudo pip install awscli --upgrade
-
       - deploy:
           command: ./deploy.sh PROD $CIRCLE_SHA1
 
@@ -82,7 +85,7 @@ workflows:
       - "build-dev":
           filters:
             branches:
-              only: [dev]
+              only: [dev, dev_mstest_v2]
       - "build-prod":
           filters:
             branches:
