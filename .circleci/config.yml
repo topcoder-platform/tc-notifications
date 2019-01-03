@@ -38,9 +38,9 @@ jobs:
       - deploy:
           name: Running MasterScript
           command: |
-            git clone --branch master https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
-            cp ./../buildscript/master_deply_v4.2.sh .
-            ./master_deply_v4.2.sh -d ECS -e DEV -t $CIRCLE_SHA1 -s zebra
+            git clone --branch dev https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
+            cp ./../buildscript/master_deploy.sh .
+            ./master_deploy.sh -d ECS -e DEV -t $CIRCLE_SHA1 -s tcnotifytest
             
   "build-prod":
     docker:
@@ -85,7 +85,7 @@ workflows:
       - "build-dev":
           filters:
             branches:
-              only: [dev, dev_mstest_v2]
+              only: [dev, dev_mstest2]
       - "build-prod":
           filters:
             branches:
