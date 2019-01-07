@@ -1,0 +1,68 @@
+{{#if [EMAIL_INVITES]}}
+
+    <link rel="stylesheet" type="text/css" href="../styles/main.scss">
+
+    <tr class="post-head">
+        <td class="main-td">
+            <table class="main-child">
+            <tr>
+                <td class="empty-child-one"></td>
+                <td class="comment-box"><img src="https://image.ibb.co/etWM7J/comment.jpg" alt="IMG"></td>
+                <td class="empty-child-two"></td>
+                <td>
+                <strong>Project invitation</a>.
+                </td>
+            </tr>
+            </table>
+        </td>
+    </tr>
+    <tr class="empty-20">
+        <td class="main-td">
+            <table class="main-child">
+            <tr><td></td></tr>
+            </table>  
+        </td>
+    </tr>
+
+
+    <tr class="post-details">
+        <td class="main-td">
+            <table class="main-child">
+                <tr>
+                    <td>You are invited to join the <strong>{{projectName}}</strong> on Topcoder Connect</td>
+                </tr>
+            </table>  
+        </td>
+    </tr>
+
+
+    <tr class="empty-50">
+        <td class="main-td">
+            <table class="main-child">
+            <tr><td></td></tr>
+            </table>  
+        </td>
+    </tr>
+    <tr class="button-row button-one">
+        <td class="main-td">
+            <table class="main-child">
+            <tr>
+                <td class="empty-child-one"></td>
+                <td class="second-child" align="center">
+                <a href="https://accounts.topcoder.com/connect/registration?retUrl={{@root.connectURL}}/projects/{{@root.projectId}}">
+                    Register a Topcoder account to join the project
+                </a>
+                </td>
+                <td class="empty-child-one"></td>
+            </tr>
+            </table>
+        </td>
+    </tr>
+    <tr class="empty-20">
+        <td class="main-td">
+            <table class="main-child">
+            <tr><td></td></tr>
+            </table>  
+        </td>
+    </tr>
+{{/if}}
