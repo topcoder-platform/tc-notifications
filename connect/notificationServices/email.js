@@ -233,6 +233,7 @@ function handler(topicName, messageJSON, notification) {
         authorFullName: notification.contents.userFullName,
         photoURL: notification.contents.photoURL,
         type: notificationType,
+        emailToAffectedUser: notification.contents.userEmail === userEmail,
       },
       recipients,
       version:"v3",
