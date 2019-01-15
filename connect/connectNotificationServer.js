@@ -323,8 +323,9 @@ const handler = (topic, message, logger, callback) => {
 
       // if message has userId such messages will likely need userHandle and user full name
       // so let's get it
+      const ids = [message.initiatorUserId];
       if (message.userId) {
-        const ids = [message.userId];
+        ids.push(message.userId);
         return service.getUsersById(ids);
       }
       return [];
@@ -335,10 +336,15 @@ const handler = (topic, message, logger, callback) => {
         notification.contents.timestamp = (new Date()).toISOString();
         // if found a user then add user handle
         if (users.length) {
-          notification.contents.userHandle = users[0].handle;
-          notification.contents.userFullName = `${users[0].firstName} ${users[0].lastName}`;
-          notification.contents.userEmail = users[0].email;
-          notification.contents.photoURL = users[0].photoURL;
+          const affectedUser = _.find(users, u => u.userId === message.userId);
+          const initiatorUser = _.find(users, u => u.userId === message.initiatorUserId);
+          if (affectedUser) {
+            notification.contents.userHandle = affectedUser.handle;
+            notification.contents.userFullName = `${affectedUser.firstName} ${affectedUser.lastName}`;
+            notification.contents.userEmail = affectedUser.email;
+            notification.contents.photoURL = affectedUser.photoURL;
+          }
+          notification.contents.initiatorUser = initiatorUser;
         }
       });
       callback(null, allNotifications);

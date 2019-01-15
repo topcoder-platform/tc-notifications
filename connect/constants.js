@@ -28,6 +28,8 @@ module.exports = {
         MANAGER_JOINED: 'notifications.connect.project.member.managerJoined',
         COPILOT_JOINED: 'notifications.connect.project.member.copilotJoined',
         ASSIGNED_AS_OWNER: 'notifications.connect.project.member.assignedAsOwner',
+        INVITE_CREATED: 'notifications.connect.project.member.invite.created',
+        INVITE_UPDATED: 'notifications.connect.project.member.invite.updated',
       },
       PROJECT: {
         ACTIVE: 'notifications.connect.project.active',

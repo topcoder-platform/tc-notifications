@@ -1,0 +1,69 @@
+{{#if [EMAIL_INVITES]}}
+
+    <link rel="stylesheet" type="text/css" href="../styles/main.scss">
+
+    <tr class="post-head">
+        <td class="main-td">
+            <table class="main-child">
+            <tr>
+                <td class="empty-child-one"></td>
+                <td class="comment-box"><img src="https://image.ibb.co/etWM7J/comment.jpg" alt="IMG"></td>
+                <td class="empty-child-two"></td>
+                <td>
+                <strong>{{title}}</a>.
+                </td>
+            </tr>
+            </table>
+        </td>
+    </tr>
+    <tr class="empty-20">
+        <td class="main-td">
+            <table class="main-child">
+            <tr><td></td></tr>
+            </table>  
+        </td>
+    </tr>
+
+
+    <tr class="post-details">
+        <td class="main-td">
+            <table class="main-child">
+                <tr>
+                    <td class="empty-child-one"></td>
+                    <td>You are invited to join the <strong>{{projectName}}</strong> on Topcoder Connect. To join the project, please register for a Topcoder account using <strong>Register</strong> button below.</td>
+                </tr>
+            </table>  
+        </td>
+    </tr>
+
+
+    <tr class="empty-50">
+        <td class="main-td">
+            <table class="main-child">
+            <tr><td></td></tr>
+            </table>  
+        </td>
+    </tr>
+    <tr class="button-row button-one">
+        <td class="main-td">
+            <table class="main-child">
+            <tr>
+                <td class="empty-child-one"></td>
+                <td class="second-child" align="center">
+                <a href="{{@root.accountsAppURL}}/connect/registration?retUrl={{@root.connectURL}}/projects/{{projectId}}">
+                    Register
+                </a>
+                </td>
+                <td class="empty-child-one"></td>
+            </tr>
+            </table>
+        </td>
+    </tr>
+    <tr class="empty-20">
+        <td class="main-td">
+            <table class="main-child">
+            <tr><td></td></tr>
+            </table>  
+        </td>
+    </tr>
+{{/if}}

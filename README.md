@@ -1,5 +1,23 @@
-# TOPCODER NOTIFICATIONS SERIES  - NOTIFICATIONS SERVER
+# TOPCODER NOTIFICATIONS
 
+## Description
+This repository hosts the API and processors for enabling notifications in various topcoder apps. Currently it is limited to provide this facility to the [Connect](https://github.com/appirio-tech/connect-app) application. Theoretcially, it is a generic framework and application which could be used for sending and consuming notificaitons by any other topcoder app. In very simple words to send notifications using this application:
+
+1. Send an event to bus
+2. Listen that event in tc-notifications
+3. There is a config in tc-notifications for each event it want to listen and we can specify rules who are the target users to whom we should send notifications for this event
+4. By default it saves all notifications which are generated after parsing the rules specified in step 3 and these are the treated web notifications which we show in the app directly
+5. Then there is option to add notification handlers where we get all these notifications one by one and we can process them further for more channels e.g. we send notification emails for each of notification generated
+6. When one wants to show the notifications, we use the notifications api (hosted inside the tc-notifications itself as separate service) to fetch notifications, mark notifications read or unread etc.
+
+tc-notifications (as a standard nodejs app) provides generic framework around notifications, it does not have config (used in step 3 of previous list) for specific apps. So, to have config for specific apps, we have to start the notification consumers per app e.g. for connect, we have a folder [`connect`](https://github.com/topcoder-platform/tc-notifications/blob/dev/connect) which hosts start script to start notification consumers with connect specific configuration ([`events-config.js`](https://github.com/topcoder-platform/tc-notifications/blob/dev/connect/events-config.js)). It also adds email notification service which sends emails for notifications as per notification settings (coming from common framework laid by tc-notifications) for the user.
+
+### Steps needed to enable other apps to use the notifications are:
+1. Have a separate start up script (in a new folder at the root of the repo) for the concerned app. I would call this as notification consumer/processor.
+2. Write [`events-config.js`](https://github.com/topcoder-platform/tc-notifications/blob/dev/connect/events-config.js) (name is not important, we have to read this file in the start up script written in step 1) for app specific notifications
+3. Write additional notification services (eg. if you want to send email or slack or any other notification) and add them to startup script
+4. Specify a node script in package.json to launch the start up script written in step 1
+5. Either add deployment for this new notification consumer/processor in existing deployment script (if you want to host the processor as separate service in the same ECS cluster) or write a new script if you want to keep the deployment separate.
 
 ## Dependencies
 - nodejs https://nodejs.org/en/ (v6+)
