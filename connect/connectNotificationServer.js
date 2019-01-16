@@ -340,8 +340,8 @@ const handler = (topic, message, logger, callback) => {
         notification.contents.timestamp = (new Date()).toISOString();
         // if found a user then add user handle
         if (users.length) {
-          const affectedUser = _.find(users, u => `${u.userId}` === message.userId);
-          const initiatorUser = _.find(users, u => `${u.userId}` === message.initiatorUserId);
+          const affectedUser = _.find(users, u => `${u.userId}` === `${message.userId}`);
+          const initiatorUser = _.find(users, u => `${u.userId}` === `${message.initiatorUserId}`);
           if (affectedUser) {
             notification.contents.userHandle = affectedUser.handle;
             notification.contents.userFullName = `${affectedUser.firstName} ${affectedUser.lastName}`;
