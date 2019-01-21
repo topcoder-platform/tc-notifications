@@ -205,7 +205,7 @@ function handler(topicName, messageJSON, notification) {
     const user = users && users.length > 0 ? users[0] : null;
     let userEmail = _.get(user, 'email');
     if (!userEmail) {
-      logger.error(`Email not received for user: ${user.id}`);
+      logger.error(`Email not received for user: ${notification.userId}`);
       return;
     }
     const userStatus = _.get(user, 'status');
