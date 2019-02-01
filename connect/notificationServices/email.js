@@ -282,6 +282,11 @@ function handler(topicName, messageJSON, notification) {
       eventMessage.replyTo = `${config.REPLY_EMAIL_PREFIX}+${eventMessage.data.topicId}/${token}@`
         + config.REPLY_EMAIL_DOMAIN;
     }
+    let requiresImmediateAttention = false;
+    if (BUS_API_EVENT.CONNECT.MEMBER.INVITE_CREATED === notificationType) {
+      requiresImmediateAttention = true;
+    }
+
 
     if (messageJSON.fileName) {
       eventMessage.data.fileName = messageJSON.fileName;
@@ -310,7 +315,7 @@ function handler(topicName, messageJSON, notification) {
     }
     logger.debug('bundlePeriod=>', bundlePeriod);
 
-    if (bundlePeriod && "immediately" !== bundlePeriod) {
+    if (bundlePeriod && "immediately" !== bundlePeriod && !requiresImmediateAttention) {
       if (!SCHEDULED_EVENT_PERIOD[bundlePeriod]) {
         throw new Error(`User's '${notification.userId}' setting for service`
           + ` '${SETTINGS_EMAIL_SERVICE_ID}' option 'bundlePeriod' has unsupported value '${bundlePeriod}'.`);
