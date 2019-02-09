@@ -321,7 +321,7 @@ const handler = (topic, message, logger, callback) => {
     )).then((notifications) => {
       allNotifications = _.filter(notifications, notification => notification.userId !== `${message.initiatorUserId}`);
 
-      if (eventConfig.includeUsers){
+      if (eventConfig.includeUsers && message[eventConfig.includeUsers] && message[eventConfig.includeUsers].length>0){
         allNotifications = _.filter(allNotifications, notification => message[eventConfig.includeUsers].contains(notification.userId));
       }
 
