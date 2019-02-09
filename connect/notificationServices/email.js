@@ -205,7 +205,7 @@ function handler(topicName, messageJSON, notification) {
     const user = users && users.length > 0 ? users[0] : null;
     let userEmail = _.get(user, 'email');
     if (!userEmail) {
-      logger.error(`Email not received for user: ${user.id}`);
+      logger.error(`Email not received for user: ${notification.userId}`);
       return;
     }
     const userStatus = _.get(user, 'status');
@@ -233,6 +233,7 @@ function handler(topicName, messageJSON, notification) {
         authorFullName: notification.contents.userFullName,
         photoURL: notification.contents.photoURL,
         type: notificationType,
+        emailToAffectedUser: notification.contents.userEmail === userEmail,
       },
       recipients,
       version:"v3",
@@ -281,6 +282,11 @@ function handler(topicName, messageJSON, notification) {
       eventMessage.replyTo = `${config.REPLY_EMAIL_PREFIX}+${eventMessage.data.topicId}/${token}@`
         + config.REPLY_EMAIL_DOMAIN;
     }
+    let requiresImmediateAttention = false;
+    if (BUS_API_EVENT.CONNECT.MEMBER.INVITE_CREATED === notificationType) {
+      requiresImmediateAttention = true;
+    }
+
 
     if (messageJSON.fileName) {
       eventMessage.data.fileName = messageJSON.fileName;
@@ -291,12 +297,25 @@ function handler(topicName, messageJSON, notification) {
     bundlePeriod = bundlePeriod && bundlePeriod.trim().length > 0 ? bundlePeriod : null;
     // if bundling is not explicitly set and the event is not a messaging event, assume bundling enabled
     if (!bundlePeriod && !messagingEvent) {
+      // finds the event category for the notification type
+      let eventBundleCategory = _.findKey(EVENT_BUNDLES, b => b.types && b.types.indexOf(notificationType) !== -1);
+      if (eventBundleCategory) {
+        const eventBundle = EVENT_BUNDLES[eventBundleCategory];
+        // if we find the event category for the notification, use the bundle settings from the first event
+        if (eventBundle && eventBundle.types && eventBundle.types.length) {
+          const firstEvtInBundle = eventBundle.types[0];
+          const firstEvtBundleSettingPath = `notifications['${firstEvtInBundle}'].${SETTINGS_EMAIL_SERVICE_ID}.bundlePeriod`
+          let firstEvtBundlePeriod = _.get(settings, firstEvtBundleSettingPath);
+          bundlePeriod = firstEvtBundlePeriod
+          logger.debug('Assuming bundle period of first event in the event category=>', bundlePeriod);
+        }
+      }
       // if bundle period is not set, assume it to be daily for default case
       bundlePeriod = !bundlePeriod ? 'daily' : bundlePeriod;
     }
     logger.debug('bundlePeriod=>', bundlePeriod);
 
-    if (bundlePeriod && "immediately" !== bundlePeriod) {
+    if (bundlePeriod && "immediately" !== bundlePeriod && !requiresImmediateAttention) {
       if (!SCHEDULED_EVENT_PERIOD[bundlePeriod]) {
         throw new Error(`User's '${notification.userId}' setting for service`
           + ` '${SETTINGS_EMAIL_SERVICE_ID}' option 'bundlePeriod' has unsupported value '${bundlePeriod}'.`);

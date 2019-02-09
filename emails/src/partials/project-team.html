@@ -45,13 +45,20 @@
                             <strong>{{userFullName}}</strong> joined the project as Manager
                         {{/if}}
                         {{#if [notifications.connect.project.member.removed]}}
-                            <strong>{{userFullName}}</strong> left the project
+                            {{#if [emailToAffectedUser]}}
+                                You are removed from the project
+                            {{else}}
+                                <strong>{{userFullName}}</strong> left the project
+                            {{/if}}
                         {{/if}}
                         {{#if [notifications.connect.project.member.left]}}
                             <strong>{{userFullName}}</strong> left the project
                         {{/if}}
                         {{#if [notifications.connect.project.member.joined]}}
                             <strong>{{userFullName}}</strong> joined the project
+                        {{/if}}
+                        {{#if [notifications.connect.project.member.invite.created]}}
+                            Hi <strong>{{userFullName}}</strong>, you are invited to join the project {{projectName}}. Please click on the button ("View project on Connect") below to join.
                         {{/if}}
                         </td>
                     </tr>

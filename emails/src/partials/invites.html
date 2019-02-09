@@ -10,7 +10,7 @@
                 <td class="comment-box"><img src="https://image.ibb.co/etWM7J/comment.jpg" alt="IMG"></td>
                 <td class="empty-child-two"></td>
                 <td>
-                <strong>Project invitation</a>.
+                <strong>{{title}}</a>.
                 </td>
             </tr>
             </table>
@@ -29,7 +29,8 @@
         <td class="main-td">
             <table class="main-child">
                 <tr>
-                    <td>You are invited to join the <strong>{{projectName}}</strong> on Topcoder Connect</td>
+                    <td class="empty-child-one"></td>
+                    <td>You have been invited to a project by {{initiator.firstName}} {{initiator.lastName}}. To join, please register with Topcoder.</td>
                 </tr>
             </table>  
         </td>
@@ -49,8 +50,8 @@
             <tr>
                 <td class="empty-child-one"></td>
                 <td class="second-child" align="center">
-                <a href="https://accounts.topcoder.com/connect/registration?retUrl={{@root.connectURL}}/projects/{{projectId}}">
-                    Register a Topcoder account to join the project
+                <a href="{{@root.accountsAppURL}}/connect/registration?retUrl={{@root.connectURL}}/projects/{{projectId}}">
+                    Register
                 </a>
                 </td>
                 <td class="empty-child-one"></td>

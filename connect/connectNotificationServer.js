@@ -275,6 +275,8 @@ notificationServer.setConfig({ LOG_LEVEL: 'debug' });
 // logger object used to log in parent thread
 // the callback is function(error, userIds), where userIds is an array of user ids to receive notifications
 const handler = (topic, message, logger, callback) => {
+  logger.debug(topic, 'topic');
+  logger.debug(message, 'message');
   const projectId = message.projectId;
   if (!projectId) {
     return callback(new Error('Missing projectId in the event message.'));
@@ -327,22 +329,30 @@ const handler = (topic, message, logger, callback) => {
 
       // if message has userId such messages will likely need userHandle and user full name
       // so let's get it
+      const ids = [message.initiatorUserId];
+      logger.debug(message.userId, 'message.userId');
       if (message.userId) {
-        const ids = [message.userId];
-        return service.getUsersById(ids);
+        ids.push(message.userId);
       }
-      return [];
+      return service.getUsersById(ids);
+      // return [];
     }).then((users) => {
+      logger.debug(users, 'users');
       _.map(allNotifications, (notification) => {
         notification.version = eventConfig.version;
         notification.contents.projectName = project.name;
         notification.contents.timestamp = (new Date()).toISOString();
         // if found a user then add user handle
         if (users.length) {
-          notification.contents.userHandle = users[0].handle;
-          notification.contents.userFullName = `${users[0].firstName} ${users[0].lastName}`;
-          notification.contents.userEmail = users[0].email;
-          notification.contents.photoURL = users[0].photoURL;
+          const affectedUser = _.find(users, u => `${u.userId}` === `${message.userId}`);
+          const initiatorUser = _.find(users, u => `${u.userId}` === `${message.initiatorUserId}`);
+          if (affectedUser) {
+            notification.contents.userHandle = affectedUser.handle;
+            notification.contents.userFullName = `${affectedUser.firstName} ${affectedUser.lastName}`;
+            notification.contents.userEmail = affectedUser.email;
+            notification.contents.photoURL = affectedUser.photoURL;
+          }
+          notification.contents.initiatorUser = initiatorUser;
         }
       });
       callback(null, allNotifications);
