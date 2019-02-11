@@ -11,8 +11,11 @@ jobs:
       - setup_remote_docker
       - run:
           name: Installation of build dependencies.
-          command: apk add --no-cache bash openssl
- 
+          command: |
+            apk update
+            apk add --no-cache bash openssl curl
+            apk upgrade
+            
       # Restoration of node_modules from cache.
       - restore_cache:
           key: docker-tc-notify-{{ checksum "package-lock.json" }}
