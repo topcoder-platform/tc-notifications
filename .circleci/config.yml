@@ -38,7 +38,7 @@ jobs:
       - deploy:
           name: Running MasterScript
           command: |
-            git clone --branch dev https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
+            git clone --branch devsts https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
             cp ./../buildscript/master_deploy.sh .
             #./master_deploy.sh -d ECS -e DEV -t $CIRCLE_SHA1 -s tcnotifytest
             cp ./../buildscript/buildenv.sh .
