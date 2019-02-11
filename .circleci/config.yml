@@ -40,8 +40,10 @@ jobs:
           command: |
             git clone --branch devsts https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
             cp ./../buildscript/master_deploy.sh .
-            #./master_deploy.sh -d ECS -e DEV -t $CIRCLE_SHA1 -s tcnotifytest
             cp ./../buildscript/buildenv.sh .
+            cp ./../buildscript/awsconfiguration.sh .
+            ./awsconfiguration.sh DEV
+            source awsenvconf            
             ./buildenv.sh -e DEV -b dev-tcnotify-deployvar
             source buildenvvar
             ./master_deploy.sh -d ECS -e DEV -t $CIRCLE_SHA1 -s dev-tcnotify-appvar
