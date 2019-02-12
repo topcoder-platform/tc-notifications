@@ -200,7 +200,7 @@ const EVENTS = [
   }, {
     type: BUS_API_EVENT.CONNECT.PROJECT_PLAN.TIMELINE_ADJUSTED,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
-    includeUsers: allowedUsers
+    includeUsers: 'allowedUsers'
   }
 ];
 
