@@ -66,4 +66,36 @@
             </table>  
         </td>
     </tr>
+    <tr class="post-details">
+        <td class="main-td">
+            <table class="main-child">
+                <tr>
+                    <td class="empty-child-one"></td>
+                    <td>If you are enterprise client with SSO, please use the link below to sign in and join the project.</td>
+                </tr>
+            </table>  
+        </td>
+    </tr>
+    <tr class="button-row button-one">
+        <td class="main-td">
+            <table class="main-child">
+            <tr>
+                <td class="empty-child-one"></td>
+                <td class="second-child" align="center">
+                <a href="{{@root.accountsAppURL}}/sso-login/?app=connect&retUrl={{@root.connectURL}}/projects/{{projectId}}">
+                    SSO Login
+                </a>
+                </td>
+                <td class="empty-child-one"></td>
+            </tr>
+            </table>
+        </td>
+    </tr>
+    <tr class="empty-20">
+        <td class="main-td">
+            <table class="main-child">
+            <tr><td></td></tr>
+            </table>  
+        </td>
+    </tr>
 {{/if}}
