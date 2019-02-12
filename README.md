@@ -14,7 +14,7 @@
 Configuration for the notification server is at `config/default.js`.
 The following parameters can be set in config files or in env variables:
 - **General**
-  - `LOG_LEVEL`: the log level
+  - `LOG_LEVEL`: the log level 
   - `PORT`: the notification server port
   - `DATABASE_URL`: URI to PostgreSQL database
   - `DATABASE_OPTIONS`: database connection options
