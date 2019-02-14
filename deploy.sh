@@ -75,6 +75,10 @@ TOKEN_CACHE_TIME=$(eval "echo \$${ENV}_TOKEN_CACHE_TIME")
 AUTH0_CLIENT_ID=$(eval "echo \$${ENV}_AUTH0_CLIENT_ID")
 AUTH0_CLIENT_SECRET=$(eval "echo \$${ENV}_AUTH0_CLIENT_SECRET")
 
+SENDGRID_API_KEY=$(eval "echo \$${ENV}_SENDGRID_API_KEY")
+SENDGRID_TEMPLATE_ID=$(eval "echo \$${ENV}_SENDGRID_TEMPLATE_ID")
+SENDGRID_VERSION_ID=$(eval "echo \$${ENV}_SENDGRID_VERSION_ID")
+
 echo $APP_NAME
 
 configure_aws_cli() {
@@ -293,7 +297,27 @@ check_service_status() {
         echo "$servicestatus"
 }
 
+deploy_email_template() {
+        
+  echo "Deploying email template"
+
+  template=`cat ./emails-dist/template.html`
+  jq -n --arg template "$template" \
+   '{"active":1,"html_content":$template}' > request-data.txt
+
+
+  curl --request PATCH \
+    --url "https://api.sendgrid.com/v3/templates/$SENDGRID_TEMPLATE_ID/versions/$SENDGRID_VERSION_ID" \
+    --header "authorization: Bearer $SENDGRID_API_KEY" \
+    --header 'content-type: application/json' \
+    --data @request-data.txt
+
+  echo "Email template deployed"
+       
+}
+
 configure_aws_cli
 push_ecr_image
 deploy_cluster
 check_service_status
+deploy_email_template

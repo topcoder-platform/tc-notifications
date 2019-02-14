@@ -43,4 +43,5 @@ then
   docker cp app:/opt/app/node_modules .
 fi
 
-
+# copy dist directory containing the built email template 
+docker cp app:/opt/app/emails/dist ./emails-dist
