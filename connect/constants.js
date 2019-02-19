@@ -30,6 +30,9 @@ module.exports = {
         ASSIGNED_AS_OWNER: 'notifications.connect.project.member.assignedAsOwner',
         INVITE_CREATED: 'notifications.connect.project.member.invite.created',
         INVITE_UPDATED: 'notifications.connect.project.member.invite.updated',
+        INVITE_REQUESTED: 'notifications.connect.project.member.invite.requested',
+        COPILOT_ADDED: 'notifications.connect.project.member.copilot.added',
+        COPILOT_REFUSED: 'notifications.connect.project.member.copilot.refused',
       },
       PROJECT: {
         ACTIVE: 'notifications.connect.project.active',

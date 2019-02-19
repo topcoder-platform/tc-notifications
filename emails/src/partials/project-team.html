@@ -21,7 +21,7 @@
     <td class="main-td">
         <table class="main-child">
         <tr><td></td></tr>
-        </table>  
+        </table>
     </td>
 </tr>
 
@@ -60,12 +60,25 @@
                         {{#if [notifications.connect.project.member.invite.created]}}
                             Hi <strong>{{userFullName}}</strong>, you are invited to join the project {{projectName}}. Please click on the button ("View project on Connect") below to join.
                         {{/if}}
+                        {{#if [notifications.connect.project.member.invite.requested]}}
+                            You are requested to add <strong>{{userFullName}}</strong> as a copilot
+                        {{/if}}
+                        {{#if [notifications.connect.project.member.copilot.added]}}
+                            {{#if [creator]}}
+                                Your request to add invite the copilot was approved
+                            {{else}}
+                                Hi <strong>{{userFullName}}</strong>, you are added as a copilot
+                            {{/if}}
+                        {{/if}}
+                        {{#if [notifications.connect.project.member.copilot.refused]}}
+                            Your request to add the copilot was refused
+                        {{/if}}
                         </td>
                     </tr>
                 </table>
             </td>
         </tr>
-        </table>  
+        </table>
     </td>
 </tr>
 {{/each}}
@@ -76,7 +89,7 @@
     <td class="main-td">
         <table class="main-child">
         <tr><td></td></tr>
-        </table>  
+        </table>
     </td>
 </tr>
 <tr class="button-row button-one">
@@ -98,7 +111,7 @@
     <td class="main-td">
         <table class="main-child">
         <tr><td></td></tr>
-        </table>  
+        </table>
     </td>
 </tr>
 {{/if}}

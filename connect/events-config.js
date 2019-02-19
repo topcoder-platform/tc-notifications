@@ -21,12 +21,14 @@ const PROJECT_ROLE_RULES = {
 // TopCoder roles
 const ROLE_CONNECT_COPILOT = 'Connect Copilot';
 const ROLE_CONNECT_MANAGER = 'Connect Manager';
+const ROLE_CONNECT_COPILOT_MANAGER = 'Connect Copilot Manager';
 const ROLE_ADMINISTRATOR = 'administrator';
 
 // TopCoder role rules
 const TOPCODER_ROLE_RULES = {
   [ROLE_CONNECT_COPILOT]: { id: config.CONNECT_COPILOT_ROLE_ID },
   [ROLE_CONNECT_MANAGER]: { id: config.CONNECT_MANAGER_ROLE_ID },
+  [ROLE_CONNECT_COPILOT_MANAGER]: { id: config.CONNECT_COPILOT_MANAGER_ROLE_ID },
   [ROLE_ADMINISTRATOR]: { id: config.ADMINISTRATOR_ROLE_ID },
 };
 
@@ -107,6 +109,16 @@ const EVENTS = [
     type: BUS_API_EVENT.CONNECT.MEMBER.INVITE_CREATED,
     projectRoles: [],
     toUserHandle: true,
+  }, {
+    type: BUS_API_EVENT.CONNECT.MEMBER.INVITE_REQUESTED,
+    topcoderRoles: [ROLE_CONNECT_COPILOT_MANAGER],
+  }, {
+    type: BUS_API_EVENT.CONNECT.MEMBER.COPILOT_ADDED,
+    toUserHandle: true,
+    creator: true
+  }, {
+    type: BUS_API_EVENT.CONNECT.MEMBER.COPILOT_REFUSED,
+    creator: true
   },
 
   // Project activity
@@ -149,7 +161,7 @@ const EVENTS = [
     type: BUS_API_EVENT.CONNECT.PROJECT.FILE_UPLOADED,
     version: 2,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
-    includeUsers: 'allowedUsers'
+    includeUsers: 'allowedUsers',
   }, {
     type: BUS_API_EVENT.CONNECT.PROJECT.SPECIFICATION_MODIFIED,
     version: 2,
@@ -160,12 +172,12 @@ const EVENTS = [
   }, {
     type: BUS_API_EVENT.CONNECT.PROJECT_PLAN.MODIFIED,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
-    includeUsers: 'allowedUsers'
+    includeUsers: 'allowedUsers',
   }, {
     type: BUS_API_EVENT.CONNECT.PROJECT_PLAN.PROGRESS_UPDATED,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
   },
-  
+
   // Phase activity
   {
     type: BUS_API_EVENT.CONNECT.PROJECT_PLAN.PHASE_ACTIVATED,
@@ -200,8 +212,8 @@ const EVENTS = [
   }, {
     type: BUS_API_EVENT.CONNECT.PROJECT_PLAN.TIMELINE_ADJUSTED,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
-    includeUsers: 'allowedUsers'
-  }
+    includeUsers: 'allowedUsers',
+  },
 ];
 
 const EVENT_BUNDLES = {
@@ -263,6 +275,9 @@ const EVENT_BUNDLES = {
       BUS_API_EVENT.CONNECT.MEMBER.MANAGER_JOINED,
       BUS_API_EVENT.CONNECT.MEMBER.REMOVED,
       BUS_API_EVENT.CONNECT.MEMBER.INVITE_CREATED,
+      BUS_API_EVENT.CONNECT.MEMBER.INVITE_REQUESTED,
+      BUS_API_EVENT.CONNECT.MEMBER.COPILOT_ADDED,
+      BUS_API_EVENT.CONNECT.MEMBER.COPILOT_REFUSED,
     ],
   },
   PROJECT_PLAN: {

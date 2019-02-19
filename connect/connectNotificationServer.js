@@ -102,6 +102,34 @@ const getNotificationsForMentionedUser = (eventConfig, content) => {
 };
 
 /**
+ * Get notifications for users obtained from createdBy
+ *
+ * @param  {Object} eventConfig event configuration
+ * @param  {String} createdBy  created by
+ *
+ * @return {Promise}            resolves to a list of notifications
+ */
+const getNotificationsForCreatedBy = (eventConfig, createdBy) => {
+  // if event doesn't have to be notified to creator, just ignore
+  if (!eventConfig.creator) {
+    return Promise.resolve([]);
+  }
+
+  // if we have to send notification to the creator,
+  // but it's not provided in the message, then throw error
+  if (!createdBy) {
+    return Promise.reject(new Error('Missing createdBy in the event message.'));
+  }
+
+  return Promise.resolve([{
+    userId: createdBy.toString(),
+    contents: {
+      creator: true,
+    },
+  }]);
+};
+
+/**
  * Get project members notifications
  *
  * @param  {Object} eventConfig event configuration
@@ -307,6 +335,7 @@ const handler = (topic, message, logger, callback) => {
       //       - check that event has everything required or throw error
       getNotificationsForTopicStarter(eventConfig, message.topicId),
       getNotificationsForUserId(eventConfig, message.userId),
+      getNotificationsForCreatedBy(eventConfig, message.createdBy),
       getNotificationsForMentionedUser(eventConfig, message.postContent),
       getProjectMembersNotifications(eventConfig, project),
       getTopCoderMembersNotifications(eventConfig),
@@ -321,7 +350,7 @@ const handler = (topic, message, logger, callback) => {
     )).then((notifications) => {
       allNotifications = _.filter(notifications, notification => notification.userId !== `${message.initiatorUserId}`);
 
-      if (eventConfig.includeUsers && message[eventConfig.includeUsers] && message[eventConfig.includeUsers].length>0){
+      if (eventConfig.includeUsers && message[eventConfig.includeUsers] && message[eventConfig.includeUsers].length > 0) {
         allNotifications = _.filter(allNotifications, notification => message[eventConfig.includeUsers].contains(notification.userId));
       }
 
