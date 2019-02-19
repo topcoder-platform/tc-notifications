@@ -9,12 +9,14 @@ const PROJECT_ROLE_OWNER = 'owner';
 const PROJECT_ROLE_COPILOT = 'copilot';
 const PROJECT_ROLE_MANAGER = 'manager';
 const PROJECT_ROLE_MEMBER = 'member';
+const PROJECT_ROLE_ACCOUNT_MANAGER = 'account_manager';
 
 // project member role rules
 const PROJECT_ROLE_RULES = {
   [PROJECT_ROLE_OWNER]: { role: 'customer', isPrimary: true },
   [PROJECT_ROLE_COPILOT]: { role: 'copilot' },
   [PROJECT_ROLE_MANAGER]: { role: 'manager' },
+  [PROJECT_ROLE_ACCOUNT_MANAGER]: { role: 'account_manager' },
   [PROJECT_ROLE_MEMBER]: {},
 };
 
@@ -50,13 +52,13 @@ const EVENTS = [
   // Outside project
   {
     type: BUS_API_EVENT.CONNECT.PROJECT.CREATED,
-    projectRoles: [PROJECT_ROLE_OWNER],
+    projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_ACCOUNT_MANAGER],
     exclude: {
       topcoderRoles: [ROLE_CONNECT_MANAGER, ROLE_ADMINISTRATOR],
     },
   }, {
     type: BUS_API_EVENT.CONNECT.PROJECT.SUBMITTED_FOR_REVIEW,
-    projectRoles: [PROJECT_ROLE_OWNER],
+    projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_ACCOUNT_MANAGER],
     topcoderRoles: [ROLE_CONNECT_MANAGER, ROLE_ADMINISTRATOR],
   }, {
     type: BUS_API_EVENT.CONNECT.PROJECT.APPROVED,
@@ -149,7 +151,7 @@ const EVENTS = [
     type: BUS_API_EVENT.CONNECT.PROJECT.FILE_UPLOADED,
     version: 2,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
-    includeUsers: 'allowedUsers'
+    includeUsers: 'allowedUsers',
   }, {
     type: BUS_API_EVENT.CONNECT.PROJECT.SPECIFICATION_MODIFIED,
     version: 2,
@@ -160,12 +162,12 @@ const EVENTS = [
   }, {
     type: BUS_API_EVENT.CONNECT.PROJECT_PLAN.MODIFIED,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
-    includeUsers: 'allowedUsers'
+    includeUsers: 'allowedUsers',
   }, {
     type: BUS_API_EVENT.CONNECT.PROJECT_PLAN.PROGRESS_UPDATED,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
   },
-  
+
   // Phase activity
   {
     type: BUS_API_EVENT.CONNECT.PROJECT_PLAN.PHASE_ACTIVATED,
@@ -200,8 +202,8 @@ const EVENTS = [
   }, {
     type: BUS_API_EVENT.CONNECT.PROJECT_PLAN.TIMELINE_ADJUSTED,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
-    includeUsers: 'allowedUsers'
-  }
+    includeUsers: 'allowedUsers',
+  },
 ];
 
 const EVENT_BUNDLES = {
