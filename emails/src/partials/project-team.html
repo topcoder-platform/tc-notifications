@@ -64,7 +64,7 @@
                             You are requested to add <strong>{{userFullName}}</strong> as a copilot
                         {{/if}}
                         {{#if [notifications.connect.project.member.invite.approved]}}
-                            {{#if [creator]}}
+                            {{#if [originator]}}
                                 Your request to add invite the member was approved
                             {{else}}
                                 Hi <strong>{{userFullName}}</strong>, you are added as a copilot

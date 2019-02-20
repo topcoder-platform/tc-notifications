@@ -110,12 +110,12 @@ const getNotificationsForMentionedUser = (eventConfig, content) => {
  * @return {Promise}            resolves to a list of notifications
  */
 const getNotificationsForOriginator = (eventConfig, originator) => {
-  // if event doesn't have to be notified to creator, just ignore
-  if (!eventConfig.creator) {
+  // if event doesn't have to be notified to originator, just ignore
+  if (!eventConfig.originator) {
     return Promise.resolve([]);
   }
 
-  // if we have to send notification to the creator,
+  // if we have to send notification to the originator,
   // but it's not provided in the message, then throw error
   if (!originator) {
     return Promise.reject(new Error('Missing originator in the event message.'));
