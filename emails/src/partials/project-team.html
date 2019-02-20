@@ -63,15 +63,15 @@
                         {{#if [notifications.connect.project.member.invite.requested]}}
                             You are requested to add <strong>{{userFullName}}</strong> as a copilot
                         {{/if}}
-                        {{#if [notifications.connect.project.member.copilot.added]}}
+                        {{#if [notifications.connect.project.member.invite.approved]}}
                             {{#if [creator]}}
-                                Your request to add invite the copilot was approved
+                                Your request to add invite the member was approved
                             {{else}}
                                 Hi <strong>{{userFullName}}</strong>, you are added as a copilot
                             {{/if}}
                         {{/if}}
-                        {{#if [notifications.connect.project.member.copilot.refused]}}
-                            Your request to add the copilot was refused
+                        {{#if [notifications.connect.project.member.invite.rejected]}}
+                            Your request to add the member was refused
                         {{/if}}
                         </td>
                     </tr>

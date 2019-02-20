@@ -102,14 +102,14 @@ const getNotificationsForMentionedUser = (eventConfig, content) => {
 };
 
 /**
- * Get notifications for users obtained from createdBy
+ * Get notifications for users obtained from originator
  *
  * @param  {Object} eventConfig event configuration
- * @param  {String} createdBy  created by
+ * @param  {String} originator originator userId
  *
  * @return {Promise}            resolves to a list of notifications
  */
-const getNotificationsForCreatedBy = (eventConfig, createdBy) => {
+const getNotificationsForOriginator = (eventConfig, originator) => {
   // if event doesn't have to be notified to creator, just ignore
   if (!eventConfig.creator) {
     return Promise.resolve([]);
@@ -117,14 +117,14 @@ const getNotificationsForCreatedBy = (eventConfig, createdBy) => {
 
   // if we have to send notification to the creator,
   // but it's not provided in the message, then throw error
-  if (!createdBy) {
-    return Promise.reject(new Error('Missing createdBy in the event message.'));
+  if (!originator) {
+    return Promise.reject(new Error('Missing originator in the event message.'));
   }
 
   return Promise.resolve([{
-    userId: createdBy.toString(),
+    userId: originator.toString(),
     contents: {
-      creator: true,
+      originator: true,
     },
   }]);
 };
@@ -335,7 +335,7 @@ const handler = (topic, message, logger, callback) => {
       //       - check that event has everything required or throw error
       getNotificationsForTopicStarter(eventConfig, message.topicId),
       getNotificationsForUserId(eventConfig, message.userId),
-      getNotificationsForCreatedBy(eventConfig, message.createdBy),
+      getNotificationsForOriginator(eventConfig, message.originator),
       getNotificationsForMentionedUser(eventConfig, message.postContent),
       getProjectMembersNotifications(eventConfig, project),
       getTopCoderMembersNotifications(eventConfig),

@@ -31,8 +31,8 @@ module.exports = {
         INVITE_CREATED: 'notifications.connect.project.member.invite.created',
         INVITE_UPDATED: 'notifications.connect.project.member.invite.updated',
         INVITE_REQUESTED: 'notifications.connect.project.member.invite.requested',
-        COPILOT_ADDED: 'notifications.connect.project.member.copilot.added',
-        COPILOT_REFUSED: 'notifications.connect.project.member.copilot.refused',
+        INVITE_APPROVED: 'notifications.connect.project.member.invite.approved',
+        INVITE_REJECTED: 'notifications.connect.project.member.invite.rejected',
       },
       PROJECT: {
         ACTIVE: 'notifications.connect.project.active',
