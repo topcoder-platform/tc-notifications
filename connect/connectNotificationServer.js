@@ -102,6 +102,34 @@ const getNotificationsForMentionedUser = (eventConfig, content) => {
 };
 
 /**
+ * Get notifications for users obtained from originator
+ *
+ * @param  {Object} eventConfig event configuration
+ * @param  {String} originator originator userId
+ *
+ * @return {Promise}            resolves to a list of notifications
+ */
+const getNotificationsForOriginator = (eventConfig, originator) => {
+  // if event doesn't have to be notified to originator, just ignore
+  if (!eventConfig.originator) {
+    return Promise.resolve([]);
+  }
+
+  // if we have to send notification to the originator,
+  // but it's not provided in the message, then throw error
+  if (!originator) {
+    return Promise.reject(new Error('Missing originator in the event message.'));
+  }
+
+  return Promise.resolve([{
+    userId: originator.toString(),
+    contents: {
+      originator: true,
+    },
+  }]);
+};
+
+/**
  * Get project members notifications
  *
  * @param  {Object} eventConfig event configuration
@@ -307,6 +335,7 @@ const handler = (topic, message, logger, callback) => {
       //       - check that event has everything required or throw error
       getNotificationsForTopicStarter(eventConfig, message.topicId),
       getNotificationsForUserId(eventConfig, message.userId),
+      getNotificationsForOriginator(eventConfig, message.originator),
       getNotificationsForMentionedUser(eventConfig, message.postContent),
       getProjectMembersNotifications(eventConfig, project),
       getTopCoderMembersNotifications(eventConfig),
@@ -321,8 +350,8 @@ const handler = (topic, message, logger, callback) => {
     )).then((notifications) => {
       allNotifications = _.filter(notifications, notification => notification.userId !== `${message.initiatorUserId}`);
 
-      if (eventConfig.includeUsers && message[eventConfig.includeUsers] && message[eventConfig.includeUsers].length>0){
-        allNotifications = _.filter(allNotifications, notification => message[eventConfig.includeUsers].contains(notification.userId));
+      if (eventConfig.includeUsers && message[eventConfig.includeUsers] && message[eventConfig.includeUsers].length > 0) {
+        allNotifications = _.filter(allNotifications, notification => message[eventConfig.includeUsers].includes(notification.userId));
       }
 
       // now let's retrieve some additional data
