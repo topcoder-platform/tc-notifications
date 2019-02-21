@@ -14,6 +14,7 @@ module.exports = {
   // As soon as this endpoint is replaced with more suitable one, these variables has to be removed if no need anymore.
   CONNECT_MANAGER_ROLE_ID: 8,
   CONNECT_COPILOT_MANAGER_ROLE_ID: 113,
+  CONNECT_ACCOUNT_MANAGER_ROLE_ID: 114,
   CONNECT_COPILOT_ROLE_ID: 4,
   ADMINISTRATOR_ROLE_ID: 1,
   // id of the BOT user which creates post with various events in discussions

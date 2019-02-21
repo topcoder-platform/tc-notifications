@@ -9,12 +9,14 @@ const PROJECT_ROLE_OWNER = 'owner';
 const PROJECT_ROLE_COPILOT = 'copilot';
 const PROJECT_ROLE_MANAGER = 'manager';
 const PROJECT_ROLE_MEMBER = 'member';
+const PROJECT_ROLE_ACCOUNT_MANAGER = 'account_manager';
 
 // project member role rules
 const PROJECT_ROLE_RULES = {
   [PROJECT_ROLE_OWNER]: { role: 'customer', isPrimary: true },
   [PROJECT_ROLE_COPILOT]: { role: 'copilot' },
   [PROJECT_ROLE_MANAGER]: { role: 'manager' },
+  [PROJECT_ROLE_ACCOUNT_MANAGER]: { role: 'account_manager' },
   [PROJECT_ROLE_MEMBER]: {},
 };
 
@@ -22,6 +24,7 @@ const PROJECT_ROLE_RULES = {
 const ROLE_CONNECT_COPILOT = 'Connect Copilot';
 const ROLE_CONNECT_MANAGER = 'Connect Manager';
 const ROLE_CONNECT_COPILOT_MANAGER = 'Connect Copilot Manager';
+const ROLE_CONNECT_ACCOUNT_MANAGER = 'Connect Account Manager';
 const ROLE_ADMINISTRATOR = 'administrator';
 
 // TopCoder role rules
@@ -29,6 +32,7 @@ const TOPCODER_ROLE_RULES = {
   [ROLE_CONNECT_COPILOT]: { id: config.CONNECT_COPILOT_ROLE_ID },
   [ROLE_CONNECT_MANAGER]: { id: config.CONNECT_MANAGER_ROLE_ID },
   [ROLE_CONNECT_COPILOT_MANAGER]: { id: config.CONNECT_COPILOT_MANAGER_ROLE_ID },
+  [ROLE_CONNECT_ACCOUNT_MANAGER]: { id: config.CONNECT_ACCOUNT_MANAGER_ROLE_ID },
   [ROLE_ADMINISTRATOR]: { id: config.ADMINISTRATOR_ROLE_ID },
 };
 
@@ -53,13 +57,14 @@ const EVENTS = [
   {
     type: BUS_API_EVENT.CONNECT.PROJECT.CREATED,
     projectRoles: [PROJECT_ROLE_OWNER],
+    topcoderRoles: [ROLE_CONNECT_ACCOUNT_MANAGER],
     exclude: {
       topcoderRoles: [ROLE_CONNECT_MANAGER, ROLE_ADMINISTRATOR],
     },
   }, {
     type: BUS_API_EVENT.CONNECT.PROJECT.SUBMITTED_FOR_REVIEW,
     projectRoles: [PROJECT_ROLE_OWNER],
-    topcoderRoles: [ROLE_CONNECT_MANAGER, ROLE_ADMINISTRATOR],
+    topcoderRoles: [ROLE_CONNECT_MANAGER, ROLE_CONNECT_ACCOUNT_MANAGER, ROLE_ADMINISTRATOR],
   }, {
     type: BUS_API_EVENT.CONNECT.PROJECT.APPROVED,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER],
