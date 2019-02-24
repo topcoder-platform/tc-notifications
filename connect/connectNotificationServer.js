@@ -339,11 +339,12 @@ const handler = (topic, message, logger, callback) => {
       getNotificationsForMentionedUser(eventConfig, message.postContent),
       getProjectMembersNotifications(eventConfig, project),
       getTopCoderMembersNotifications(eventConfig),
-    ]).then((notificationsPerSource) => (
+    ]).then((notificationsPerSource) => {
       // first found notification for one user will be send, the rest ignored
       // NOTE all userId has to be string
-      _.uniqBy(_.flatten(notificationsPerSource), 'userId')
-    )).then((notifications) => (
+      logger.debug('all notifications: ', notificationsPerSource);
+      return _.uniqBy(_.flatten(notificationsPerSource), 'userId')
+    }).then((notifications) => (
       excludeNotifications(notifications, eventConfig, message, {
         project,
       })
@@ -353,7 +354,7 @@ const handler = (topic, message, logger, callback) => {
       if (eventConfig.includeUsers && message[eventConfig.includeUsers] && message[eventConfig.includeUsers].length > 0) {
         allNotifications = _.filter(allNotifications, notification => message[eventConfig.includeUsers].includes(notification.userId));
       }
-
+      logger.debug('filtered notifications: ', allNotifications);
       // now let's retrieve some additional data
 
       // if message has userId such messages will likely need userHandle and user full name
