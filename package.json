@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node connect/connectNotificationServer",
     "startAPI": "node index-api",
+    "startConsumer": "node consumer",
     "lint": "eslint *.js src config test connect || true",
     "lint:fix": "eslint *.js --fix src config test connect || true",
     "postinstall": "npm run build",

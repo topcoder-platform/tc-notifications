@@ -82,7 +82,7 @@ workflows:
       - "build-dev":
           filters:
             branches:
-              only: [dev]
+              only: [dev, 'feature/general-purpose-notifications-usage']
       - "build-prod":
           filters:
             branches:
