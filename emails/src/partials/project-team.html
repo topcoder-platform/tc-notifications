@@ -98,7 +98,7 @@
         <tr>
             <td class="empty-child-one"></td>
             <td class="second-child" align="center">
-                {{#if [notifications.connect.project.member.invite.requested]}}
+                {{#if notifications.[0].[notifications.connect.project.member.invite.requested]}}
                     <a href="{{@root.connectURL}}/projects/{{notifications.[0].projectId}}#manageTopcoderTeam">
                         Manage project team
                     </a>
