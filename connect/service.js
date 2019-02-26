@@ -6,6 +6,8 @@ const request = require('superagent');
 const config = require('./config');
 const _ = require('lodash');
 
+let rolesCache = null;
+
 /**
  * Get project details
  *
@@ -13,10 +15,10 @@ const _ = require('lodash');
  *
  * @return {Promise}          promise resolved to project details
  */
-const getProject = (projectId) => {
-  return M2m.getMachineToken(config.AUTH0_CLIENT_ID, config.AUTH0_CLIENT_SECRET)
-    .then((token) => {
-      return request
+const getProject = (projectId) => (
+  M2m.getMachineToken(config.AUTH0_CLIENT_ID, config.AUTH0_CLIENT_SECRET)
+    .then((token) => (
+      request
         .get(`${config.TC_API_V4_BASE_URL}/projects/${projectId}`)
         .set('accept', 'application/json')
         .set('authorization', `Bearer ${token}`)
@@ -32,24 +34,68 @@ const getProject = (projectId) => {
             `Failed to get project details of project id: ${projectId}.` +
             (errorDetails ? ' Server response: ' + errorDetails : '')
           );
-        });
+        })
+    ))
+    .catch((err) => {
+      err.message = 'Error generating m2m token: ' + err.message;
+      throw err;
     })
+);
+
+/**
+ * Get role id
+ *
+ * @param  {String} role role
+ *
+ * @return {Promise}       promise resolved to role members ids list
+ */
+const getRoleId = (role) => {
+  if (rolesCache) {
+    const cachedRole = _.find(rolesCache, { roleName: role });
+    if (cachedRole) {
+      return Promise.resolve(cachedRole.id);
+    }
+  }
+  return M2m.getMachineToken(config.AUTH0_CLIENT_ID, config.AUTH0_CLIENT_SECRET)
+    .then((token) => (
+      request
+        .get(`${config.TC_API_V3_BASE_URL}/roles`)
+        .set('accept', 'application/json')
+        .set('authorization', `Bearer ${token}`)
+        .then((res) => {
+          if (!_.get(res, 'body.result.success')) {
+            throw new Error('Failed to get roles list');
+          }
+          const roles = _.get(res, 'body.result.content');
+          rolesCache = roles;
+          return _.find(roles, { roleName: role }).id;
+        }).catch((err) => {
+          const errorDetails = _.get(err, 'response.body.result.content.message');
+          throw new Error(
+            `Failed to get role id for role ${role}.` +
+            (errorDetails ? ' Server response: ' + errorDetails : '')
+          );
+        })
+    ))
     .catch((err) => {
       err.message = 'Error generating m2m token: ' + err.message;
       throw err;
     });
 };
+
 /**
  * Get role members
  *
- * @param  {String} roleId role id
+ * @param  {String} role role
  *
  * @return {Promise}       promise resolved to role members ids list
  */
-const getRoleMembers = (roleId) => {
-  return M2m.getMachineToken(config.AUTH0_CLIENT_ID, config.AUTH0_CLIENT_SECRET)
-    .then((token) => {
-      return request
+const getRoleMembers = (role) => (
+  M2m.getMachineToken(config.AUTH0_CLIENT_ID, config.AUTH0_CLIENT_SECRET)
+    .then((token) => (
+      getRoleId(role)
+      .then(roleId => (
+        request
         .get(`${config.TC_API_V3_BASE_URL}/roles/${roleId}?fields=subjects`)
         .set('accept', 'application/json')
         .set('authorization', `Bearer ${token}`)
@@ -65,13 +111,14 @@ const getRoleMembers = (roleId) => {
             `Failed to get role membrs of role id: ${roleId}.` +
             (errorDetails ? ' Server response: ' + errorDetails : '')
           );
-        });
-    })
+        })
+      ))
+    ))
     .catch((err) => {
       err.message = 'Error generating m2m token: ' + err.message;
       throw err;
-    });
-};
+    })
+);
 
 /**
  * Get users details by ids
@@ -88,8 +135,9 @@ const getUsersById = (ids) => {
       throw err;
     })
     .then((token) => {
+      const fields = 'fields=userId,email,handle,firstName,lastName,photoURL,status';
       return request
-      .get(`${config.TC_API_V3_BASE_URL}/members/_search?fields=userId,email,handle,firstName,lastName,photoURL,status&query=${query}`)
+      .get(`${config.TC_API_V3_BASE_URL}/members/_search?${fields}&query=${query}`)
       .set('accept', 'application/json')
       .set('authorization', `Bearer ${token}`)
       .then((res) => {
@@ -125,8 +173,9 @@ const getUsersByHandle = (handles) => {
       throw err;
     })
     .then((token) => {
+      const fields = 'fields=userId,handle,firstName,lastName,photoURL';
       return request
-      .get(`${config.TC_API_V3_BASE_URL}/members/_search?fields=userId,handle,firstName,lastName,photoURL&query=${query}`)
+      .get(`${config.TC_API_V3_BASE_URL}/members/_search?${fields}&query=${query}`)
       .set('accept', 'application/json')
       .set('authorization', `Bearer ${token}`)
       .then((res) => {
@@ -154,10 +203,10 @@ const getUsersByHandle = (handles) => {
  *
  * @return {Promise}          promise resolved to topic details
  */
-const getTopic = (topicId, logger) => {
-  return M2m.getMachineToken(config.AUTH0_CLIENT_ID, config.AUTH0_CLIENT_SECRET)
-    .then((token) => {
-      return request
+const getTopic = (topicId, logger) => (
+  M2m.getMachineToken(config.AUTH0_CLIENT_ID, config.AUTH0_CLIENT_SECRET)
+    .then((token) => (
+      request
         .get(`${config.MESSAGE_API_BASE_URL}/topics/${topicId}/read`)
         .set('accept', 'application/json')
         .set('authorization', `Bearer ${token}`)
@@ -175,13 +224,13 @@ const getTopic = (topicId, logger) => {
             `Failed to get topic details of topic id: ${topicId}.` +
             (errorDetails ? ' Server response: ' + errorDetails : '')
           );
-        });
-    })
+        })
+    ))
     .catch((err) => {
       err.message = 'Error generating m2m token: ' + err.message;
       throw err;
-    });
-};
+    })
+);
 
 module.exports = {
   getProject,
