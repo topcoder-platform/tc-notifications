@@ -185,6 +185,8 @@ function* listNotifications(query, userId) {
   if (_.keys(notificationSettings).length > 0) {
     // only filter out notifications types which were explicitly set to 'no' - so we return notification by default
     const notifications = _.keys(notificationSettings).filter((notificationType) =>
+      !notificationSettings[notificationType] ||
+      !notificationSettings[notificationType].web ||
       notificationSettings[notificationType].web.enabled !== 'no'
     );
     filter.where.type = { $in: notifications };

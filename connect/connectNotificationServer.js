@@ -343,7 +343,7 @@ const handler = (topic, message, logger, callback) => {
       // first found notification for one user will be send, the rest ignored
       // NOTE all userId has to be string
       logger.debug('all notifications: ', notificationsPerSource);
-      return _.uniqBy(_.flatten(notificationsPerSource), 'userId')
+      return _.uniqBy(_.flatten(notificationsPerSource), 'userId');
     }).then((notifications) => (
       excludeNotifications(notifications, eventConfig, message, {
         project,

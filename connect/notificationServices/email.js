@@ -14,49 +14,48 @@ const {
   BUS_API_EVENT,
   SCHEDULED_EVENT_PERIOD,
   SETTINGS_EMAIL_SERVICE_ID,
-  ACTIVE_USER_STATUSES
+  ACTIVE_USER_STATUSES,
 } = require('../constants');
 const { EVENTS, EVENT_BUNDLES } = require('../events-config');
 const helpers = require('../helpers');
 const service = require('../service');
 
 
-function replacePlaceholders(term,data){
+function replacePlaceholders(term, data) {
   let placeholders = term.match(/<[a-zA-Z]+>/g);
   let ret = term;
-  if (placeholders && placeholders.length){
-    _(placeholders).each(p=>{
-      let values = _.map(data,p.slice(1, -1));
+  if (placeholders && placeholders.length) {
+    _(placeholders).each(p => {
+      let values = _.map(data, p.slice(1, -1));
       const total = values.length;
-      let replacement = values.length < 3 ? 
-                          values.join(', ') : 
-                          values.slice(0,2).join(', ') +' and ' + (total-3) +'others';
+      let replacement = values.length < 3 ?
+                          values.join(', ') :
+                          values.slice(0, 2).join(', ') + ' and ' + (total - 3) + 'others';
       ret = ret.replace(p, values.join(', '));
-    })
+    });
   }
   return ret;
 }
 
-function getSections(projectUserEvents){
+function getSections(projectUserEvents) {
   let sections = [];
   _.chain(projectUserEvents)
   .groupBy(value => getEventGroupKey(value))
-  .forIn((value,key)=>{
-    if (!EVENT_BUNDLES[key].groupBy){
+  .forIn((value, key) => {
+    if (!EVENT_BUNDLES[key].groupBy) {
       sections.push({
-        title:replacePlaceholders(EVENT_BUNDLES[key].title,_(value).map(g=>g.data.data).value()),
-        [key]:true,
-        notifications: _(value).map(v=>v.data.data).value()
+        title: replacePlaceholders(EVENT_BUNDLES[key].title, _(value).map(g => g.data.data).value()),
+        [key]: true,
+        notifications: _(value).map(v => v.data.data).value(),
       });
     } else {
-      _.chain(value).groupBy(n=>n.data.data[EVENT_BUNDLES[key].groupBy]).forIn((groupValue,groupKey)=>{
-        
+      _.chain(value).groupBy(n => n.data.data[EVENT_BUNDLES[key].groupBy]).forIn((groupValue, groupKey) => {
         let title = EVENT_BUNDLES[key].title;
-        title = replacePlaceholders(title,_(groupValue).map(g=>g.data.data).value());
+        title = replacePlaceholders(title, _(groupValue).map(g => g.data.data).value());
         sections.push({
           title,
-          [key]:true,
-          notifications: _(groupValue).map(g=>g.data.data).value()
+          [key]: true,
+          notifications: _(groupValue).map(g => g.data.data).value(),
         });
       }).value();
     }
@@ -92,7 +91,7 @@ function handleScheduledEvents(events, setEventsStatus) {
         .mapValues(projectUserEvents => ({
           id: _.get(projectUserEvents, '[0].data.data.projectId'),
           name: _.get(projectUserEvents, '[0].data.data.projectName'),
-          sections: getSections(projectUserEvents)
+          sections: getSections(projectUserEvents),
         }))
         .values()
         .value(),
@@ -104,7 +103,7 @@ function handleScheduledEvents(events, setEventsStatus) {
 
     // update common values for bundled email
     eventMessage.replyTo = config.DEFAULT_REPLY_EMAIL;
-    eventMessage.version="v3";
+    eventMessage.version = 'v3';
     eventMessage.cc = [];
     eventMessage.from = {
       name: config.REPLY_EMAIL_FROM,
@@ -145,8 +144,8 @@ function getEventGroupKey(value) {
     .keys()
     .find(key => _.includes(_.get(EVENT_BUNDLES, `${key}.types`), _.get(value, 'data.data.type')))
     .value();
-    if (!key) return 'DEFAULT';
-    return key;
+  if (!key) return 'DEFAULT';
+  return key;
 }
 
 /**
@@ -157,7 +156,7 @@ function getEventGroupKey(value) {
  */
 function wrapIndividualNotification(data) {
   const key = getEventGroupKey(data);
-  const subject = replacePlaceholders(EVENT_BUNDLES[key].subject,[data.data.data]);
+  const subject = replacePlaceholders(EVENT_BUNDLES[key].subject, [data.data.data]);
 
   return {
     subject,
@@ -212,7 +211,7 @@ function handler(topicName, messageJSON, notification) {
     // don't send email notification for inactive users, ideally we should not have generated
     // notifications for inactive users, however, for now handling it here as safe gaurd
     if (userStatus && ACTIVE_USER_STATUSES.indexOf(userStatus) === -1) {
-      logger.error(`Notification generated for inactive user, ignoring`);
+      logger.error('Notification generated for inactive user, ignoring');
       return;
     }
     if (config.ENABLE_DEV_MODE === 'true') {
@@ -236,16 +235,16 @@ function handler(topicName, messageJSON, notification) {
         emailToAffectedUser: notification.contents.userEmail === userEmail,
       },
       recipients,
-      version:"v3",
+      version: 'v3',
       from: {
         name: notification.contents.userHandle,
         email: config.DEFAULT_REPLY_EMAIL,
       },
       categories,
     };
-    eventMessage.data[eventMessage.data.type]=true;
-    _.assign(eventMessage.data,notification.contents);
-    
+    eventMessage.data[eventMessage.data.type] = true;
+    _.assign(eventMessage.data, notification.contents);
+
 
     // default values that get overridden when the notification is about topics/posts updates
     let reference = 'project';
@@ -256,7 +255,7 @@ function handler(topicName, messageJSON, notification) {
       messagingEvent = true;
       eventMessage.data.topicId = parseInt(messageJSON.topicId, 10);
       eventMessage.data.postId = messageJSON.postId ? parseInt(messageJSON.postId, 10) : null;
-      if (messageJSON.postContent){
+      if (messageJSON.postContent) {
         eventMessage.data.post = helpers.markdownToHTML(messageJSON.postContent);
       }
 
@@ -304,9 +303,9 @@ function handler(topicName, messageJSON, notification) {
         // if we find the event category for the notification, use the bundle settings from the first event
         if (eventBundle && eventBundle.types && eventBundle.types.length) {
           const firstEvtInBundle = eventBundle.types[0];
-          const firstEvtBundleSettingPath = `notifications['${firstEvtInBundle}'].${SETTINGS_EMAIL_SERVICE_ID}.bundlePeriod`
+          const firstEvtBundleSettingPath = `notifications['${firstEvtInBundle}'].${SETTINGS_EMAIL_SERVICE_ID}.bundlePeriod`;
           let firstEvtBundlePeriod = _.get(settings, firstEvtBundleSettingPath);
-          bundlePeriod = firstEvtBundlePeriod
+          bundlePeriod = firstEvtBundlePeriod;
           logger.debug('Assuming bundle period of first event in the event category=>', bundlePeriod);
         }
       }
@@ -315,7 +314,7 @@ function handler(topicName, messageJSON, notification) {
     }
     logger.debug('bundlePeriod=>', bundlePeriod);
 
-    if (bundlePeriod && "immediately" !== bundlePeriod && !requiresImmediateAttention) {
+    if (bundlePeriod && 'immediately' !== bundlePeriod && !requiresImmediateAttention) {
       if (!SCHEDULED_EVENT_PERIOD[bundlePeriod]) {
         throw new Error(`User's '${notification.userId}' setting for service`
           + ` '${SETTINGS_EMAIL_SERVICE_ID}' option 'bundlePeriod' has unsupported value '${bundlePeriod}'.`);
@@ -332,7 +331,7 @@ function handler(topicName, messageJSON, notification) {
       });
     } else {
       // send single field "notificationsHTML" with the rendered template
-      eventMessage.data = wrapIndividualNotification({data:eventMessage});
+      eventMessage.data = wrapIndividualNotification({ data: eventMessage });
       console.log(eventMessage.data.contents);
 
       // send event to bus api

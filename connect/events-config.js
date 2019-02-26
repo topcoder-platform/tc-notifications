@@ -120,10 +120,10 @@ const EVENTS = [
   }, {
     type: BUS_API_EVENT.CONNECT.MEMBER.INVITE_APPROVED,
     toUserHandle: true,
-    originator: true
+    originator: true,
   }, {
     type: BUS_API_EVENT.CONNECT.MEMBER.INVITE_REJECTED,
-    originator: true
+    originator: true,
   },
 
   // Project activity

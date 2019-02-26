@@ -74,7 +74,7 @@ function startKafkaConsumer(handlers, notificationServiceHandlers) {
       });
   });
 
-  
+
   consumer
     .init()
     .then(() => _.each(_.keys(handlers),
