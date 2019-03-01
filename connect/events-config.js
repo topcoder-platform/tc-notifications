@@ -113,6 +113,7 @@ const EVENTS = [
     originator: true,
   }, {
     type: BUS_API_EVENT.CONNECT.MEMBER.INVITE_REJECTED,
+    topcoderRoles: [ROLE_CONNECT_COPILOT_MANAGER],
     originator: true,
   },
 
