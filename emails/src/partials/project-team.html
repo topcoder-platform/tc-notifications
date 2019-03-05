@@ -71,7 +71,11 @@
                             {{/if}}
                         {{/if}}
                         {{#if [notifications.connect.project.member.invite.rejected]}}
-                            Your request to add the member was refused
+                            {{#if [originator]}}
+                                Your request to add the member was refused
+                            {{else}}
+                                Request to add <strong>{{userFullName}}</strong> as copilot was refused
+                            {{/if}}
                         {{/if}}
                         </td>
                     </tr>
