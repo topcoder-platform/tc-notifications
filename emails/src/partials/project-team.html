@@ -21,7 +21,7 @@
     <td class="main-td">
         <table class="main-child">
         <tr><td></td></tr>
-        </table>  
+        </table>
     </td>
 </tr>
 
@@ -60,12 +60,29 @@
                         {{#if [notifications.connect.project.member.invite.created]}}
                             Hi <strong>{{userFullName}}</strong>, you are invited to join the project {{projectName}}. Please click on the button ("View project on Connect") below to join.
                         {{/if}}
+                        {{#if [notifications.connect.project.member.invite.requested]}}
+                            You are requested to add <strong>{{userFullName}}</strong> as a copilot
+                        {{/if}}
+                        {{#if [notifications.connect.project.member.invite.approved]}}
+                            {{#if [originator]}}
+                                Your request to add invite the member was approved
+                            {{else}}
+                                Hi <strong>{{userFullName}}</strong>, you are added as a copilot
+                            {{/if}}
+                        {{/if}}
+                        {{#if [notifications.connect.project.member.invite.rejected]}}
+                            {{#if [originator]}}
+                                Your request to add the member was refused
+                            {{else}}
+                                Request to add <strong>{{userFullName}}</strong> as copilot was refused
+                            {{/if}}
+                        {{/if}}
                         </td>
                     </tr>
                 </table>
             </td>
         </tr>
-        </table>  
+        </table>
     </td>
 </tr>
 {{/each}}
@@ -76,7 +93,7 @@
     <td class="main-td">
         <table class="main-child">
         <tr><td></td></tr>
-        </table>  
+        </table>
     </td>
 </tr>
 <tr class="button-row button-one">
@@ -85,9 +102,15 @@
         <tr>
             <td class="empty-child-one"></td>
             <td class="second-child" align="center">
-            <a href="{{@root.connectURL}}/projects/{{notifications.[0].projectId}}">
-                View project on Connect
-            </a>
+                {{#if notifications.[0].[notifications.connect.project.member.invite.requested]}}
+                    <a href="{{@root.connectURL}}/projects/{{notifications.[0].projectId}}#manageTopcoderTeam">
+                        Manage project team
+                    </a>
+                {{else}}
+                    <a href="{{@root.connectURL}}/projects/{{notifications.[0].projectId}}">
+                        View project on Connect
+                    </a>
+                {{/if}}
             </td>
             <td class="empty-child-one"></td>
         </tr>
@@ -98,7 +121,7 @@
     <td class="main-td">
         <table class="main-child">
         <tr><td></td></tr>
-        </table>  
+        </table>
     </td>
 </tr>
 {{/if}}

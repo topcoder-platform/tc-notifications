@@ -23,7 +23,7 @@
 			"description": "",
 			"auth": null,
 			"events": null,
-			"collection": "3f30c4e3-3b7a-491b-bdb2-6629d081a452",
+			"collectionId": "3f30c4e3-3b7a-491b-bdb2-6629d081a452",
 			"folder": null,
 			"order": [
 				"1b3b6480-ea94-4027-8898-f82f28e2bea6",
@@ -40,6 +40,7 @@
 	"requests": [
 		{
 			"id": "19332a51-03e8-4f5c-8f85-4d28d6dfe6f4",
+			"collectionId": "3f30c4e3-3b7a-491b-bdb2-6629d081a452",
 			"name": "getSettings",
 			"url": "{{URL}}/settings",
 			"description": "",
@@ -71,6 +72,7 @@
 		},
 		{
 			"id": "1b3b6480-ea94-4027-8898-f82f28e2bea6",
+			"collectionId": "3f30c4e3-3b7a-491b-bdb2-6629d081a452",
 			"name": "listNotifications - invalid read filter",
 			"url": "{{URL}}/list?offset=0&limit=20&type=notifications.connect.project.updated&read=yes",
 			"description": "",
@@ -131,6 +133,7 @@
 		},
 		{
 			"id": "543cab06-2c7d-4aed-8cf3-0808463254d5",
+			"collectionId": "3f30c4e3-3b7a-491b-bdb2-6629d081a452",
 			"name": "markAllRead",
 			"url": "{{URL}}/read",
 			"description": "",
@@ -162,6 +165,7 @@
 		},
 		{
 			"id": "59fc9f2b-28c5-4cff-b21b-11ab51bf67d8",
+			"collectionId": "3f30c4e3-3b7a-491b-bdb2-6629d081a452",
 			"name": "getSettings - invalid token",
 			"url": "{{URL}}/settings",
 			"description": "",
@@ -193,6 +197,7 @@
 		},
 		{
 			"id": "76779830-a8a4-4636-8c03-1801b3d1863d",
+			"collectionId": "3f30c4e3-3b7a-491b-bdb2-6629d081a452",
 			"name": "markAsRead",
 			"url": "{{URL}}/1/read",
 			"description": "",
@@ -226,6 +231,7 @@
 			"id": "cb2299a5-dac7-4c40-80c4-7b1694138354",
 			"name": "TC API - get project",
 			"url": "https://api.topcoder-dev.com/v4/projects/1936",
+			"collectionId": "3f30c4e3-3b7a-491b-bdb2-6629d081a452",
 			"description": "",
 			"data": [],
 			"dataMode": "raw",
@@ -339,7 +345,7 @@
 					],
 					"cookies": [],
 					"request": "cb2299a5-dac7-4c40-80c4-7b1694138354",
-					"collection": "3f30c4e3-3b7a-491b-bdb2-6629d081a452"
+					"collectionId": "3f30c4e3-3b7a-491b-bdb2-6629d081a452"
 				}
 			],
 			"rawModeData": "",
@@ -351,6 +357,7 @@
 			"name": "markAsRead - not found",
 			"url": "{{URL}}/1111111/read",
 			"description": "",
+			"collectionId": "3f30c4e3-3b7a-491b-bdb2-6629d081a452",
 			"data": [],
 			"dataMode": "raw",
 			"headerData": [
@@ -380,6 +387,7 @@
 		{
 			"id": "d293d2c5-230d-4f34-8c97-1adc1f2f89b4",
 			"name": "listNotifications - invalid limit",
+			"collectionId": "3f30c4e3-3b7a-491b-bdb2-6629d081a452",
 			"url": "{{URL}}/list?offset=0&limit=abc&type=notifications.connect.project.updated",
 			"description": "",
 			"data": [],
@@ -441,6 +449,7 @@
 			"id": "d57ba947-a5e7-410a-b978-76882f33c86e",
 			"name": "updateSettings",
 			"url": "{{URL}}/settings",
+			"collectionId": "3f30c4e3-3b7a-491b-bdb2-6629d081a452",
 			"description": "",
 			"data": [],
 			"dataMode": "raw",
@@ -471,6 +480,7 @@
 		{
 			"id": "da23d550-55b3-4f7d-9131-735956d62f6d",
 			"name": "markAllRead - missing token",
+			"collectionId": "3f30c4e3-3b7a-491b-bdb2-6629d081a452",
 			"url": "{{URL}}/read",
 			"description": "",
 			"data": [],
@@ -495,6 +505,7 @@
 		},
 		{
 			"id": "f2246cf7-7aae-4ea0-9d92-1d932d340302",
+			"collectionId": "3f30c4e3-3b7a-491b-bdb2-6629d081a452",
 			"name": "updateSettings - invalid body",
 			"url": "{{URL}}/settings",
 			"description": "",
@@ -527,6 +538,7 @@
 		{
 			"id": "f3f3a847-46f6-4059-b167-b436078fb112",
 			"name": "listNotifications - invalid offset",
+			"collectionId": "3f30c4e3-3b7a-491b-bdb2-6629d081a452",
 			"url": "{{URL}}/list?offset=-1&limit=20&type=notifications.connect.project.updated",
 			"description": "",
 			"data": [],
@@ -586,6 +598,7 @@
 		},
 		{
 			"id": "fce69847-5bf8-4b07-bcaf-6352db4ba923",
+			"collectionId": "3f30c4e3-3b7a-491b-bdb2-6629d081a452",
 			"name": "listNotifications",
 			"url": "{{URL}}/list?offset=0&limit=20",
 			"description": "",
