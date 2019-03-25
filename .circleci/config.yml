@@ -78,7 +78,7 @@ jobs:
             source buildenvvar
             ./master_deploy.sh -d ECS -e PROD -t latest -s prod-global-appvar,prod-tc-notifications-appvar -i tc-notifications  
             echo "========== Running Masterscript - prod deploy tc-notifications-consumers service ========="
-            if [ -e prod-tc-notifications-deployvar.json ]; then  sudo rm -vf dev-tc-notifications-deployvar.json; fi
+            if [ -e prod-tc-notifications-deployvar.json ]; then  sudo rm -vf prod-tc-notifications-deployvar.json; fi
             ./buildenv.sh -e PROD -b prod-tc-notifications-consumers-deployvar
             source buildenvvar
             ./master_deploy.sh -d ECS -e PROD -t latest -s prod-global-appvar,prod-tc-notifications-appvar -i tc-notifications      
