@@ -10,4 +10,5 @@ COPY . .
 RUN npm install
 RUN npm install dotenv --save
 RUN npm test
-ENTRYPOINT ["npm","run"]
+#ENTRYPOINT ["npm","run"]
+CMD ["npm", "start"]
