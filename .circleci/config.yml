@@ -1,89 +1,100 @@
+
 version: 2
+defaults: &defaults
+    docker:
+      - image: docker:17.06.1-ce-git
+install_dependency: &install_dependency
+          name: Installation of build and deployment dependencies.
+          command: |
+            apk update
+            apk add --no-cache bash curl
+            apk upgrade
+            apk add --no-cache jq py-pip sudo
+            sudo pip install awscli --upgrade
+install_deploysuite: &install_deploysuite
+          name: Installation of install_deploysuite.
+          #Git Clone -change back to v1.3 or latest once counter var is generalized.
+          command: |
+            git clone --branch master https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript    
+            cp ./../buildscript/master_deploy.sh .
+            cp ./../buildscript/buildenv.sh .
+            cp ./../buildscript/awsconfiguration.sh .
+            
+restore_cache_settings_for_build: &restore_cache_settings_for_build
+  key: docker-tc-notify-{{ checksum "package-lock.json" }}
+
+save_cache_settings: &save_cache_settings
+  key: docker-tc-notify-{{ checksum "package-lock.json" }}
+  paths:
+    - node_modules
+
+run_build: &run_build
+          name: Build of Docker image
+          command: ./build.sh
+
 
 jobs:
   # Build & Deploy against development backend rer
   "build-dev":
-    docker:
-      - image: docker:17.06.1-ce-git
+    <<: *defaults
     steps:
-      # Initialization.
       - checkout
       - setup_remote_docker
-      - run:
-          name: Installation of build dependencies.
-          command: apk add --no-cache bash
-
-      # Restoration of node_modules from cache.
-      - restore_cache:
-          key: docker-tc-notify-{{ checksum "package-lock.json" }}
-
-      # Build of Docker image.
-      - run:
-          name: Build of Docker image
-          command: ./build.sh DEV
-
-      # Caching node modules.
-      - save_cache:
-          key: docker-tc-notify-{{ checksum "package-lock.json" }}
-          paths:
-            - node_modules
-
-      # Deployment.
-      - run:
-          name: Installing AWS client
-          command: |
-            apk add --no-cache jq py-pip sudo
-            sudo pip install awscli --upgrade
-
+      - run: *install_dependency
+      - run: *install_deploysuite
+      - restore_cache: *restore_cache_settings_for_build
+      - run: *run_build
+      - save_cache: *save_cache_settings
       - deploy:
-          command: ./deploy.sh DEV $CIRCLE_SHA1
+          name: Running Masterscript - deploy tc-notifications-api service
+          command: |    
+            ./awsconfiguration.sh DEV
+            source awsenvconf
+            ./buildenv.sh -e DEV -b dev-tc-notifications-deployvar
+            source buildenvvar
+            ./master_deploy.sh -d ECS -e DEV -t latest -s dev-global-appvar,dev-tc-notifications-appvar -i tc-notifications  
+            echo "Running Masterscript - deploy tc-notifications-consumers service"
+            if [ -e dev-tc-notifications-deployvar.json ]; then  sudo rm -vf dev-tc-notifications-deployvar.json; fi
+            ./buildenv.sh -e DEV -b dev-tc-notifications-consumers-deployvar
+            source buildenvvar
+            ./master_deploy.sh -d ECS -e DEV -t latest -s dev-global-appvar,dev-tc-notifications-appvar -i tc-notifications      
 
   "build-prod":
-    docker:
-      - image: docker:17.06.1-ce-git
+    <<: *defaults
     steps:
-      # Initialization.
       - checkout
       - setup_remote_docker
-      - run:
-          name: Installation of build dependencies.
-          command: apk add --no-cache bash
-
-      # Restoration of node_modules from cache.
-      - restore_cache:
-          key: docker-tc-notify-{{ checksum "package-lock.json" }}
-
-      # Build of Docker image.
-      - run:
-          name: Build of Docker image
-          command: ./build.sh PROD
-
-      # Caching node modules.
-      - save_cache:
-          key: docker-tc-notify-{{ checksum "package-lock.json" }}
-          paths:
-            - node_modules
-
-      # Deployment.
-      - run:
-          name: Installing AWS client
-          command: |
-            apk add --no-cache jq py-pip sudo
-            sudo pip install awscli --upgrade
-
+      - run: *install_dependency
+      - run: *install_deploysuite
+      - restore_cache: *restore_cache_settings_for_build
+      - run: *run_build
+      - save_cache: *save_cache_settings
       - deploy:
-          command: ./deploy.sh PROD $CIRCLE_SHA1
-
+          name: Running Masterscript - prod deploy tc-notifications-api service
+          command: |
+            ./awsconfiguration.sh PROD
+            source awsenvconf
+            ./buildenv.sh -e PROD -b prod-tc-notifications-deployvar
+            source buildenvvar
+            ./master_deploy.sh -d ECS -e PROD -t latest -s prod-global-appvar,prod-tc-notifications-appvar -i tc-notifications  
+            echo "========== Running Masterscript - prod deploy tc-notifications-consumers service ========="
+            if [ -e prod-tc-notifications-deployvar.json ]; then  sudo rm -vf prod-tc-notifications-deployvar.json; fi
+            ./buildenv.sh -e PROD -b prod-tc-notifications-consumers-deployvar
+            source buildenvvar
+            ./master_deploy.sh -d ECS -e PROD -t latest -s prod-global-appvar,prod-tc-notifications-appvar -i tc-notifications      
+            
 workflows:
   version: 2
   build:
     jobs:
       # Development builds are executed on "develop" branch only.
       - "build-dev":
+          context : org-global
           filters:
             branches:
-              only: [dev]
+              only: ['dev']
       - "build-prod":
+          context : org-global
           filters:
             branches:
               only: master
