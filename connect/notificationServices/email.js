@@ -274,7 +274,7 @@ function handler(topicName, messageJSON, notification) {
       };
       logger.debug('body', body);
       logger.debug(`body for generating token: ${JSON.stringify(body)}`);
-      logger.debug(`AUTH_SECRET: ${config.AUTH_SECRET.substring(-5)}`);
+      logger.debug(`AUTH_SECRET: ${config.AUTH_SECRET.substring(0, 5)}`);
       const token = jwt.sign(body, config.AUTH_SECRET, { noTimestamp: true }).split('.')[2];
       logger.debug(`token: ${token}`);
 
@@ -332,7 +332,7 @@ function handler(topicName, messageJSON, notification) {
     } else {
       // send single field "notificationsHTML" with the rendered template
       eventMessage.data = wrapIndividualNotification({ data: eventMessage });
-      console.log(eventMessage.data.contents);
+      //console.log(eventMessage.data.contents);
 
       // send event to bus api
       return busService.postEvent({
