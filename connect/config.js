@@ -24,7 +24,7 @@ module.exports = {
 
   // email notification service related variables
   ENV: process.env.ENV,
-  AUTH_SECRET: process.env.authSecret,
+  AUTH_SECRET: process.env.AUTH_SECRET,
   ENABLE_EMAILS: process.env.ENABLE_EMAILS || true,
   ENABLE_DEV_MODE: process.env.ENABLE_DEV_MODE || true,
   DEV_MODE_EMAIL: process.env.DEV_MODE_EMAIL,
