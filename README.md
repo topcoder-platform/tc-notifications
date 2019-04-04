@@ -20,7 +20,7 @@ tc-notifications (as a standard nodejs app) provides generic framework around no
 5. Either add deployment for this new notification consumer/processor in existing deployment script (if you want to host the processor as separate service in the same ECS cluster) or write a new script if you want to keep the deployment separate.
 
 ## Dependencies
-- nodejs https://nodejs.org/en/ (v6+)
+- nodejs https://nodejs.org/en/ (v6+, if newer version of node is used, e.g. v10, then it needs to install extra lib `npm i natives@1.1.6` to support the gulp build)
 - Heroku Toolbelt https://toolbelt.heroku.com
 - git
 - PostgreSQL 9.5
@@ -50,6 +50,8 @@ The following parameters can be set in config files or in env variables:
       if not provided, then SSL connection is not used, direct insecure connection is used;
       if provided, it can be either path to private key file or private key content
 - **Topcoder API**
+  - `TC_API_V3_BASE_URL`: the TopCoder API V3 base URL
+  - `TC_API_V4_BASE_URL`: the TopCoder API V4 base URL
   - `TC_API_V5_BASE_URL`: the TopCoder API V5 base URL
 - **Notifications API**
   - `API_CONTEXT_PATH`: path to serve API on
@@ -59,6 +61,16 @@ The following parameters can be set in config files or in env variables:
   - `TOKEN_CACHE_TIME`: time period of the cached token
   - `AUTH0_CLIENT_ID`: auth0 client id
   - `AUTH0_CLIENT_SECRET`: auth0 client secret
+  - `AUTH0_PROXY_SERVER_URL`: auth0 proxy server URL
+- **Consumer handlers**
+  - `KAFKA_CONSUMER_HANDLERS`: mapping from consumer topic to handlers
+- **Email notification**
+  - `ENV`: used to construct email category
+  - `ENABLE_EMAILS`: whether to enable email notifications
+  - `ENABLE_DEV_MODE`: whether to enable dev mode
+  - `DEV_MODE_EMAIL`: recipient email used in dev mode
+  - `DEFAULT_REPLY_EMAIL`: default reply email
+
 
 ### Connect notification server
 Configuration for the connect notification server is at `connect/config.js`.

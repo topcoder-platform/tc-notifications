@@ -28,6 +28,8 @@ module.exports = {
   KAFKA_CLIENT_CERT_KEY: process.env.KAFKA_CLIENT_CERT_KEY ?
     process.env.KAFKA_CLIENT_CERT_KEY.replace('\\n', '\n') : null,
 
+  TC_API_V3_BASE_URL: process.env.TC_API_V3_BASE_URL || 'https://api.topcoder-dev.com/v3',
+  TC_API_V4_BASE_URL: process.env.TC_API_V4_BASE_URL || 'https://api.topcoder-dev.com/v4',
   TC_API_V5_BASE_URL: process.env.TC_API_V5_BASE_URL || 'https://api.topcoder-dev.com/v5',
   API_CONTEXT_PATH: process.env.API_CONTEXT_PATH || '/v5/notifications',
 
@@ -40,6 +42,18 @@ module.exports = {
   TOKEN_CACHE_TIME: process.env.TOKEN_CACHE_TIME || 86400000,
   AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID,
   AUTH0_CLIENT_SECRET: process.env.AUTH0_CLIENT_SECRET,
-  AUTH0_PROXY_SERVER_URL: process.env.AUTH0_PROXY_SERVER_URL || '',
-  KAFKA_CONSUMER_TOPICS: process.env.KAFKA_CONSUMER_TOPICS || null, 
+  AUTH0_PROXY_SERVER_URL: process.env.AUTH0_PROXY_SERVER_URL,
+
+  KAFKA_CONSUMER_HANDLERS: {
+    // key is Kafka topic name, value is array of handler function names defined in src/processors/index.js
+    'notifications.community.challenge.created': ['handleChallengeCreated'],
+    'notifications.community.challenge.phasewarning': ['handleChallengePhaseWarning'],
+  },
+
+  // email notification service related variables
+  ENV: process.env.ENV,
+  ENABLE_EMAILS: process.env.ENABLE_EMAILS ? Boolean(process.env.ENABLE_EMAILS) : true,
+  ENABLE_DEV_MODE: process.env.ENABLE_DEV_MODE ? Boolean(process.env.ENABLE_DEV_MODE) : true,
+  DEV_MODE_EMAIL: process.env.DEV_MODE_EMAIL,
+  DEFAULT_REPLY_EMAIL: process.env.DEFAULT_REPLY_EMAIL,
 };
