@@ -123,9 +123,10 @@ function handleScheduledEvents(events, setEventsStatus) {
         + ` with body ${JSON.stringify(eventMessage)} to bus api`);
 
       setEventsStatus(userEvents, SCHEDULED_EVENT_STATUS.COMPLETED);
-    }).catch(() => {
+    }).catch((err) => {
       logger.error(`Failed to send ${BUS_API_EVENT.EMAIL.GENERAL} event`
-        + ` with body ${JSON.stringify(eventMessage)} to bus api`);
+        + `; error: ${err.message}`
+        + `; with body ${JSON.stringify(eventMessage)} to bus api`);
 
       setEventsStatus(userEvents, SCHEDULED_EVENT_STATUS.FAILED);
     });
@@ -343,6 +344,11 @@ function handler(topicName, messageJSON, notification) {
         payload: eventMessage,
       }).then(() => {
         logger.info(`Successfully sent ${eventType} event with body ${JSON.stringify(eventMessage)} to bus api`);
+      })
+      .catch((err) => {
+        logger.error(`Failed to send ${eventType} event`
+          + `; error: ${err.message}`
+          + `; with body ${JSON.stringify(eventMessage)} to bus api`);  
       });
     }
   });
