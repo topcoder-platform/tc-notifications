@@ -1,7 +1,6 @@
 /**
  * Configuration of connect events
  */
-const config = require('./config');
 const { BUS_API_EVENT } = require('./constants');
 
 // project member role names
@@ -26,15 +25,6 @@ const ROLE_CONNECT_MANAGER = 'Connect Manager';
 const ROLE_CONNECT_COPILOT_MANAGER = 'Connect Copilot Manager';
 const ROLE_CONNECT_ACCOUNT_MANAGER = 'Connect Account Manager';
 const ROLE_ADMINISTRATOR = 'administrator';
-
-// TopCoder role rules
-const TOPCODER_ROLE_RULES = {
-  [ROLE_CONNECT_COPILOT]: { id: config.CONNECT_COPILOT_ROLE_ID },
-  [ROLE_CONNECT_MANAGER]: { id: config.CONNECT_MANAGER_ROLE_ID },
-  [ROLE_CONNECT_COPILOT_MANAGER]: { id: config.CONNECT_COPILOT_MANAGER_ROLE_ID },
-  [ROLE_CONNECT_ACCOUNT_MANAGER]: { id: config.CONNECT_ACCOUNT_MANAGER_ROLE_ID },
-  [ROLE_ADMINISTRATOR]: { id: config.ADMINISTRATOR_ROLE_ID },
-};
 
 /**
  * Supported events configuration
@@ -68,7 +58,7 @@ const EVENTS = [
   }, {
     type: BUS_API_EVENT.CONNECT.PROJECT.APPROVED,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER],
-    topcoderRoles: [ROLE_CONNECT_COPILOT, ROLE_ADMINISTRATOR],
+    topcoderRoles: [ROLE_ADMINISTRATOR],
   }, {
     type: BUS_API_EVENT.CONNECT.PROJECT.ACTIVE,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER],
@@ -123,6 +113,7 @@ const EVENTS = [
     originator: true,
   }, {
     type: BUS_API_EVENT.CONNECT.MEMBER.INVITE_REJECTED,
+    topcoderRoles: [ROLE_CONNECT_COPILOT_MANAGER],
     originator: true,
   },
 
@@ -313,7 +304,6 @@ const EVENT_BUNDLES = {
 
 module.exports = {
   PROJECT_ROLE_RULES,
-  TOPCODER_ROLE_RULES,
   EVENTS,
   EVENT_BUNDLES,
 

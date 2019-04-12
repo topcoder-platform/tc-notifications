@@ -11,6 +11,7 @@ const logger = require('./src/common/logger');
 const models = require('./src/models');
 const processors = require('./src/processors');
 global.Promise = require('bluebird');
+const healthcheck = require('topcoder-healthcheck-dropin')
 
 /**
  * Start Kafka consumer
@@ -80,7 +81,7 @@ function startKafkaConsumer() {
             // logging
             logger.info(`Saved ${notifications.length} notifications for users: ${
               _.map(notifications, (n) => n.userId).join(', ')
-            }`);
+              }`);
           }
           logger.info(`Handler ${handlerFuncNames[i]} was run successfully`);
         } catch (e) {
@@ -98,6 +99,18 @@ function startKafkaConsumer() {
       });
   });
 
+  const check = function () {
+    if (!consumer.client.initialBrokers && !consumer.client.initialBrokers.length) {
+      return false
+    }
+    let connected = true
+    consumer.client.initialBrokers.forEach(conn => {
+      logger.debug(`url ${conn.server()} - connected=${conn.connected}`)
+      connected = conn.connected & connected
+    })
+    return connected
+  }
+
   // Start kafka consumer
   logger.info('Starting kafka consumer');
   consumer
@@ -107,6 +120,7 @@ function startKafkaConsumer() {
     }])
     .then(() => {
       logger.info('Kafka consumer initialized successfully');
+      healthcheck.init([check])
     })
     .catch((err) => {
       logger.error('Kafka consumer failed');

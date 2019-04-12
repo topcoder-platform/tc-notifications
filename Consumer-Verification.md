@@ -64,10 +64,10 @@ export TC_API_V5_BASE_URL=http://localhost:4000/v5
 
 - set M2M config params:
 ```
-export AUTH0_CLIENT_ID=8QovDh27SrDu1XSs68m21A1NBP8isvOt
-export AUTH0_CLIENT_SECRET=3QVxxu20QnagdH-McWhVz0WfsQzA1F8taDdGDI4XphgpEYZPcMTF4lX3aeOIeCzh
-export AUTH0_URL=https://topcoder-dev.auth0.com/oauth/token
-export AUTH0_AUDIENCE=https://m2m.topcoder-dev.com/
+export AUTH0_CLIENT_ID=dummy
+export AUTH0_CLIENT_SECRET=dummy
+export AUTH0_URL=dummy
+export AUTH0_AUDIENCE=dummy
 ```
 
 - install dependencies `npm i`

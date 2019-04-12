@@ -123,9 +123,10 @@ function handleScheduledEvents(events, setEventsStatus) {
         + ` with body ${JSON.stringify(eventMessage)} to bus api`);
 
       setEventsStatus(userEvents, SCHEDULED_EVENT_STATUS.COMPLETED);
-    }).catch(() => {
+    }).catch((err) => {
       logger.error(`Failed to send ${BUS_API_EVENT.EMAIL.GENERAL} event`
-        + ` with body ${JSON.stringify(eventMessage)} to bus api`);
+        + `; error: ${err.message}`
+        + `; with body ${JSON.stringify(eventMessage)} to bus api`);
 
       setEventsStatus(userEvents, SCHEDULED_EVENT_STATUS.FAILED);
     });
@@ -274,7 +275,7 @@ function handler(topicName, messageJSON, notification) {
       };
       logger.debug('body', body);
       logger.debug(`body for generating token: ${JSON.stringify(body)}`);
-      logger.debug(`AUTH_SECRET: ${config.AUTH_SECRET.substring(-5)}`);
+      logger.debug(`AUTH_SECRET: ${config.AUTH_SECRET.substring(0, 5)}`);
       const token = jwt.sign(body, config.AUTH_SECRET, { noTimestamp: true }).split('.')[2];
       logger.debug(`token: ${token}`);
 
@@ -332,7 +333,7 @@ function handler(topicName, messageJSON, notification) {
     } else {
       // send single field "notificationsHTML" with the rendered template
       eventMessage.data = wrapIndividualNotification({ data: eventMessage });
-      console.log(eventMessage.data.contents);
+      //console.log(eventMessage.data.contents);
 
       // send event to bus api
       return busService.postEvent({
@@ -343,6 +344,11 @@ function handler(topicName, messageJSON, notification) {
         payload: eventMessage,
       }).then(() => {
         logger.info(`Successfully sent ${eventType} event with body ${JSON.stringify(eventMessage)} to bus api`);
+      })
+      .catch((err) => {
+        logger.error(`Failed to send ${eventType} event`
+          + `; error: ${err.message}`
+          + `; with body ${JSON.stringify(eventMessage)} to bus api`);  
       });
     }
   });

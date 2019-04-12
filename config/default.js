@@ -17,8 +17,8 @@ module.exports = {
     },
   },
 
-  AUTH_SECRET: process.env.authSecret,
-  VALID_ISSUERS: process.env.validIssuers ? process.env.validIssuers.replace(/\\"/g, '') : null,
+  AUTH_SECRET: process.env.AUTH_SECRET,
+  VALID_ISSUERS: process.env.VALID_ISSUERS ? process.env.VALID_ISSUERS.replace(/\\"/g, '') : null,
   // keep it here for dev purposes, it's only needed by modified version of tc-core-library-js
   // which skips token validation when locally deployed
 

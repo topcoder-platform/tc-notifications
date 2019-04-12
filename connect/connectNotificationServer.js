@@ -11,7 +11,6 @@ const _ = require('lodash');
 const service = require('./service');
 const { BUS_API_EVENT } = require('./constants');
 const EVENTS = require('./events-config').EVENTS;
-const TOPCODER_ROLE_RULES = require('./events-config').TOPCODER_ROLE_RULES;
 const PROJECT_ROLE_RULES = require('./events-config').PROJECT_ROLE_RULES;
 const PROJECT_ROLE_OWNER = require('./events-config').PROJECT_ROLE_OWNER;
 const emailNotificationServiceHandler = require('./notificationServices/email').handler;
@@ -30,7 +29,7 @@ const getTopCoderMembersNotifications = (eventConfig) => {
   }
 
   const getRoleMembersPromises = eventConfig.topcoderRoles.map(topcoderRole => (
-    service.getRoleMembers(TOPCODER_ROLE_RULES[topcoderRole].id)
+    service.getRoleMembers(topcoderRole)
   ));
 
   return Promise.all(getRoleMembersPromises).then((membersPerRole) => {
@@ -351,8 +350,10 @@ const handler = (topic, message, logger, callback) => {
     )).then((notifications) => {
       allNotifications = _.filter(notifications, notification => notification.userId !== `${message.initiatorUserId}`);
 
-      if (eventConfig.includeUsers && message[eventConfig.includeUsers] && message[eventConfig.includeUsers].length > 0) {
-        allNotifications = _.filter(allNotifications, notification => message[eventConfig.includeUsers].includes(notification.userId));
+      if (eventConfig.includeUsers && message[eventConfig.includeUsers] &&
+          message[eventConfig.includeUsers].length > 0) {
+        allNotifications = _.filter(allNotifications,
+          notification => message[eventConfig.includeUsers].includes(notification.userId));
       }
       logger.debug('filtered notifications: ', allNotifications);
       // now let's retrieve some additional data
