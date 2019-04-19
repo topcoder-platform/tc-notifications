@@ -170,7 +170,7 @@
             <tr>
                 <td class="empty-child-one"></td>
                 <td class="second-child" align="center">
-                <a href="{{@root.connectURL}}/projects/{{notifications.[0].projectId}}#feed-{{notifications.[0].topicId}}">
+                <a href="{{notifications.[0].postURL}}">
                     View post on Connect
                 </a>
                 </td>
@@ -196,7 +196,7 @@
     <tr class="copy-link">
         <td class="main-td">
             <table class="main-child">
-            <tr><td><a href="{{@root.connectURL}}/projects/{{notifications.[0].projectId}}#feed-{{notifications.[0].topicId}}">{{@root.connectURL}}/projects/{{notifications.[0].projectId}}#feed-{{notifications.[0].topicId}}</a></td></tr>
+            <tr><td><a href="{{notifications.[0].postURL}}">{{notifications.[0].postURL}}</a></td></tr>
             </table>  
         </td>
     </tr>
