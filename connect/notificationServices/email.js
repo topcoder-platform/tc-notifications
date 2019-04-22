@@ -245,7 +245,33 @@ function handler(topicName, messageJSON, notification) {
     };
     eventMessage.data[eventMessage.data.type] = true;
     _.assign(eventMessage.data, notification.contents);
+       
+    // message service may return tags
+    // to understand if post notification is regarding phases or no, we will try to get phaseId from the tags
+    const tags = _.get(notification.contents, 'tags', [])
+    const PHASE_ID_REGEXP = /phase#(\d+)/
+    const phaseIds = tags.map((tag) => _.get(tag.match(PHASE_ID_REGEXP), '1', null))
+    const phaseId = _.find(phaseIds, (phaseId) => phaseId !== null)
+    if (phaseId) {
+      eventMessage.data.phaseId = phaseId;
+    }
 
+    // if the notification is regarding topic: dashboard topic, dashboard post or phase post 
+    // we build a link to the post
+    if (eventMessage.data.topicId) {
+      // phase post
+      if (eventMessage.data.phaseId) {
+        eventMessage.data.postURL = `${config.CONNECT_URL}/projects/${eventMessage.data.projectId}/plan#phase-${eventMessage.data.phaseId}-posts-${eventMessage.data.postId}`;
+
+      // dashboard post
+      } else if (eventMessage.data.postId) {
+        eventMessage.data.postURL = `${config.CONNECT_URL}/projects/${eventMessage.data.projectId}#comment-${eventMessage.data.postId}`;
+
+      // dashboard topic
+      } else {
+        eventMessage.data.postURL = `${config.CONNECT_URL}/projects/${eventMessage.data.projectId}#feed-${eventMessage.data.topicId}`;
+      }
+    }
 
     // default values that get overridden when the notification is about topics/posts updates
     let reference = 'project';
