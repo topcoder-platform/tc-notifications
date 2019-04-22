@@ -97,7 +97,7 @@ workflows:
           context : org-global
           filters:
             branches:
-              only: [dev, 'feature/general-purpose-notifications-usage']
+              only: [dev]
       - "build-prod":
           context : org-global
           filters:

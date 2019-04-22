@@ -36,13 +36,13 @@ function* searchUsersByQuery(query) {
     const res = yield request
       .get(`${
         config.TC_API_V3_BASE_URL
-      }/members/_search?query=${
+        }/members/_search?query=${
         query
-      }&offset=${
+        }&offset=${
         offset
-      }&limit=${
+        }&limit=${
         limit
-      }&fields=userId,email,handle,firstName,lastName,photoURL,status`)
+        }&fields=userId,email,handle,firstName,lastName,photoURL,status`)
       .set('Authorization', `Bearer ${token}`);
     if (!_.get(res, 'body.result.success')) {
       throw new Error(`Failed to search users by query: ${query}`);
@@ -214,6 +214,7 @@ function* notifyUsersOfMessage(users, message) {
     // construct notification, rest fields are set in consumer.js
     notifications.push({ userId: user.userId });
 
+    /* TODO  Sachin disabled this code 
     if (config.ENABLE_EMAILS) {
       // notify user by email, ignore error in order not to block rest processing
       try {
@@ -222,9 +223,63 @@ function* notifyUsersOfMessage(users, message) {
         logger.error(`Failed to send email to user id: ${user.userId}, handle: ${user.handle}`);
         logger.logFullError(e);
       }
-    }
+    } */
+
   }
+  logger.info(`Total ${notifications.length} users would be notified.`)
   return notifications;
+}
+
+/**
+ * Fetch Challenge usersInfo from challenge id.
+ * @param {String} challengeId infomix challenge id
+ * @returns {Array} the associated user's detail object
+ */
+function* getUsersInfoFromChallenge(challengeId) {
+  const token = yield getM2MToken()
+  let usersInfo = []
+  const url = `${config.TC_API_V4_BASE_URL}/challenges/${challengeId}/resources`
+  logger.info(`calling challenge api ${url} `)
+  const res = yield request
+    .get(url)
+    .set('Authorization', `Bearer ${token}`)
+    .catch((err) => {
+      const errorDetails = _.get(err, 'message');
+      throw new Error(
+        `Error in call challenge api by id ${challengeId}` +
+        (errorDetails ? ' Server response: ' + errorDetails : '')
+      )
+    })
+  if (!_.get(res, 'body.result.success')) {
+    throw new Error(`Failed to get challenge by id ${challengeId}`);
+  }
+  usersInfo = _.get(res, 'body.result.content');
+  logger.info(`Feteched ${usersInfo.length} records from challenge api`)
+  return usersInfo;
+}
+
+/** 
+ * Filter associated challenge's user based on criteria 
+ * @param {Array} usersInfo user object array 
+ * @param {Array} filterCriteria on roles 
+ * 
+ * @returns {Array} of user object  
+ */
+function filterChallengeUsers(usersInfo, filterCriteria = []) {
+  let users = []
+  let totaleRoles = []
+  _.map(usersInfo, (user) => {
+    let userId = _.get(user, 'properties.External Reference ID')
+    let role = _.get(user, 'role')
+    totaleRoles[role] = 1
+    if (filterCriteria.length > 0 && _.indexOf(filterCriteria, role) >= 0) {
+      users.push({ userId: userId })
+    } else if (filterCriteria.length == 0) {
+      users.push({ userId: userId })
+    }
+  })
+  logger.info(`Total roles availables in this challenge are: ${_.keys(totaleRoles).join(',')}`)
+  return users
 }
 
 module.exports = {
@@ -235,4 +290,6 @@ module.exports = {
   notifyUserViaEmail,
   getChallenge,
   notifyUsersOfMessage,
+  getUsersInfoFromChallenge,
+  filterChallengeUsers,
 };

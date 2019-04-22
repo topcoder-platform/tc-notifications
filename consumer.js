@@ -7,11 +7,13 @@ const config = require('config');
 const _ = require('lodash');
 const Kafka = require('no-kafka');
 const co = require('co');
+global.Promise = require('bluebird');
+const healthcheck = require('topcoder-healthcheck-dropin')
+
 const logger = require('./src/common/logger');
 const models = require('./src/models');
 const processors = require('./src/processors');
-global.Promise = require('bluebird');
-const healthcheck = require('topcoder-healthcheck-dropin')
+
 
 /**
  * Start Kafka consumer
@@ -47,9 +49,11 @@ function startKafkaConsumer() {
       return;
     }
 
-    // get handler function names for the topic
-    const handlerFuncNames = config.KAFKA_CONSUMER_HANDLERS[topic];
-    if (!handlerFuncNames || handlerFuncNames.length === 0) {
+    // get rule sets for the topic
+    const ruleSets = config.KAFKA_CONSUMER_RULESETS[topic];
+
+    // TODO for NULL handler
+    if (!ruleSets || ruleSets.length === 0) {
       logger.error(`No handler configured for Kafka topic ${topic}.`);
       // commit the message and ignore it
       consumer.commitOffset({ topic, partition, offset: m.offset });
@@ -58,18 +62,24 @@ function startKafkaConsumer() {
 
     return co(function* () {
       // run each handler
-      for (let i = 0; i < handlerFuncNames.length; i += 1) {
+      for (let i = 0; i < ruleSets.length; i += 1) {
+        const rule = ruleSets[i]
+        const handlerFuncArr = _.keys(rule)
+        const handlerFuncName = _.get(handlerFuncArr, "0")
+
         try {
-          const handler = processors[handlerFuncNames[i]];
+          const handler = processors[handlerFuncName]
+          const handlerRuleSets = rule[handlerFuncName]
           if (!handler) {
-            logger.error(`Handler ${handlerFuncNames[i]} is not defined`);
+            logger.error(`Handler ${handlerFuncName} is not defined`);
             continue;
           }
-          logger.info(`Run handler ${handlerFuncNames[i]}`);
+          logger.info(`Run handler ${handlerFuncName}`);
           // run handler to get notifications
-          const notifications = yield handler(messageJSON);
+          const notifications = yield handler(messageJSON, handlerRuleSets);
           if (notifications && notifications.length > 0) {
             // save notifications in bulk to improve performance
+            logger.info(`Going to insert ${notifications.length} notifications in database.`)
             yield models.Notification.bulkCreate(_.map(notifications, (n) => ({
               userId: n.userId,
               type: n.type || topic,
@@ -77,16 +87,17 @@ function startKafkaConsumer() {
               read: false,
               seen: false,
               version: n.version || null,
-            })));
+            })))
             // logging
-            logger.info(`Saved ${notifications.length} notifications for users: ${
+            logger.info(`Saved ${notifications.length} notifications`)
+            /* logger.info(` for users: ${
               _.map(notifications, (n) => n.userId).join(', ')
-              }`);
+              }`); */
           }
-          logger.info(`Handler ${handlerFuncNames[i]} was run successfully`);
+          logger.info(`Handler ${handlerFuncName} executed successfully`);
         } catch (e) {
           // log and ignore error, so that it won't block rest handlers
-          logger.error(`Handler ${handlerFuncNames[i]} failed`);
+          logger.error(`Handler ${handlerFuncName} failed`);
           logger.logFullError(e);
         }
       }
@@ -115,7 +126,8 @@ function startKafkaConsumer() {
   logger.info('Starting kafka consumer');
   consumer
     .init([{
-      subscriptions: _.keys(config.KAFKA_CONSUMER_HANDLERS),
+      // subscribe topics
+      subscriptions: _.keys(config.KAFKA_CONSUMER_RULESETS),
       handler: messageHandler,
     }])
     .then(() => {

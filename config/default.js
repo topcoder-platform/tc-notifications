@@ -44,15 +44,16 @@ module.exports = {
   AUTH0_CLIENT_SECRET: process.env.AUTH0_CLIENT_SECRET,
   AUTH0_PROXY_SERVER_URL: process.env.AUTH0_PROXY_SERVER_URL,
 
-  KAFKA_CONSUMER_HANDLERS: {
-    // key is Kafka topic name, value is array of handler function names defined in src/processors/index.js
-    'notifications.community.challenge.created': ['handleChallengeCreated'],
-    'notifications.community.challenge.phasewarning': ['handleChallengePhaseWarning'],
+  KAFKA_CONSUMER_RULESETS: {
+    // key is Kafka topic name, value is array of ruleset which have key as handler function name defined in src/processors/index.js
+    'challenge.notification.events' : [{handleChallenge : {type:'UPDATE_DRAFT_CHALLENGE', roles: ["Submitter" /** Competitor */, "Copilot", "Reviewer"]}}],
+    //'notifications.community.challenge.created': ['handleChallengeCreated'],
+    //'notifications.community.challenge.phasewarning': ['handleChallengePhaseWarning'],
   },
 
   // email notification service related variables
   ENV: process.env.ENV,
-  ENABLE_EMAILS: process.env.ENABLE_EMAILS ? Boolean(process.env.ENABLE_EMAILS) : true,
+  ENABLE_EMAILS: process.env.ENABLE_EMAILS ? Boolean(process.env.ENABLE_EMAILS) : false,
   ENABLE_DEV_MODE: process.env.ENABLE_DEV_MODE ? Boolean(process.env.ENABLE_DEV_MODE) : true,
   DEV_MODE_EMAIL: process.env.DEV_MODE_EMAIL,
   DEFAULT_REPLY_EMAIL: process.env.DEFAULT_REPLY_EMAIL,
