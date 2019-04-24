@@ -7,6 +7,7 @@
 const _ = require('lodash');
 const Joi = require('joi');
 const errors = require('../common/errors');
+const logger = require('../common/logger');
 const models = require('../models');
 
 const DEFAULT_LIMIT = 10;
@@ -308,3 +309,5 @@ module.exports = {
   getSettings,
   updateSettings,
 };
+
+logger.buildService(module.exports);

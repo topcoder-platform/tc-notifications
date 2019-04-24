@@ -57,7 +57,12 @@ jobs:
             if [ -e dev-tc-notifications-deployvar.json ]; then  sudo rm -vf dev-tc-notifications-deployvar.json; fi
             ./buildenv.sh -e DEV -b dev-tc-notifications-consumers-deployvar
             source buildenvvar
-            ./master_deploy.sh -d ECS -e DEV -t latest -s dev-global-appvar,dev-tc-notifications-appvar -i tc-notifications      
+            ./master_deploy.sh -d ECS -e DEV -t latest -s dev-global-appvar,dev-tc-notifications-appvar -i tc-notifications 
+            echo "Running Masterscript - deploy tc-notifications-general-processor service"
+            if [ -e dev-tc-notifications-consumers-deployvar.json ]; then  sudo rm -vf dev-tc-notifications-consumers-deployvar.json; fi
+            ./buildenv.sh -e DEV -b dev-tc-notifications-general-processor-deployvar
+            source buildenvvar
+            ./master_deploy.sh -d ECS -e DEV -t latest -s dev-global-appvar,dev-tc-notifications-appvar -i tc-notifications     
 
   "build-prod":
     <<: *defaults
@@ -92,7 +97,7 @@ workflows:
           context : org-global
           filters:
             branches:
-              only: ['dev']
+              only: [dev, 'feature/general-purpose-notifications-usage']
       - "build-prod":
           context : org-global
           filters:
