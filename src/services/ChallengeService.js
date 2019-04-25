@@ -36,9 +36,6 @@ handle.schema = {
     timestamp: joi.date().required(),
     'mime-type': joi.string().required(),
     payload: joi.object().keys({
-      data: joi.object().keys({
-        id: joi.number().integer().min(1)
-      }).unknown(true).required(),
       type: joi.string().required(),
       userId: joi.number().integer().min(1)
     }).unknown(true).required(),
