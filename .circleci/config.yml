@@ -57,7 +57,12 @@ jobs:
             if [ -e dev-tc-notifications-deployvar.json ]; then  sudo rm -vf dev-tc-notifications-deployvar.json; fi
             ./buildenv.sh -e DEV -b dev-tc-notifications-consumers-deployvar
             source buildenvvar
-            ./master_deploy.sh -d ECS -e DEV -t latest -s dev-global-appvar,dev-tc-notifications-appvar -i tc-notifications      
+            ./master_deploy.sh -d ECS -e DEV -t latest -s dev-global-appvar,dev-tc-notifications-appvar -i tc-notifications 
+            echo "Running Masterscript - deploy tc-notifications-general-processor service"
+            if [ -e dev-tc-notifications-consumers-deployvar.json ]; then  sudo rm -vf dev-tc-notifications-consumers-deployvar.json; fi
+            ./buildenv.sh -e DEV -b dev-tc-notifications-general-processor-deployvar
+            source buildenvvar
+            ./master_deploy.sh -d ECS -e DEV -t latest -s dev-global-appvar,dev-tc-notifications-appvar -i tc-notifications     
 
   "build-prod":
     <<: *defaults
@@ -81,7 +86,12 @@ jobs:
             if [ -e prod-tc-notifications-deployvar.json ]; then  sudo rm -vf prod-tc-notifications-deployvar.json; fi
             ./buildenv.sh -e PROD -b prod-tc-notifications-consumers-deployvar
             source buildenvvar
-            ./master_deploy.sh -d ECS -e PROD -t latest -s prod-global-appvar,prod-tc-notifications-appvar -i tc-notifications      
+            ./master_deploy.sh -d ECS -e PROD -t latest -s prod-global-appvar,prod-tc-notifications-appvar -i tc-notifications
+            echo "Running Masterscript - prod deploy tc-notifications-general-processor service"
+            if [ -e prod-tc-notifications-consumers-deployvar.json ]; then  sudo rm -vf prod-tc-notifications-consumers-deployvar.json; fi
+            ./buildenv.sh -e PROD -b prod-tc-notifications-general-processor-deployvar
+            source buildenvvar
+            ./master_deploy.sh -d ECS -e PROD -t latest -s prod-global-appvar,prod-tc-notifications-appvar -i tc-notifications
             
 workflows:
   version: 2
@@ -92,7 +102,7 @@ workflows:
           context : org-global
           filters:
             branches:
-              only: ['dev']
+              only: [dev, 'feature/general-purpose-notifications-usage']
       - "build-prod":
           context : org-global
           filters:
