@@ -28,9 +28,9 @@ module.exports = {
   KAFKA_CLIENT_CERT_KEY: process.env.KAFKA_CLIENT_CERT_KEY ?
     process.env.KAFKA_CLIENT_CERT_KEY.replace('\\n', '\n') : null,
 
-  TC_API_V3_BASE_URL: process.env.TC_API_V3_BASE_URL || 'https://api.topcoder-dev.com/v3',
-  TC_API_V4_BASE_URL: process.env.TC_API_V4_BASE_URL || 'https://api.topcoder-dev.com/v4',
-  TC_API_V5_BASE_URL: process.env.TC_API_V5_BASE_URL || 'https://api.topcoder-dev.com/v5',
+  TC_API_V3_BASE_URL: process.env.TC_API_V3_BASE_URL || '',
+  TC_API_V4_BASE_URL: process.env.TC_API_V4_BASE_URL || '',
+  TC_API_V5_BASE_URL: process.env.TC_API_V5_BASE_URL || '',
   API_CONTEXT_PATH: process.env.API_CONTEXT_PATH || '/v5/notifications',
 
   // Configuration for generating machine to machine auth0 token.
