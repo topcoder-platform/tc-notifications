@@ -260,25 +260,30 @@ function* getUsersInfoFromChallenge(challengeId) {
 
 /** 
  * Filter associated challenge's user based on criteria 
- * @param {Array} usersInfo user object array 
- * @param {Array} filterCriteria on roles 
+ * @param {Array} usersInfo user object array
+ * @param {Array} filterOnRoles on roles
+ * @param {Array} filterOnUsers on user's ids
  * 
  * @returns {Array} of user object  
  */
-function filterChallengeUsers(usersInfo, filterCriteria = []) {
-  let users = []
-  let totaleRoles = []
+function filterChallengeUsers(usersInfo, filterOnRoles = [], filterOnUsers = []) {
+  const users = [] // filtered users
+  const rolesAvailable = [] // available roles in challenge api response
   _.map(usersInfo, (user) => {
-    let userId = _.get(user, 'properties.External Reference ID')
-    let role = _.get(user, 'role')
-    totaleRoles[role] = 1
-    if (filterCriteria.length > 0 && _.indexOf(filterCriteria, role) >= 0) {
+    const userId = parseInt(_.get(user, 'properties.External Reference ID'))
+    const role = _.get(user, 'role')
+
+    _.indexOf(rolesAvailable, role) == -1 ? rolesAvailable.push(role) : ''
+
+    if (filterOnRoles.length > 0 && _.indexOf(filterOnRoles, role) >= 0) {
       users.push({ userId: userId })
-    } else if (filterCriteria.length == 0) {
+    } else if (filterOnUsers.length > 0 && _.indexOf(filterOnUsers, userId) >= 0) {
+      users.push({ userId: userId }) /** Submitter only case */
+    } else if (filterOnRoles.length == 0 && filterOnUsers.length == 0) {
       users.push({ userId: userId })
     }
   })
-  logger.info(`Total roles availables in this challenge are: ${_.keys(totaleRoles).join(',')}`)
+  logger.info(`Total roles available in this challenge are: ${rolesAvailable.join(',')}`)
   return users
 }
 
