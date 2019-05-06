@@ -19,18 +19,20 @@ function* handle(message, ruleSets) {
 
   if (message.payload.resource === _.get(ruleSets, "resource")) {
     const challengeId = message.payload.challengeId
-    const usersInfo = yield tcApiHelper.getUsersInfoFromChallenge(challengeId)
+    const filterOnRoles = _.get(ruleSets, "roles")
 
     const filterOnUsers = []
     if (_.get(ruleSets, 'selfOnly')) {
       const memberId = _.get(message.payload, "memberId")
       filterOnUsers.push(memberId)
     }
-    const filterOnRoles = _.get(ruleSets, "roles")
+
+    const usersInfo = yield tcApiHelper.getUsersInfoFromChallenge(challengeId)
     const users = tcApiHelper.filterChallengeUsers(usersInfo, filterOnRoles, filterOnUsers)
+    const notification = yield tcApiHelper.modifyNotificationNode(ruleSets, { id: challengeId})
     logger.info(`Successfully filetered ${users.length} users on rulesets ${JSON.stringify(filterOnRoles)} `)
     // notify users of message
-    return yield tcApiHelper.notifyUsersOfMessage(users, message);
+    return yield tcApiHelper.notifyUsersOfMessage(users, notification);
   }
   return {}
 }
@@ -42,7 +44,7 @@ handle.schema = {
     timestamp: joi.date().required(),
     'mime-type': joi.string().required(),
     payload: joi.object().keys({
-      resource: joi.string().required() 
+      resource: joi.string().required()
     }).unknown(true).required(),
   }).required(),
   ruleSets: joi.object()

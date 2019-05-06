@@ -83,7 +83,7 @@ function startKafkaConsumer() {
             yield models.Notification.bulkCreate(_.map(notifications, (n) => ({
               userId: n.userId,
               type: n.type || topic,
-              contents: n.contents || messageJSON.payload || {},
+              contents: n.contents || n.notification || messageJSON.payload || {},
               read: false,
               seen: false,
               version: n.version || null,

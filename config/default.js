@@ -46,9 +46,56 @@ module.exports = {
 
   KAFKA_CONSUMER_RULESETS: {
     // key is Kafka topic name, value is array of ruleset which have key as handler function name defined in src/processors/index.js
-    'challenge.notification.events': [{ handleChallenge: { type: 'UPDATE_DRAFT_CHALLENGE', roles: ["Submitter" /** Competitor */, "Copilot", "Reviewer"] } }],
-    'notifications.autopilot.events': [{ handleAutoPilot: { phaseTypeName: 'Checkpoint Screening', state: 'START', roles: ["Copilot", "Reviewer"] } }],
-    'submission.notification.create': [{ handleSubmission: { resource: 'submission', roles: ["Copilot", "Reviewer"], selfOnly: true /** Submitter only */ } }],
+    'challenge.notification.events': [
+      {
+        handleChallenge: /** topic handler name */
+        {
+          type: 'UPDATE_DRAFT_CHALLENGE',
+          roles: ["Submitter" /** Competitor */, "Copilot", "Reviewer"],
+          notification:
+          {
+            id: 0, /** challengeid or projectid  */
+            name: '', /** challenge name */
+            group: 'Challenge',
+            title: 'Challenge specification is modified.'
+          }
+        }
+      }
+    ],
+    'notifications.autopilot.events': [
+      {
+        handleAutoPilot:
+        {
+          phaseTypeName: 'Checkpoint Screening',
+          state: 'START',
+          roles: ["Copilot", "Reviewer"],
+          notification:
+          {
+            id: 0, /** challengeid or projectid  */
+            name: '', /** challenge name */
+            group: 'Challenge',
+            title: 'Challenge checkpoint review.'
+          }
+        }
+      }
+    ],
+    'submission.notification.create': [
+      {
+        handleSubmission:
+        {
+          resource: 'submission',
+          roles: ["Copilot", "Reviewer"],
+          selfOnly: true /** Submitter only */,
+          notification:
+          {
+            id: 0, /** challengeid or projectid  */
+            name: '', /** challenge name */
+            group: 'Submission',
+            title: 'A new submission is uploaded.'
+          }
+        }
+      }
+    ],
     //'notifications.community.challenge.created': ['handleChallengeCreated'],
     //'notifications.community.challenge.phasewarning': ['handleChallengePhaseWarning'],
   },
