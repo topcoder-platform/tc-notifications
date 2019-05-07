@@ -41,4 +41,10 @@ module.exports = {
       method: 'health',
     },
   },
+  '/': {
+    get: {
+      controller: 'NotificationController',
+      method: 'listNotifications',
+    },
+  },
 };
