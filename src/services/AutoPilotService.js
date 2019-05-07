@@ -20,12 +20,15 @@ function* handle(message, ruleSets) {
   if ((message.payload.phaseTypeName === _.get(ruleSets, "phaseTypeName"))
     && (message.payload.state === _.get(ruleSets, "state"))) {
     const challengeId = message.payload.projectId
-    const usersInfo = yield tcApiHelper.getUsersInfoFromChallenge(challengeId)
     const filerOnRoles = _.get(ruleSets, "roles")
+
+    const notification = yield tcApiHelper.modifyNotificationNode(ruleSets, { id: challengeId})
+    const usersInfo = yield tcApiHelper.getUsersInfoFromChallenge(challengeId)
     const users = tcApiHelper.filterChallengeUsers(usersInfo, filerOnRoles)
+
     logger.info(`Successfully filetered ${users.length} users on rulesets ${JSON.stringify(filerOnRoles)} `)
     // notify users of message
-    return yield tcApiHelper.notifyUsersOfMessage(users, message);
+    return yield tcApiHelper.notifyUsersOfMessage(users, notification);
   }
   return {}
 }

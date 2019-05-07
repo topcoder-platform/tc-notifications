@@ -188,7 +188,9 @@ function* notifyUserViaEmail(user, message) {
  */
 function* getChallenge(challengeId) {
   // this is public API, M2M token is not needed
-  const res = yield request.get(`${config.TC_API_V4_BASE_URL}/challenges/${challengeId}`);
+  const url = `${config.TC_API_V4_BASE_URL}/challenges/${challengeId}`
+  logger.info(`calling public challenge api ${url}`)
+  const res = yield request.get(url);
   if (!_.get(res, 'body.result.success')) {
     throw new Error(`Failed to get challenge by id ${challengeId}`);
   }
@@ -198,10 +200,10 @@ function* getChallenge(challengeId) {
 /**
  * Notify users of message.
  * @param {Array} users the users
- * @param {Object} message the Kafka message
+ * @param {Object} notification notifcation node
  * @returns {Array} the notifications
  */
-function* notifyUsersOfMessage(users, message) {
+function* notifyUsersOfMessage(users, notification) {
   if (!users || users.length === 0) {
     logger.info('No users to notify message.');
     return [];
@@ -212,7 +214,7 @@ function* notifyUsersOfMessage(users, message) {
   for (let i = 0; i < users.length; i += 1) {
     const user = users[i];
     // construct notification, rest fields are set in consumer.js
-    notifications.push({ userId: user.userId });
+    notifications.push({ userId: user.userId, notification: notification });
 
     /* TODO  Sachin disabled this code 
     if (config.ENABLE_EMAILS) {
@@ -287,6 +289,34 @@ function filterChallengeUsers(usersInfo, filterOnRoles = [], filterOnUsers = [])
   return users
 }
 
+/** 
+ * modify notification template  
+ * @param {Object} ruleSet rule
+ * @param {Object} data values to be filled 
+ * 
+ * @returns {Object} notification node
+ */
+function* modifyNotificationNode(ruleSet, data) {
+  const notification = _.get(ruleSet, "notification")
+  const id = data.id || data.challengeId || 0
+  const name = _.get(data, "name")
+
+  notification.id = id
+
+  if (name) {
+    notification.name = name
+  } else {
+    try {
+      const challenge = yield getChallenge(id)
+      notification.name = _.get(challenge, "challengeTitle")
+    } catch (error) {
+      notification.name = ''
+      logger.error(`Error in fetching challenge detail : ${error}`)
+    }
+  }
+  return notification
+}
+
 module.exports = {
   getM2MToken,
   getUsersBySkills,
@@ -297,4 +327,5 @@ module.exports = {
   notifyUsersOfMessage,
   getUsersInfoFromChallenge,
   filterChallengeUsers,
+  modifyNotificationNode,
 };

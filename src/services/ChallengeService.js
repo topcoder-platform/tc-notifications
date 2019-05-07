@@ -19,12 +19,15 @@ function* handle(message, ruleSets) {
 
   if (message.payload.type === _.get(ruleSets, "type")) {
     const challengeId = message.payload.data.id
-    const usersInfo = yield tcApiHelper.getUsersInfoFromChallenge(challengeId)
     const filterOnRoles = _.get(ruleSets, "roles")
+    const challengeTitle = _.get(message.payload, "data.name")
+
+    const notification = yield tcApiHelper.modifyNotificationNode(ruleSets, { id: challengeId, name: challengeTitle })
+    const usersInfo = yield tcApiHelper.getUsersInfoFromChallenge(challengeId)
     const users = tcApiHelper.filterChallengeUsers(usersInfo, filterOnRoles)
     logger.info(`Successfully filetered ${users.length} users on rulesets ${JSON.stringify(filterOnRoles)} `)
     // notify users of message
-    return yield tcApiHelper.notifyUsersOfMessage(users, message);
+    return yield tcApiHelper.notifyUsersOfMessage(users, notification);
   }
   return {}
 }
