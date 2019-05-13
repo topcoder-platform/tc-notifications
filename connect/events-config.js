@@ -5,6 +5,7 @@ const { BUS_API_EVENT } = require('./constants');
 
 // project member role names
 const PROJECT_ROLE_OWNER = 'owner';
+const PROJECT_ROLE_CUSTOMER = 'customer';
 const PROJECT_ROLE_COPILOT = 'copilot';
 const PROJECT_ROLE_MANAGER = 'manager';
 const PROJECT_ROLE_MEMBER = 'member';
@@ -13,6 +14,7 @@ const PROJECT_ROLE_ACCOUNT_MANAGER = 'account_manager';
 // project member role rules
 const PROJECT_ROLE_RULES = {
   [PROJECT_ROLE_OWNER]: { role: 'customer', isPrimary: true },
+  [PROJECT_ROLE_CUSTOMER]: { role: 'customer' },
   [PROJECT_ROLE_COPILOT]: { role: 'copilot' },
   [PROJECT_ROLE_MANAGER]: { role: 'manager' },
   [PROJECT_ROLE_ACCOUNT_MANAGER]: { role: 'account_manager' },
@@ -20,6 +22,7 @@ const PROJECT_ROLE_RULES = {
 };
 
 // TopCoder roles
+// eslint-disable-next-line no-unused-vars
 const ROLE_CONNECT_COPILOT = 'Connect Copilot';
 const ROLE_CONNECT_MANAGER = 'Connect Manager';
 const ROLE_CONNECT_COPILOT_MANAGER = 'Connect Copilot Manager';
@@ -123,31 +126,53 @@ const EVENTS = [
     version: 2,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
     toMentionedUsers: true,
+    exclude: {
+      privatePostsForProjectRoles: [PROJECT_ROLE_CUSTOMER],
+    },
   }, {
     type: BUS_API_EVENT.CONNECT.POST.CREATED,
     version: 2,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
     toTopicStarter: true,
     toMentionedUsers: true,
+    exclude: {
+      draftPhasesForProjectRoles: [PROJECT_ROLE_CUSTOMER],
+      privatePostsForProjectRoles: [PROJECT_ROLE_CUSTOMER],
+    },
   }, {
     type: BUS_API_EVENT.CONNECT.POST.UPDATED,
     version: 2,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
     toTopicStarter: true,
     toMentionedUsers: true,
+    exclude: {
+      draftPhasesForProjectRoles: [PROJECT_ROLE_CUSTOMER],
+      privatePostsForProjectRoles: [PROJECT_ROLE_CUSTOMER],
+    },
   }, {
     type: BUS_API_EVENT.CONNECT.POST.MENTION,
+    exclude: {
+      draftPhasesForProjectRoles: [PROJECT_ROLE_CUSTOMER],
+      privatePostsForProjectRoles: [PROJECT_ROLE_CUSTOMER],
+    },
   },
   {
     type: BUS_API_EVENT.CONNECT.TOPIC.DELETED,
     version: 2,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
     toTopicStarter: false,
+    exclude: {
+      privatePostsForProjectRoles: [PROJECT_ROLE_CUSTOMER],
+    },
   },
   {
     type: BUS_API_EVENT.CONNECT.POST.DELETED,
     version: 2,
     projectRoles: [PROJECT_ROLE_OWNER, PROJECT_ROLE_COPILOT, PROJECT_ROLE_MANAGER, PROJECT_ROLE_MEMBER],
+    exclude: {
+      draftPhasesForProjectRoles: [PROJECT_ROLE_CUSTOMER],
+      privatePostsForProjectRoles: [PROJECT_ROLE_CUSTOMER],
+    },
   },
   {
     type: BUS_API_EVENT.CONNECT.PROJECT.LINK_CREATED,

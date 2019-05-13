@@ -8,7 +8,7 @@ const _ = require('lodash');
 const Kafka = require('no-kafka');
 const co = require('co');
 global.Promise = require('bluebird');
-const healthcheck = require('topcoder-healthcheck-dropin')
+const healthcheck = require('topcoder-healthcheck-dropin');
 
 const logger = require('./src/common/logger');
 const models = require('./src/models');
@@ -63,13 +63,13 @@ function startKafkaConsumer() {
     return co(function* () {
       // run each handler
       for (let i = 0; i < ruleSets.length; i += 1) {
-        const rule = ruleSets[i]
-        const handlerFuncArr = _.keys(rule)
-        const handlerFuncName = _.get(handlerFuncArr, "0")
+        const rule = ruleSets[i];
+        const handlerFuncArr = _.keys(rule);
+        const handlerFuncName = _.get(handlerFuncArr, '0');
 
         try {
-          const handler = processors[handlerFuncName]
-          const handlerRuleSets = rule[handlerFuncName]
+          const handler = processors[handlerFuncName];
+          const handlerRuleSets = rule[handlerFuncName];
           if (!handler) {
             logger.error(`Handler ${handlerFuncName} is not defined`);
             continue;
@@ -79,7 +79,7 @@ function startKafkaConsumer() {
           const notifications = yield handler(messageJSON, handlerRuleSets);
           if (notifications && notifications.length > 0) {
             // save notifications in bulk to improve performance
-            logger.info(`Going to insert ${notifications.length} notifications in database.`)
+            logger.info(`Going to insert ${notifications.length} notifications in database.`);
             yield models.Notification.bulkCreate(_.map(notifications, (n) => ({
               userId: n.userId,
               type: n.type || topic,
@@ -87,9 +87,9 @@ function startKafkaConsumer() {
               read: false,
               seen: false,
               version: n.version || null,
-            })))
+            })));
             // logging
-            logger.info(`Saved ${notifications.length} notifications`)
+            logger.info(`Saved ${notifications.length} notifications`);
             /* logger.info(` for users: ${
               _.map(notifications, (n) => n.userId).join(', ')
               }`); */
@@ -112,15 +112,15 @@ function startKafkaConsumer() {
 
   const check = function () {
     if (!consumer.client.initialBrokers && !consumer.client.initialBrokers.length) {
-      return false
+      return false;
     }
-    let connected = true
+    let connected = true;
     consumer.client.initialBrokers.forEach(conn => {
-      logger.debug(`url ${conn.server()} - connected=${conn.connected}`)
-      connected = conn.connected & connected
-    })
-    return connected
-  }
+      logger.debug(`url ${conn.server()} - connected=${conn.connected}`);
+      connected = conn.connected & connected;
+    });
+    return connected;
+  };
 
   // Start kafka consumer
   logger.info('Starting kafka consumer');
@@ -132,7 +132,7 @@ function startKafkaConsumer() {
     }])
     .then(() => {
       logger.info('Kafka consumer initialized successfully');
-      healthcheck.init([check])
+      healthcheck.init([check]);
     })
     .catch((err) => {
       logger.error('Kafka consumer failed');
