@@ -15,7 +15,7 @@ const logger = require('./common/logger');
 const errors = require('./common/errors');
 const models = require('./models');
 const Kafka = require('no-kafka');
-const healthcheck = require('topcoder-healthcheck-dropin')
+const healthcheck = require('topcoder-healthcheck-dropin');
 
 /**
  * Start Kafka consumer for event bus events.
@@ -77,22 +77,22 @@ function startKafkaConsumer(handlers, notificationServiceHandlers) {
 
   const check = function () {
     if (!consumer.client.initialBrokers && !consumer.client.initialBrokers.length) {
-      return false
+      return false;
     }
-    let connected = true
+    let connected = true;
     consumer.client.initialBrokers.forEach(conn => {
-      logger.debug(`url ${conn.server()} - connected=${conn.connected}`)
-      connected = conn.connected & connected
-    })
-    return connected
-  }
+      logger.debug(`url ${conn.server()} - connected=${conn.connected}`);
+      connected = conn.connected & connected;
+    });
+    return connected;
+  };
 
   consumer
     .init()
     .then(() => {
       _.each(_.keys(handlers),
-        (topicName) => consumer.subscribe(topicName, dataHandler))
-      healthcheck.init([check])
+        (topicName) => consumer.subscribe(topicName, dataHandler));
+      healthcheck.init([check]);
     })
     .catch((err) => {
       logger.error('Kafka Consumer failed');

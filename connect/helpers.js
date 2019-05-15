@@ -2,6 +2,9 @@
  * Helper functions
  */
 const Remarkable = require('remarkable');
+const _ = require('lodash');
+
+const PHASE_ID_REGEXP = /phase#(\d+)/;
 
 /**
  * Convert markdown into raw draftjs state
@@ -42,7 +45,20 @@ const sanitizeEmail = (email) => {
   return '';
 };
 
+/**
+ * Helper method to extract phaseId from tag
+ *
+ * @param {Array} tags list of message tags
+ *
+ * @returns {String} phase id
+ */
+const extractPhaseId = (tags) => {
+  const phaseIds = tags.map((tag) => _.get(tag.match(PHASE_ID_REGEXP), '1', null));
+  return _.find(phaseIds, (phaseId) => phaseId !== null);
+};
+
 module.exports = {
   markdownToHTML,
   sanitizeEmail,
+  extractPhaseId,
 };

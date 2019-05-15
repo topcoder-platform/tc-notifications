@@ -7,8 +7,8 @@
     "start": "node connect/connectNotificationServer",
     "startAPI": "node index-api",
     "startConsumer": "node consumer",
-    "lint": "eslint *.js src config test connect || true",
-    "lint:fix": "eslint *.js --fix src config test connect || true",
+    "lint": "eslint *.js src config test connect",
+    "lint:fix": "eslint *.js --fix src config test connect",
     "postinstall": "npm run build",
     "build": "gulp build",
     "watch": "gulp watch"
