@@ -96,11 +96,12 @@ const getNotificationsForMentionedUser = (logger, eventConfig, content) => {
         });
         resolve(notifications);
       }).catch((error) => {
-        console.log(error, 'error');
         if (logger) {
           logger.error(error);
+          logger.info('Unable to send notification to mentioned user')
         }
-        reject(new Error('Unable to fetch details for mentioned user in the message.'));
+        //resolves with empty notification which essentially means we are unable to send notification to mentioned user
+        resolve([]);
       });
     } else {
       resolve([]);
