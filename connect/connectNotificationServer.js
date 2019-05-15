@@ -96,6 +96,7 @@ const getNotificationsForMentionedUser = (logger, eventConfig, content) => {
         });
         resolve(notifications);
       }).catch((error) => {
+        console.log(error, 'error');
         if (logger) {
           logger.error(error);
         }
