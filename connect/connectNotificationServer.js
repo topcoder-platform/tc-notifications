@@ -9,6 +9,7 @@ const config = require('./config');
 const notificationServer = require('../index');
 const _ = require('lodash');
 const service = require('./service');
+const helpers = require('./helpers');
 const { BUS_API_EVENT } = require('./constants');
 const EVENTS = require('./events-config').EVENTS;
 const PROJECT_ROLE_RULES = require('./events-config').PROJECT_ROLE_RULES;
@@ -254,6 +255,83 @@ const getNotificationsForTopicStarter = (eventConfig, topicId) => {
 };
 
 /**
+ * Filter members by project roles
+ *
+ * @params {Array} List of project roles
+ * @params {Array} List of project members
+ *
+ * @returns {Array} List of objects with user ids
+ */
+const filterMembersByRoles = (roles, members) => {
+  let result = [];
+
+  roles.forEach(projectRole => {
+    result = result.concat(
+      _.filter(members, PROJECT_ROLE_RULES[projectRole])
+        .map(projectMember => ({
+          userId: projectMember.userId.toString(),
+        }))
+    );
+  });
+
+  return result;
+};
+
+/**
+ * Exclude private posts notification
+ *
+ * @param  {Object} eventConfig event configuration
+ * @param  {Object} project     project details
+ * @param  {Array}  tags        list of message tags
+ *
+ * @return {Promise}            resolves to a list of notifications
+ */
+const getExcludedPrivatePostNotifications = (eventConfig, project, tags) => {
+  // skip if message is not private or exclusion rule is not configured
+  if (!_.includes(tags, 'MESSAGES') || !eventConfig.privatePostsForProjectRoles) {
+    return Promise.resolve([]);
+  }
+
+  const members = _.get(project, 'members', []);
+  const notifications = filterMembersByRoles(eventConfig.privatePostsForProjectRoles, members);
+
+  return Promise.resolve(notifications);
+};
+
+/**
+ * Exclude notifications about posts inside draft phases
+ *
+ * @param  {Object} eventConfig event configuration
+ * @param  {Object} project     project details
+ * @param  {Array}  tags        list of message tags
+ *
+ * @return {Promise}            resolves to a list of notifications
+ */
+const getExcludeDraftPhasesNotifications = (eventConfig, project, tags) => {
+  // skip is no exclusion rule is configured
+  if (!eventConfig.draftPhasesForProjectRoles) {
+    return Promise.resolve([]);
+  }
+
+  const phaseId = helpers.extractPhaseId(tags);
+  // skip if it is not phase notification
+  if (!phaseId) {
+    return Promise.resolve([]);
+  }
+
+  // exclude all user with configured roles if phase is in draft state
+  return service.getPhase(project.id, phaseId)
+    .then((phase) => {
+      if (phase.status === 'draft') {
+        const members = _.get(project, 'members', []);
+        const notifications = filterMembersByRoles(eventConfig.draftPhasesForProjectRoles, members);
+
+        return Promise.resolve(notifications);
+      }
+    });
+};
+
+/**
  * Exclude notifications using exclude rules of the event config
  *
  * @param {Object} logger object used to log in parent thread
@@ -280,12 +358,17 @@ const excludeNotifications = (logger, notifications, eventConfig, message, data)
   // and after filter out such notifications from the notifications list
   // TODO move this promise all together with `_.uniqBy` to one function
   //      and reuse it here and in `handler` function
+  const tags = _.get(message, 'tags', []);
+
   return Promise.all([
     getNotificationsForTopicStarter(excludeEventConfig, message.topicId),
     getNotificationsForUserId(excludeEventConfig, message.userId),
     getNotificationsForMentionedUser(logger, excludeEventConfig, message.postContent),
     getProjectMembersNotifications(excludeEventConfig, project),
     getTopCoderMembersNotifications(excludeEventConfig),
+    // these are special exclude rules which are only working for excluding notifications but not including
+    getExcludedPrivatePostNotifications(excludeEventConfig, project, tags),
+    getExcludeDraftPhasesNotifications(excludeEventConfig, project, tags),
   ]).then((notificationsPerSource) => (
     _.uniqBy(_.flatten(notificationsPerSource), 'userId')
   )).then((excludedNotifications) => {

@@ -4,8 +4,6 @@
 const _ = require('lodash');
 const jwt = require('jsonwebtoken');
 const co = require('co');
-const fs = require('fs');
-const path = require('path');
 const { logger, busService, eventScheduler, notificationService } = require('../../index');
 const { createEventScheduler, SCHEDULED_EVENT_STATUS } = eventScheduler;
 
@@ -16,29 +14,43 @@ const {
   SETTINGS_EMAIL_SERVICE_ID,
   ACTIVE_USER_STATUSES,
 } = require('../constants');
-const { EVENTS, EVENT_BUNDLES } = require('../events-config');
+const { EVENT_BUNDLES } = require('../events-config');
 const helpers = require('../helpers');
 const service = require('../service');
 
 
 function replacePlaceholders(term, data) {
-  let placeholders = term.match(/<[a-zA-Z]+>/g);
+  const placeholders = term.match(/<[a-zA-Z]+>/g);
   let ret = term;
   if (placeholders && placeholders.length) {
     _(placeholders).each(p => {
-      let values = _.map(data, p.slice(1, -1));
-      const total = values.length;
-      let replacement = values.length < 3 ?
-                          values.join(', ') :
-                          values.slice(0, 2).join(', ') + ' and ' + (total - 3) + 'others';
+      const values = _.map(data, p.slice(1, -1));
+      // TODO remove this code if possible.
+      // This code appears to be not in use causing lint errors.
+      // For now I'm commenting it, in case it contains some valuable logic.
+      // But after confirmation that it's redundant it has to be removed.
+      //
+      // const total = values.length;
+      // const replacement = values.length < 3 ?
+      //                     values.join(', ') :
+      //                     values.slice(0, 2).join(', ') + ' and ' + (total - 3) + 'others';
       ret = ret.replace(p, values.join(', '));
     });
   }
   return ret;
 }
 
+function getEventGroupKey(value) {
+  const key = _.chain(EVENT_BUNDLES)
+    .keys()
+    .find(k => _.includes(_.get(EVENT_BUNDLES, `${k}.types`), _.get(value, 'data.data.type')))
+    .value();
+  if (!key) return 'DEFAULT';
+  return key;
+}
+
 function getSections(projectUserEvents) {
-  let sections = [];
+  const sections = [];
   _.chain(projectUserEvents)
   .groupBy(value => getEventGroupKey(value))
   .forIn((value, key) => {
@@ -49,7 +61,7 @@ function getSections(projectUserEvents) {
         notifications: _(value).map(v => v.data.data).value(),
       });
     } else {
-      _.chain(value).groupBy(n => n.data.data[EVENT_BUNDLES[key].groupBy]).forIn((groupValue, groupKey) => {
+      _.chain(value).groupBy(n => n.data.data[EVENT_BUNDLES[key].groupBy]).forIn((groupValue) => {
         let title = EVENT_BUNDLES[key].title;
         title = replacePlaceholders(title, _(groupValue).map(g => g.data.data).value());
         sections.push({
@@ -139,15 +151,6 @@ const scheduler = createEventScheduler(
   SCHEDULED_EVENT_PERIOD,
   handleScheduledEvents
 );
-
-function getEventGroupKey(value) {
-  let key = _.chain(EVENT_BUNDLES)
-    .keys()
-    .find(key => _.includes(_.get(EVENT_BUNDLES, `${key}.types`), _.get(value, 'data.data.type')))
-    .value();
-  if (!key) return 'DEFAULT';
-  return key;
-}
 
 /**
  * Prepares data to be provided to the template to render a single notification.
@@ -245,30 +248,31 @@ function handler(topicName, messageJSON, notification) {
     };
     eventMessage.data[eventMessage.data.type] = true;
     _.assign(eventMessage.data, notification.contents);
-       
+
     // message service may return tags
     // to understand if post notification is regarding phases or no, we will try to get phaseId from the tags
-    const tags = _.get(notification.contents, 'tags', [])
-    const PHASE_ID_REGEXP = /phase#(\d+)/
-    const phaseIds = tags.map((tag) => _.get(tag.match(PHASE_ID_REGEXP), '1', null))
-    const phaseId = _.find(phaseIds, (phaseId) => phaseId !== null)
+    const tags = _.get(notification.contents, 'tags', []);
+    const phaseId = helpers.extractPhaseId(tags);
     if (phaseId) {
       eventMessage.data.phaseId = phaseId;
     }
 
-    // if the notification is regarding topic: dashboard topic, dashboard post or phase post 
+    // if the notification is regarding topic: dashboard topic, dashboard post or phase post
     // we build a link to the post
     if (eventMessage.data.topicId) {
       // phase post
       if (eventMessage.data.phaseId) {
+        // eslint-disable-next-line max-len
         eventMessage.data.postURL = `${config.CONNECT_URL}/projects/${eventMessage.data.projectId}/plan#phase-${eventMessage.data.phaseId}-posts-${eventMessage.data.postId}`;
 
       // dashboard post
       } else if (eventMessage.data.postId) {
+        // eslint-disable-next-line max-len
         eventMessage.data.postURL = `${config.CONNECT_URL}/projects/${eventMessage.data.projectId}#comment-${eventMessage.data.postId}`;
 
       // dashboard topic
       } else {
+        // eslint-disable-next-line max-len
         eventMessage.data.postURL = `${config.CONNECT_URL}/projects/${eventMessage.data.projectId}#feed-${eventMessage.data.topicId}`;
       }
     }
@@ -319,19 +323,21 @@ function handler(topicName, messageJSON, notification) {
     }
 
     // if notifications has to be bundled
-    let bundlePeriod = _.get(settings, `notifications['${notificationType}'].${SETTINGS_EMAIL_SERVICE_ID}.bundlePeriod`);
+    let bundlePeriod = _.get(settings,
+      `notifications['${notificationType}'].${SETTINGS_EMAIL_SERVICE_ID}.bundlePeriod`);
     bundlePeriod = bundlePeriod && bundlePeriod.trim().length > 0 ? bundlePeriod : null;
     // if bundling is not explicitly set and the event is not a messaging event, assume bundling enabled
     if (!bundlePeriod && !messagingEvent) {
       // finds the event category for the notification type
-      let eventBundleCategory = _.findKey(EVENT_BUNDLES, b => b.types && b.types.indexOf(notificationType) !== -1);
+      const eventBundleCategory = _.findKey(EVENT_BUNDLES, b => b.types && b.types.indexOf(notificationType) !== -1);
       if (eventBundleCategory) {
         const eventBundle = EVENT_BUNDLES[eventBundleCategory];
         // if we find the event category for the notification, use the bundle settings from the first event
         if (eventBundle && eventBundle.types && eventBundle.types.length) {
           const firstEvtInBundle = eventBundle.types[0];
-          const firstEvtBundleSettingPath = `notifications['${firstEvtInBundle}'].${SETTINGS_EMAIL_SERVICE_ID}.bundlePeriod`;
-          let firstEvtBundlePeriod = _.get(settings, firstEvtBundleSettingPath);
+          const firstEvtBundleSettingPath =
+            `notifications['${firstEvtInBundle}'].${SETTINGS_EMAIL_SERVICE_ID}.bundlePeriod`;
+          const firstEvtBundlePeriod = _.get(settings, firstEvtBundleSettingPath);
           bundlePeriod = firstEvtBundlePeriod;
           logger.debug('Assuming bundle period of first event in the event category=>', bundlePeriod);
         }
@@ -341,7 +347,7 @@ function handler(topicName, messageJSON, notification) {
     }
     logger.debug('bundlePeriod=>', bundlePeriod);
 
-    if (bundlePeriod && 'immediately' !== bundlePeriod && !requiresImmediateAttention) {
+    if (bundlePeriod && bundlePeriod !== 'immediately' && !requiresImmediateAttention) {
       if (!SCHEDULED_EVENT_PERIOD[bundlePeriod]) {
         throw new Error(`User's '${notification.userId}' setting for service`
           + ` '${SETTINGS_EMAIL_SERVICE_ID}' option 'bundlePeriod' has unsupported value '${bundlePeriod}'.`);
@@ -359,7 +365,7 @@ function handler(topicName, messageJSON, notification) {
     } else {
       // send single field "notificationsHTML" with the rendered template
       eventMessage.data = wrapIndividualNotification({ data: eventMessage });
-      //console.log(eventMessage.data.contents);
+      // console.log(eventMessage.data.contents);
 
       // send event to bus api
       return busService.postEvent({
@@ -374,7 +380,7 @@ function handler(topicName, messageJSON, notification) {
       .catch((err) => {
         logger.error(`Failed to send ${eventType} event`
           + `; error: ${err.message}`
-          + `; with body ${JSON.stringify(eventMessage)} to bus api`);  
+          + `; with body ${JSON.stringify(eventMessage)} to bus api`);
       });
     }
   });
