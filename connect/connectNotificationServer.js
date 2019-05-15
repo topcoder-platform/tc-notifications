@@ -56,12 +56,13 @@ const getTopCoderMembersNotifications = (eventConfig) => {
 /**
  * Get notifications for mentioned users
  *
+ * @param  {Object} logger object used to log in parent thread
  * @param  {Object} eventConfig event configuration
  * @param  {Object} message content
  *
  * @return {Promise}            resolves to a list of notifications
  */
-const getNotificationsForMentionedUser = (eventConfig, content) => {
+const getNotificationsForMentionedUser = (logger, eventConfig, content) => {
   if (!eventConfig.toMentionedUsers || !content) {
     return Promise.resolve([]);
   }
@@ -93,6 +94,11 @@ const getNotificationsForMentionedUser = (eventConfig, content) => {
           notification.userId = mentionedUser ? mentionedUser.userId.toString() : notification.userHandle;
         });
         resolve(notifications);
+      }).catch((error) => {
+        if (logger) {
+          logger.error(error);
+        }
+        reject(new Error('Unable to fetch details for mentioned user in the message.'));
       });
     } else {
       resolve([]);
@@ -249,6 +255,7 @@ const getNotificationsForTopicStarter = (eventConfig, topicId) => {
 /**
  * Exclude notifications using exclude rules of the event config
  *
+ * @param {Object} logger object used to log in parent thread
  * @param {Array}  notifications notifications list
  * @param {Object} eventConfig   event configuration
  * @param {Object} message       message
@@ -256,7 +263,7 @@ const getNotificationsForTopicStarter = (eventConfig, topicId) => {
  *
  * @returns {Promise} resolves to the list of filtered notifications
  */
-const excludeNotifications = (notifications, eventConfig, message, data) => {
+const excludeNotifications = (logger, notifications, eventConfig, message, data) => {
   // if there are no rules to exclude notifications, just return all of them untouched
   if (!eventConfig.exclude) {
     return Promise.resolve(notifications);
@@ -275,7 +282,7 @@ const excludeNotifications = (notifications, eventConfig, message, data) => {
   return Promise.all([
     getNotificationsForTopicStarter(excludeEventConfig, message.topicId),
     getNotificationsForUserId(excludeEventConfig, message.userId),
-    getNotificationsForMentionedUser(eventConfig, message.postContent),
+    getNotificationsForMentionedUser(logger, excludeEventConfig, message.postContent),
     getProjectMembersNotifications(excludeEventConfig, project),
     getTopCoderMembersNotifications(excludeEventConfig),
   ]).then((notificationsPerSource) => (
@@ -335,7 +342,7 @@ const handler = (topic, message, logger, callback) => {
       getNotificationsForTopicStarter(eventConfig, message.topicId),
       getNotificationsForUserId(eventConfig, message.userId),
       getNotificationsForOriginator(eventConfig, message.originator),
-      getNotificationsForMentionedUser(eventConfig, message.postContent),
+      getNotificationsForMentionedUser(logger, eventConfig, message.postContent),
       getProjectMembersNotifications(eventConfig, project),
       getTopCoderMembersNotifications(eventConfig),
     ]).then((notificationsPerSource) => {
@@ -344,7 +351,7 @@ const handler = (topic, message, logger, callback) => {
       logger.debug('all notifications: ', notificationsPerSource);
       return _.uniqBy(_.flatten(notificationsPerSource), 'userId');
     }).then((notifications) => (
-      excludeNotifications(notifications, eventConfig, message, {
+      excludeNotifications(logger, notifications, eventConfig, message, {
         project,
       })
     )).then((notifications) => {
