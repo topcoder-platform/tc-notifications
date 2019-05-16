@@ -76,7 +76,6 @@ function startKafkaConsumer(handlers, notificationServiceHandlers) {
   });
 
   const check = function () {
-    logger.debug('Checking Health...')   ; 
     if (!consumer.client.initialBrokers && !consumer.client.initialBrokers.length) {
       logger.debug('Found unhealthy Kafka Brokers...');
       return false;
@@ -86,7 +85,6 @@ function startKafkaConsumer(handlers, notificationServiceHandlers) {
       logger.debug(`url ${conn.server()} - connected=${conn.connected}`);
       connected = conn.connected & connected;
     });
-    logger.debug('Found all Kafka Brokers healthy...');
     return connected;
   };
 
