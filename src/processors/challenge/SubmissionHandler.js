@@ -8,7 +8,7 @@ const service = require('../../services/SubmissionService');
  * Handle Kafka JSON message of autopilot.
  *
  * @param {Object} message the Kafka JSON message
- * @param {Object} ruleSets 
+ * @param {Object} ruleSets
  *
  * @return {Promise} promise resolved to notifications
  */

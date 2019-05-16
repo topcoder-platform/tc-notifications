@@ -232,10 +232,46 @@ const getTopic = (topicId, logger) => (
     })
 );
 
+/**
+ * Get phase details
+ *
+ * @param  {String} projectId project id
+ * @param  {String} phaseId phase id
+ *
+ * @return {Promise}          promise resolved to phase details
+ */
+const getPhase = (projectId, phaseId) => (
+  M2m.getMachineToken(config.AUTH0_CLIENT_ID, config.AUTH0_CLIENT_SECRET)
+    .then((token) => (
+      request
+        .get(`${config.TC_API_V4_BASE_URL}/projects/${projectId}/phases/${phaseId}`)
+        .set('accept', 'application/json')
+        .set('authorization', `Bearer ${token}`)
+        .then((res) => {
+          if (!_.get(res, 'body.result.success')) {
+            throw new Error(`Failed to get phase details of project id: ${projectId}, phase id: ${phaseId}`);
+          }
+          const project = _.get(res, 'body.result.content');
+          return project;
+        }).catch((err) => {
+          const errorDetails = _.get(err, 'response.body.result.content.message');
+          throw new Error(
+            `Failed to get phase details of project id: ${projectId}, phase id: ${phaseId}.` +
+            (errorDetails ? ' Server response: ' + errorDetails : '')
+          );
+        })
+    ))
+    .catch((err) => {
+      err.message = 'Error generating m2m token: ' + err.message;
+      throw err;
+    })
+);
+
 module.exports = {
   getProject,
   getRoleMembers,
   getUsersById,
   getUsersByHandle,
   getTopic,
+  getPhase,
 };
