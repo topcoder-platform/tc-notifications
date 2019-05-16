@@ -95,14 +95,14 @@ const getNotificationsForMentionedUser = (logger, eventConfig, content) => {
           notification.userId = mentionedUser ? mentionedUser.userId.toString() : notification.userHandle;
         });
         resolve(notifications);
-      })/*.catch((error) => {
+      }).catch((error) => {
         if (logger) {
           logger.error(error);
           logger.info('Unable to send notification to mentioned user')
         }
         //resolves with empty notification which essentially means we are unable to send notification to mentioned user
         resolve([]);
-      })*/;
+      });
     } else {
       resolve([]);
     }
