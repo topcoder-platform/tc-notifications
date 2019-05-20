@@ -149,7 +149,7 @@ const getProjectMembersNotifications = (eventConfig, project) => {
     return Promise.resolve([]);
   }
 
-  return new Promise((resolve) => {
+  return Promise.promisify((callback) => {
     let notifications = [];
     const projectMembers = _.get(project, 'members', []);
 
@@ -184,8 +184,8 @@ const getProjectMembersNotifications = (eventConfig, project) => {
     // only one per userId
     notifications = _.uniqBy(notifications, 'userId');
 
-    resolve(notifications);
-  });
+    callback(null, notifications);
+  })();
 };
 
 /**
