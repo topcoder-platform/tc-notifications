@@ -504,5 +504,12 @@ if (config.ENABLE_EMAILS) {
 //     notificationServer.logger.error('Notification server errored out');
 //   });
 
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.log('Unhandled Rejection at:', promise, 'reason:', reason);
+    // aborts the process to let the HA of the container to restart the task
+    process.abort();
+});
+
 // if no need to init database, then directly start the server:
 notificationServer.startKafkaConsumers();
