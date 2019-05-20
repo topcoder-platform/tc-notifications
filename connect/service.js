@@ -166,7 +166,7 @@ const getUsersById = (ids) => {
  * @return {Promise}   resolves to the list of user details
  */
 const getUsersByHandle = (handles) => {
-  const query = _.map(handles, (handle) => 'handle:' + handle.trim()).join(' OR ');
+  const query = _.map(handles, (handle) => 'handle:"' + handle.trim().replace('"', '\\"') + '"').join(' OR ');
   return M2m.getMachineToken(config.AUTH0_CLIENT_ID, config.AUTH0_CLIENT_SECRET)
     .catch((err) => {
       err.message = 'Error generating m2m token: ' + err.message;
