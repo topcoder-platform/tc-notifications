@@ -102,7 +102,7 @@ workflows:
           context : org-global
           filters:
             branches:
-              only: [dev, 'feature/general-purpose-notifications-usage']
+              only: [dev, 'feature/general-purpose-notifications-usage', 'feature/test_health_check']
       - "build-prod":
           context : org-global
           filters:
