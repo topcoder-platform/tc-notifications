@@ -86,27 +86,25 @@ const getNotificationsForMentionedUser = (logger, eventConfig, content) => {
   // only one per userHandle
   notifications = _.uniqBy(notifications, 'userHandle');
 
-  return new Promise((resolve, reject) => { // eslint-disable-line no-unused-vars
-    const handles = _.map(notifications, 'userHandle');
-    if (handles.length > 0) {
-      return service.getUsersByHandle(handles).then((users) => {
-        _.forEach(notifications, (notification) => {
-          const mentionedUser = _.find(users, { handle: notification.userHandle });
-          notification.userId = mentionedUser ? mentionedUser.userId.toString() : notification.userHandle;
-        });
-        resolve(notifications);
-      })/*.catch((error) => {
-        if (logger) {
-          logger.error(error);
-          logger.info('Unable to send notification to mentioned user')
-        }
-        //resolves with empty notification which essentially means we are unable to send notification to mentioned user
-        resolve([]);
-      })*/;
-    } else {
-      resolve([]);
-    }
-  });
+  const handles = _.map(notifications, 'userHandle');
+  if (handles.length > 0) {
+    return service.getUsersByHandle(handles).then((users) => {
+      _.forEach(notifications, (notification) => {
+        const mentionedUser = _.find(users, { handle: notification.userHandle });
+        notification.userId = mentionedUser ? mentionedUser.userId.toString() : notification.userHandle;
+      });
+      return Promise.resolve(notifications);
+    }).catch((error) => {
+      if (logger) {
+        logger.error(error);
+        logger.info('Unable to send notification to mentioned user')
+      }
+      //resolves with empty notification which essentially means we are unable to send notification to mentioned user
+      return Promise.resolve([]);
+    });
+  } else {
+    return Promise.resolve([]);
+  }
 };
 
 /**
