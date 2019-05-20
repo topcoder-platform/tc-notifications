@@ -89,20 +89,20 @@ const getNotificationsForMentionedUser = (logger, eventConfig, content) => {
   return new Promise((resolve, reject) => { // eslint-disable-line no-unused-vars
     const handles = _.map(notifications, 'userHandle');
     if (handles.length > 0) {
-      service.getUsersByHandle(handles).then((users) => {
+      return service.getUsersByHandle(handles).then((users) => {
         _.forEach(notifications, (notification) => {
           const mentionedUser = _.find(users, { handle: notification.userHandle });
           notification.userId = mentionedUser ? mentionedUser.userId.toString() : notification.userHandle;
         });
         resolve(notifications);
-      }).catch((error) => {
+      })/*.catch((error) => {
         if (logger) {
           logger.error(error);
           logger.info('Unable to send notification to mentioned user')
         }
         //resolves with empty notification which essentially means we are unable to send notification to mentioned user
         resolve([]);
-      });
+      })*/;
     } else {
       resolve([]);
     }
