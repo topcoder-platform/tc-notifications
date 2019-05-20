@@ -75,20 +75,37 @@ function startKafkaConsumer(handlers, notificationServiceHandlers) {
       });
   });
 
+  var latestSubscriptions = null;
+
   const check = function () {
-    logger.debug('Checking Health...')   ; 
+    logger.debug("Checking health");
     if (!consumer.client.initialBrokers && !consumer.client.initialBrokers.length) {
       logger.debug('Found unhealthy Kafka Brokers...');
       return false;
     }
     let connected = true;
+    let currentSubscriptions = consumer.subscriptions;
+    for(var sIdx in currentSubscriptions) {
+      // current subscription
+      let sub = currentSubscriptions[sIdx];
+      // previous subscription
+      let prevSub = latestSubscriptions ? latestSubscriptions[sIdx] : null;
+      // levarage the `paused` field (https://github.com/oleksiyk/kafka/blob/master/lib/base_consumer.js#L66) to
+      // determine if there was a possibility of an unhandled exception. If we find paused status for the same
+      // topic in two consecutive health checks, we assume it was stuck because of unhandled error
+      if (prevSub && prevSub.paused && sub.paused) {
+        logger.error(`Found subscription for ${sIdx} in paused state for consecutive health checks`);
+        return false;
+      }
+    }
+    // stores the latest subscription status in global variable
+    latestSubscriptions = consumer.subscriptions;
     consumer.client.initialBrokers.forEach(conn => {
-      logger.debug(`url ${conn.server()} - connected=${conn.connected}`);
-      connected = conn.connected & connected;
+      logger.debug(`url ${conn.server()} - connected=${conn.connected}`)
+      connected = conn.connected & connected
     });
-    logger.debug('Found all Kafka Brokers healthy...');
-    return connected;
-  };
+    return connected
+  }
 
   consumer
     .init()
