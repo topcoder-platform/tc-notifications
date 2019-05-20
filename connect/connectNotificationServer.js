@@ -413,10 +413,10 @@ const handler = (topic, message, logger, callback) => {
   }
 
   // get project details
-  service.getProject(projectId).then(project => {
+  return service.getProject(projectId).then(project => {
     let allNotifications = [];
 
-    Promise.all([
+    return Promise.all([
       // the order in this list defines the priority of notification for the SAME user
       // upper in this list - higher priority
       // NOTE: always add all handles here, they have to check by themselves:
