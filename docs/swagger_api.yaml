@@ -6,7 +6,7 @@ info:
 host: "localhost:4000"
 basePath: "/v5/notifications"
 schemes:
-- "http"
+  - "http"
 securityDefinitions:
   jwt:
     type: apiKey
@@ -15,7 +15,7 @@ securityDefinitions:
     description: JWT Authentication. Provide API Key in the form 'Bearer &lt;token&gt;'.
 
 paths:
-  /list:
+  /:
     get:
       description:
         list notifications
@@ -24,18 +24,23 @@ paths:
       security:
         - jwt: []
       parameters:
-        - name: offset
+        - name: page
           in: query
-          description: The offset
+          description: The page
           required: false
           type: integer
           format: int32
-        - name: limit
+        - name: per_page
           in: query
-          description: The limit
+          description: The number of rows served
           required: false
           type: integer
           format: int32
+        - name: platform
+          in: query
+          description: The platform
+          required: false
+          type: string
         - name: type
           in: query
           description: The type
@@ -83,20 +88,64 @@ paths:
                     updatedAt:
                       type: string
                       description: updated at date string
-              offset:
+              page:
                 type: integer
                 format: int32
-                description: the offset
-              limit:
+                description: the page
+              per_page:
                 type: integer
                 format: int32
-                description: the limit
+                description: the per_page
               totalCount:
                 type: integer
                 format: int32
                 description: the total count
         401:
           description: "Authentication failed."
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal server error."
+          schema:
+            $ref: "#/definitions/Error"
+  /{id}:
+    patch:
+      description:
+        update notification
+      security:
+        - jwt: []
+      parameters:
+        - in: path
+          name: id
+          description: notification id
+          required: true
+          type: integer
+          format: int64
+        - in: body
+          name: body
+          description: notification payload
+          required: true
+          schema:
+            $ref: "#/definitions/NotificationUpdatePayload"
+      responses:
+        200:
+          description: OK, the notification(s) are updated
+          schema:
+            $ref: "#/definitions/Notification"
+        400:
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/Error"
+        401:
+          description: "authentication failed"
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Action not allowed."
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "Notification is not found"
           schema:
             $ref: "#/definitions/Error"
         500:
@@ -256,6 +305,32 @@ paths:
             $ref: "#/definitions/Error"
 
 definitions:
+  NotificationUpdatePayload:
+    properties:
+      read:
+        type: boolean
+      seen:
+        type: boolean
+  Notification:
+    properties:
+      id:
+        type: integer
+      userId:
+        type: integer
+      type:
+        type: string
+      contents:
+        type: object
+      version:
+        type: integer
+      read:
+        type: boolean
+      seen:
+        type: boolean
+      createdAt:
+        type: string
+      updatedAt:
+        type: string
   Error:
     properties:
       error:
