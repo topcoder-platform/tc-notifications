@@ -17,6 +17,24 @@ const models = require('./models');
 const Kafka = require('no-kafka');
 const healthcheck = require('topcoder-healthcheck-dropin');
 
+
+// helps in health checking in case of unhandled rejection of promises
+const unhandledRejections = [];
+process.on('unhandledRejection', (reason, promise) => {
+  console.log('Unhandled Rejection at:', promise, 'reason:', reason);
+  // aborts the process to let the HA of the container to restart the task
+  // process.abort();
+  unhandledRejections.push(promise);
+});
+
+// ideally any unhandled rejection is handled after more than one event loop, it should be removed
+// from the unhandledRejections array. We just remove the first element from the array as we only care
+// about the count every time an unhandled rejection promise is handled
+process.on('rejectionHandled', (promise) => {
+  console.log('Handled Rejection at:', promise);
+  unhandledRejections.shift();
+});
+
 /**
  * Start Kafka consumer for event bus events.
  * @param {Object} handlers                    the handlers
@@ -79,8 +97,12 @@ function startKafkaConsumer(handlers, notificationServiceHandlers) {
 
   const check = function () {
     logger.debug("Checking health");
+    if (unhandledRejections && unhandledRejections.length > 0) {
+      logger.error('Found unhandled promises. Application is potentially in stalled state.');
+      return false;
+    }
     if (!consumer.client.initialBrokers && !consumer.client.initialBrokers.length) {
-      logger.debug('Found unhealthy Kafka Brokers...');
+      logger.error('Found unhealthy Kafka Brokers...');
       return false;
     }
     let connected = true;
