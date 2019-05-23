@@ -91,13 +91,16 @@ const getNotificationsForMentionedUser = (logger, eventConfig, content) => {
     return service.getUsersByHandle(handles).then((users) => {
       _.forEach(notifications, (notification) => {
         const mentionedUser = _.find(users, { handle: notification.userHandle });
-        notification.userId = mentionedUser ? mentionedUser.userId.toString() : notification.userHandle;
+        notification.userId = mentionedUser ? mentionedUser.userId.toString() : null;
+        if (!notification.userId && logger) {// such notifications would be discarded later after aggregation
+          logger.info(`Unable to find user with handle ${notification.userHandle}`);
+        }
       });
       return Promise.resolve(notifications);
     }).catch((error) => {
       if (logger) {
         logger.error(error);
-        logger.info('Unable to send notification to mentioned user')
+        logger.info('Unable to send notification to mentioned user');
       }
       //resolves with empty notification which essentially means we are unable to send notification to mentioned user
       return Promise.resolve([]);
@@ -438,7 +441,7 @@ const handler = (topic, message, logger, callback) => {
         project,
       })
     )).then((notifications) => {
-      allNotifications = _.filter(notifications, notification => notification.userId !== `${message.initiatorUserId}`);
+      allNotifications = _.filter(notifications, n => n.userId && n.userId !== `${message.initiatorUserId}`);
 
       if (eventConfig.includeUsers && message[eventConfig.includeUsers] &&
           message[eventConfig.includeUsers].length > 0) {
