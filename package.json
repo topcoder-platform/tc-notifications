@@ -53,8 +53,9 @@
     "sequelize": "^4.21.0",
     "superagent": "^3.8.0",
     "tc-core-library-js": "appirio-tech/tc-core-library-js.git#v2.6",
-    "winston": "^2.2.0",
-    "topcoder-healthcheck-dropin": "^1.0.3"
+    "topcoder-healthcheck-dropin": "^1.0.3",
+    "urijs": "^1.19.1",
+    "winston": "^2.2.0"
   },
   "engines": {
     "node": "6.x"
