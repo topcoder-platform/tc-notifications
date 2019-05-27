@@ -179,7 +179,7 @@ updateSettings.schema = {
 function* listNotifications(query, userId) {
   const settings = yield getSettings(userId);
   const notificationSettings = settings.notifications;
-  const limit = query.per_page;
+  const limit = query.limit || query.per_page;
   const offset = (query.page - 1) * limit;
   const filter = { where: {
     userId,
@@ -213,7 +213,7 @@ function* listNotifications(query, userId) {
   });
   return {
     items,
-    perPage: query.per_page,
+    perPage: limit,
     currentPage: query.page,
     total: docs.count,
   };
@@ -223,6 +223,8 @@ listNotifications.schema = {
   query: Joi.object().keys({
     page: Joi.number().integer().min(1).default(1),
     per_page: Joi.number().integer().min(1).default(DEFAULT_LIMIT),
+    // supporting limit field temporarily
+    limit: Joi.number().integer().min(1),
     type: Joi.string(),
     platform: Joi.string(),
     // when it is true, return only read notifications
