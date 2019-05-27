@@ -179,14 +179,10 @@ updateSettings.schema = {
 function* listNotifications(query, userId) {
   const settings = yield getSettings(userId);
   const notificationSettings = settings.notifications;
-  const limit = query.per_page;
-  const offset = (query.page - 1) * limit;
+
   const filter = { where: {
     userId,
-  }, offset, limit, order: [['createdAt', 'DESC']] };
-  if (query.platform) {
-    filter.where.type = { $like: `notifications\.${query.platform}\.%` };
-  }
+  }, offset: query.offset, limit: query.limit, order: [['createdAt', 'DESC']] };
   if (_.keys(notificationSettings).length > 0) {
     // only filter out notifications types which were explicitly set to 'no' - so we return notification by default
     const notifications = _.keys(notificationSettings).filter((notificationType) =>
@@ -194,10 +190,10 @@ function* listNotifications(query, userId) {
       !notificationSettings[notificationType].web &&
       notificationSettings[notificationType].web.enabled === 'no'
     );
-    filter.where.type = Object.assign(filter.where.type || {}, { $notIn: notifications });
+    filter.where.type = { $notIn: notifications };
   }
   if (query.type) {
-    filter.where.type = Object.assign(filter.where.type || {}, { $eq: query.type });
+    filter.where.type = query.type;
   }
   if (query.read) {
     filter.where.read = (query.read === 'true');
@@ -213,63 +209,23 @@ function* listNotifications(query, userId) {
   });
   return {
     items,
-    perPage: query.per_page,
-    currentPage: query.page,
-    total: docs.count,
+    offset: query.offset,
+    limit: query.limit,
+    totalCount: docs.count,
   };
 }
 
 listNotifications.schema = {
   query: Joi.object().keys({
-    page: Joi.number().integer().min(1).default(1),
-    per_page: Joi.number().integer().min(1).default(DEFAULT_LIMIT),
+    offset: Joi.number().integer().min(0).default(0),
+    limit: Joi.number().integer().min(1).default(DEFAULT_LIMIT),
     type: Joi.string(),
-    platform: Joi.string(),
     // when it is true, return only read notifications
     // when it is false, return only un-read notifications
     // when it is no provided, no read flag filtering
     read: Joi.string().valid('true', 'false'),
   }).required(),
   userId: Joi.number().required(),
-};
-
-/**
- * Update notification.
- *
- * Update notification based on notification id
- *
- * @param {Number} userId the user id
- * @param {Number} notificationId the notification id
- * @param {Object} payload the update notification payload
- * @returns {Object} the updated notification
- */
-function* updateNotification(userId, notificationId, payload) {
-  if (payload.read === false) {
-    throw new errors.ValidationError('Cannot set notification to be unread');
-  }
-  if (payload.seen === false) {
-    throw new errors.ValidationError('Cannot set notification to be unseen');
-  }
-
-  const entity = yield models.Notification.findOne({ where: { id: Number(notificationId) } });
-  if (!entity) {
-    throw new errors.NotFoundError(`Cannot find Notification where id = ${notificationId}`);
-  }
-  if (Number(entity.userId) !== userId) {
-    throw new errors.ForbiddenError(`Cannot access Notification where id = ${entity.id}`);
-  }
-  yield models.Notification.update(payload, { where: { id: Number(notificationId), userId: Number(userId) } });
-
-  return Object.assign(entity, payload);
-}
-
-updateNotification.schema = {
-  userId: Joi.number().required(),
-  notificationId: Joi.number().required(),
-  payload: Joi.object().keys({
-    read: Joi.boolean(),
-    seen: Joi.boolean(),
-  }),
 };
 
 /**
@@ -352,7 +308,6 @@ module.exports = {
   markAsSeen,
   getSettings,
   updateSettings,
-  updateNotification,
 };
 
 logger.buildService(module.exports);

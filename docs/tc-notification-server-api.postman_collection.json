@@ -1,163 +1,47 @@
 {
-	"id": "8fe3fe1d-744f-4c0e-ac34-e2029e6308e9",
+	"id": "3f30c4e3-3b7a-491b-bdb2-6629d081a452",
 	"name": "tc-notification-server-api",
 	"description": "",
 	"auth": null,
 	"events": null,
-	"variables": [],
+	"variables": null,
 	"order": [
-		"68de66b4-c2c6-4b3b-9df4-42f7cf4c4fa3",
-		"c31aa2cc-e377-4b59-a4ee-9e5181449996",
-		"4dc587b5-2da8-4055-8317-88f7a677eb34",
-		"e323baef-7406-4665-9bbe-3f64ce4a427c",
-		"af4744ee-ceba-4a35-a14a-eb38290139fb",
-		"0012295a-9139-47bb-91b3-1f53d94bd928",
-		"8981f01c-fd95-4d19-abcf-36265682a610"
+		"19332a51-03e8-4f5c-8f85-4d28d6dfe6f4",
+		"543cab06-2c7d-4aed-8cf3-0808463254d5",
+		"76779830-a8a4-4636-8c03-1801b3d1863d",
+		"cb2299a5-dac7-4c40-80c4-7b1694138354",
+		"d57ba947-a5e7-410a-b978-76882f33c86e",
+		"fce69847-5bf8-4b07-bcaf-6352db4ba923"
 	],
 	"folders_order": [
-		"060feceb-1658-4fee-9d71-0fedc75effe9"
+		"dbebd550-6c33-4778-b467-d56decf16c91"
 	],
 	"folders": [
 		{
-			"id": "060feceb-1658-4fee-9d71-0fedc75effe9",
+			"id": "dbebd550-6c33-4778-b467-d56decf16c91",
 			"name": "failure",
 			"description": "",
 			"auth": null,
 			"events": null,
-			"collection": "8fe3fe1d-744f-4c0e-ac34-e2029e6308e9",
+			"collectionId": "3f30c4e3-3b7a-491b-bdb2-6629d081a452",
 			"folder": null,
 			"order": [
-				"47aaac74-b661-48d6-bed1-d61efd13b668",
-				"c2d28896-3208-4326-a65e-1718c1f891c5",
-				"c8bb53de-91fc-443c-a8fc-d13f503d0e5f",
-				"208a8afb-8287-4b93-88fd-67320d0a7f0f",
-				"021b87b0-caca-41e9-85ea-16a9d09bab22",
-				"334aae9e-38fc-425e-9649-e09c6188ddc2",
-				"9445564c-74bb-4599-8eca-ae292d5b37fc",
-				"88038b95-0a16-4a36-8835-0713c731e433"
+				"1b3b6480-ea94-4027-8898-f82f28e2bea6",
+				"59fc9f2b-28c5-4cff-b21b-11ab51bf67d8",
+				"cbc03cb1-6dfe-43fd-8e99-8c56923c2978",
+				"d293d2c5-230d-4f34-8c97-1adc1f2f89b4",
+				"da23d550-55b3-4f7d-9131-735956d62f6d",
+				"f2246cf7-7aae-4ea0-9d92-1d932d340302",
+				"f3f3a847-46f6-4059-b167-b436078fb112"
 			],
 			"folders_order": []
 		}
 	],
 	"requests": [
 		{
-			"id": "0012295a-9139-47bb-91b3-1f53d94bd928",
-			"name": "updateNotification",
-			"url": "{{URL}}/1",
-			"description": "",
-			"data": [],
-			"dataMode": "raw",
-			"headerData": [
-				{
-					"description": "",
-					"enabled": true,
-					"key": "Content-Type",
-					"value": "application/json"
-				},
-				{
-					"description": "",
-					"enabled": true,
-					"key": "Authorization",
-					"value": "Bearer {{TOKEN}}"
-				}
-			],
-			"method": "PATCH",
-			"pathVariableData": [],
-			"queryParams": [],
-			"auth": null,
-			"events": null,
-			"folder": null,
-			"rawModeData": "{\n\t\"read\": true\n}",
-			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
-			"pathVariables": {}
-		},
-		{
-			"id": "021b87b0-caca-41e9-85ea-16a9d09bab22",
-			"name": "markAllRead - missing token",
-			"url": "{{URL}}/read",
-			"description": "",
-			"data": [],
-			"dataMode": "raw",
-			"headerData": [
-				{
-					"key": "Content-Type",
-					"value": "application/json",
-					"description": "",
-					"enabled": false
-				}
-			],
-			"method": "PUT",
-			"pathVariableData": [],
-			"queryParams": [],
-			"auth": null,
-			"events": null,
-			"folder": "060feceb-1658-4fee-9d71-0fedc75effe9",
-			"rawModeData": "",
-			"headers": "//Content-Type: application/json\n",
-			"pathVariables": {}
-		},
-		{
-			"id": "208a8afb-8287-4b93-88fd-67320d0a7f0f",
-			"name": "listNotifications - invalid limit",
-			"url": "{{URL}}/list?offset=0&limit=abc&type=notifications.connect.project.updated",
-			"description": "",
-			"data": null,
-			"dataMode": null,
-			"headerData": [
-				{
-					"key": "Content-Type",
-					"value": "application/json",
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "Authorization",
-					"value": "Bearer {{TOKEN}}",
-					"description": "",
-					"enabled": true
-				}
-			],
-			"method": "GET",
-			"pathVariableData": [],
-			"queryParams": [
-				{
-					"key": "offset",
-					"value": "0",
-					"equals": true,
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "limit",
-					"value": "abc",
-					"equals": true,
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "type",
-					"value": "notifications.connect.project.updated",
-					"equals": true,
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "read",
-					"value": "false",
-					"equals": true,
-					"description": "",
-					"enabled": false
-				}
-			],
-			"auth": null,
-			"events": null,
-			"folder": "060feceb-1658-4fee-9d71-0fedc75effe9",
-			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
-			"pathVariables": {}
-		},
-		{
-			"id": "334aae9e-38fc-425e-9649-e09c6188ddc2",
-			"name": "updateSettings - invalid body",
+			"id": "19332a51-03e8-4f5c-8f85-4d28d6dfe6f4",
+			"collectionId": "3f30c4e3-3b7a-491b-bdb2-6629d081a452",
+			"name": "getSettings",
 			"url": "{{URL}}/settings",
 			"description": "",
 			"data": [],
@@ -176,23 +60,24 @@
 					"enabled": true
 				}
 			],
-			"method": "PUT",
+			"method": "GET",
 			"pathVariableData": [],
 			"queryParams": [],
 			"auth": null,
 			"events": null,
-			"folder": "060feceb-1658-4fee-9d71-0fedc75effe9",
-			"rawModeData": "[\n\t{\n\t\t\"wrong\": \"notifications.connect.project.created\",\n\t\t\"deliveryMethod\": 123,\n\t\t\"value\": \"on\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.project.created\",\n\t\t\"deliveryMethod\": \"sms\",\n\t\t\"value\": \"off\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.project.created\",\n\t\t\"deliveryMethod\": \"web\",\n\t\t\"value\": \"off\"\n\t},\n\t{\n\t\t\"topic\": \"notifications.connect.message.posted\",\n\t\t\"deliveryMethod\": \"email\",\n\t\t\"value\": \"off\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.message.posted\",\n\t\t\"deliveryMethod\": \"sms\",\n\t\t\"value\": \"on\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.message.posted\",\n\t\t\"deliveryMethod\": \"web\",\n\t\t\"value\": \"on\"\n\t}\n]",
+			"folder": null,
+			"rawModeData": "",
 			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
 			"pathVariables": {}
 		},
 		{
-			"id": "47aaac74-b661-48d6-bed1-d61efd13b668",
+			"id": "1b3b6480-ea94-4027-8898-f82f28e2bea6",
+			"collectionId": "3f30c4e3-3b7a-491b-bdb2-6629d081a452",
 			"name": "listNotifications - invalid read filter",
 			"url": "{{URL}}/list?offset=0&limit=20&type=notifications.connect.project.updated&read=yes",
 			"description": "",
-			"data": null,
-			"dataMode": null,
+			"data": [],
+			"dataMode": "raw",
 			"headerData": [
 				{
 					"key": "Content-Type",
@@ -241,276 +126,14 @@
 			],
 			"auth": null,
 			"events": null,
-			"folder": "060feceb-1658-4fee-9d71-0fedc75effe9",
-			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
-			"pathVariables": {}
-		},
-		{
-			"id": "4dc587b5-2da8-4055-8317-88f7a677eb34",
-			"name": "markAsRead",
-			"url": "{{URL}}/1/read",
-			"description": "",
-			"data": [],
-			"dataMode": "raw",
-			"headerData": [
-				{
-					"key": "Content-Type",
-					"value": "application/json",
-					"description": "",
-					"enabled": false
-				},
-				{
-					"key": "Authorization",
-					"value": "Bearer {{TOKEN}}",
-					"description": "",
-					"enabled": true
-				}
-			],
-			"method": "PUT",
-			"pathVariableData": [],
-			"queryParams": [],
-			"auth": null,
-			"events": null,
-			"folder": null,
+			"folder": "dbebd550-6c33-4778-b467-d56decf16c91",
 			"rawModeData": "",
-			"headers": "//Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
-			"pathVariables": {}
-		},
-		{
-			"id": "68de66b4-c2c6-4b3b-9df4-42f7cf4c4fa3",
-			"name": "getSettings",
-			"url": "{{URL}}/settings",
-			"description": "",
-			"data": null,
-			"dataMode": null,
-			"headerData": [
-				{
-					"key": "Content-Type",
-					"value": "application/json",
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "Authorization",
-					"value": "Bearer {{TOKEN}}",
-					"description": "",
-					"enabled": true
-				}
-			],
-			"method": "GET",
-			"pathVariableData": [],
-			"queryParams": [],
-			"auth": null,
-			"events": null,
-			"folder": null,
 			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
 			"pathVariables": {}
 		},
 		{
-			"id": "88038b95-0a16-4a36-8835-0713c731e433",
-			"name": "updateNotification - invalid action",
-			"url": "{{URL}}/1",
-			"description": "",
-			"data": [],
-			"dataMode": "raw",
-			"headerData": [
-				{
-					"description": "",
-					"enabled": true,
-					"key": "Content-Type",
-					"value": "application/json"
-				},
-				{
-					"description": "",
-					"enabled": true,
-					"key": "Authorization",
-					"value": "Bearer {{TOKEN}}"
-				}
-			],
-			"method": "PATCH",
-			"pathVariableData": [],
-			"queryParams": [],
-			"auth": null,
-			"events": null,
-			"folder": "060feceb-1658-4fee-9d71-0fedc75effe9",
-			"rawModeData": "{\n\t\"read\": true,\n\t\"seen\": false\n}",
-			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
-			"pathVariables": {}
-		},
-		{
-			"id": "8981f01c-fd95-4d19-abcf-36265682a610",
-			"name": "listNotifications",
-			"url": "{{URL}}?page=1&per_page=20&platform=connect",
-			"description": "",
-			"data": null,
-			"dataMode": null,
-			"headerData": [
-				{
-					"key": "Content-Type",
-					"value": "application/json",
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "Authorization",
-					"value": "Bearer {{TOKEN}}",
-					"description": "",
-					"enabled": true
-				}
-			],
-			"method": "GET",
-			"pathVariableData": [],
-			"queryParams": [
-				{
-					"key": "page",
-					"value": "1",
-					"equals": true,
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "per_page",
-					"value": "20",
-					"equals": true,
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "platform",
-					"value": "connect",
-					"equals": true,
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "read",
-					"value": "false",
-					"equals": true,
-					"description": "",
-					"enabled": false
-				}
-			],
-			"auth": null,
-			"events": null,
-			"folder": null,
-			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
-			"pathVariables": {}
-		},
-		{
-			"id": "9445564c-74bb-4599-8eca-ae292d5b37fc",
-			"name": "listNotifications - invalid page",
-			"url": "{{URL}}/list?page=-1&per_page=20",
-			"description": "",
-			"data": null,
-			"dataMode": null,
-			"headerData": [
-				{
-					"description": "",
-					"enabled": true,
-					"key": "Content-Type",
-					"value": "application/json"
-				},
-				{
-					"description": "",
-					"enabled": true,
-					"key": "Authorization",
-					"value": "Bearer {{TOKEN}}"
-				}
-			],
-			"method": "GET",
-			"pathVariableData": [],
-			"queryParams": [
-				{
-					"key": "page",
-					"value": "-1",
-					"equals": true,
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "per_page",
-					"value": "20",
-					"equals": true,
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "read",
-					"value": "false",
-					"equals": true,
-					"description": "",
-					"enabled": false
-				}
-			],
-			"auth": null,
-			"events": null,
-			"folder": "060feceb-1658-4fee-9d71-0fedc75effe9",
-			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
-			"pathVariables": {}
-		},
-		{
-			"id": "af4744ee-ceba-4a35-a14a-eb38290139fb",
-			"name": "updateSettings",
-			"url": "{{URL}}/settings",
-			"description": "",
-			"data": [],
-			"dataMode": "raw",
-			"headerData": [
-				{
-					"key": "Content-Type",
-					"value": "application/json",
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "Authorization",
-					"value": "Bearer {{TOKEN}}",
-					"description": "",
-					"enabled": true
-				}
-			],
-			"method": "PUT",
-			"pathVariableData": [],
-			"queryParams": [],
-			"auth": null,
-			"events": null,
-			"folder": null,
-			"rawModeData": "{\n    \"notifications\": {\n        \"notifications.connect.project.active\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.updated\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.member.left\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.paused\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.approved\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.fileUploaded\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.canceled\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.topic.created\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.member.copilotJoined\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.post.deleted\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.created\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.member.assignedAsOwner\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.completed\": {\n            \"web\": {\n                \"enabled\": \"yes\"\n            },\n            \"email\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.topic.deleted\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.post.created\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.member.joined\": {\n            \"web\": {\n                \"enabled\": \"yes\"\n            },\n            \"email\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.member.removed\": {\n            \"web\": {\n                \"enabled\": \"yes\"\n            },\n            \"email\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.specificationModified\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.member.managerJoined\": {\n            \"web\": {\n                \"enabled\": \"yes\"\n            },\n            \"email\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.submittedForReview\": {\n            \"web\": {\n                \"enabled\": \"yes\"\n            },\n            \"email\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.linkCreated\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.post.edited\": {\n            \"web\": {\n                \"enabled\": \"yes\"\n            },\n            \"email\": {\n                \"enabled\": \"yes\"\n            }\n        }\n    },\n    \"services\": {\n        \"email\": {\n            \"bundlePeriod\": \"every10minutes\"\n        }\n    }\n}",
-			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
-			"pathVariables": {}
-		},
-		{
-			"id": "c2d28896-3208-4326-a65e-1718c1f891c5",
-			"name": "getSettings - invalid token",
-			"url": "{{URL}}/settings",
-			"description": "",
-			"data": null,
-			"dataMode": null,
-			"headerData": [
-				{
-					"key": "Content-Type",
-					"value": "application/json",
-					"description": "",
-					"enabled": true
-				},
-				{
-					"key": "Authorization",
-					"value": "Bearer invalid",
-					"description": "",
-					"enabled": true
-				}
-			],
-			"method": "GET",
-			"pathVariableData": [],
-			"queryParams": [],
-			"auth": null,
-			"events": null,
-			"folder": "060feceb-1658-4fee-9d71-0fedc75effe9",
-			"headers": "Content-Type: application/json\nAuthorization: Bearer invalid\n",
-			"pathVariables": {}
-		},
-		{
-			"id": "c31aa2cc-e377-4b59-a4ee-9e5181449996",
+			"id": "543cab06-2c7d-4aed-8cf3-0808463254d5",
+			"collectionId": "3f30c4e3-3b7a-491b-bdb2-6629d081a452",
 			"name": "markAllRead",
 			"url": "{{URL}}/read",
 			"description": "",
@@ -541,9 +164,42 @@
 			"pathVariables": {}
 		},
 		{
-			"id": "c8bb53de-91fc-443c-a8fc-d13f503d0e5f",
-			"name": "markAsRead - not found",
-			"url": "{{URL}}/1111111/read",
+			"id": "59fc9f2b-28c5-4cff-b21b-11ab51bf67d8",
+			"collectionId": "3f30c4e3-3b7a-491b-bdb2-6629d081a452",
+			"name": "getSettings - invalid token",
+			"url": "{{URL}}/settings",
+			"description": "",
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer invalid",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"method": "GET",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": null,
+			"folder": "dbebd550-6c33-4778-b467-d56decf16c91",
+			"rawModeData": "",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer invalid\n",
+			"pathVariables": {}
+		},
+		{
+			"id": "76779830-a8a4-4636-8c03-1801b3d1863d",
+			"collectionId": "3f30c4e3-3b7a-491b-bdb2-6629d081a452",
+			"name": "markAsRead",
+			"url": "{{URL}}/1/read",
 			"description": "",
 			"data": [],
 			"dataMode": "raw",
@@ -566,18 +222,19 @@
 			"queryParams": [],
 			"auth": null,
 			"events": null,
-			"folder": "060feceb-1658-4fee-9d71-0fedc75effe9",
+			"folder": null,
 			"rawModeData": "",
 			"headers": "//Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
 			"pathVariables": {}
 		},
 		{
-			"id": "e323baef-7406-4665-9bbe-3f64ce4a427c",
+			"id": "cb2299a5-dac7-4c40-80c4-7b1694138354",
 			"name": "TC API - get project",
 			"url": "https://api.topcoder-dev.com/v4/projects/1936",
+			"collectionId": "3f30c4e3-3b7a-491b-bdb2-6629d081a452",
 			"description": "",
-			"data": null,
-			"dataMode": null,
+			"data": [],
+			"dataMode": "raw",
 			"headerData": [
 				{
 					"key": "Content-Type",
@@ -600,7 +257,7 @@
 			"folder": null,
 			"responses": [
 				{
-					"id": "3e0e5441-9c98-4a09-a256-9d825e2c76f8",
+					"id": "ae658c70-e29d-4d49-aefd-944af0e4f811",
 					"name": "test111",
 					"status": "",
 					"mime": "",
@@ -614,84 +271,390 @@
 					"requestObject": null,
 					"headers": [
 						{
+							"name": "access-control-allow-credentials",
 							"key": "access-control-allow-credentials",
 							"value": "true",
-							"name": "access-control-allow-credentials",
 							"description": "Indicates whether or not the response to the request can be exposed when the credentials flag is true. When used as part of a response to a preflight request, this indicates whether or not the actual request can be made using credentials."
 						},
 						{
+							"name": "access-control-allow-headers",
 							"key": "access-control-allow-headers",
 							"value": "Authorization,Content-Type,Accept,Origin,User-Agent,DNT,Cache-Control,X-Mx-ReqToken,Keep-Alive,X-Requested-With,If-Modified-Since",
-							"name": "access-control-allow-headers",
 							"description": "Used in response to a preflight request to indicate which HTTP headers can be used when making the actual request."
 						},
 						{
+							"name": "access-control-allow-methods",
 							"key": "access-control-allow-methods",
 							"value": "GET, POST, OPTIONS, DELETE, PUT, PATCH",
-							"name": "access-control-allow-methods",
 							"description": "Specifies the method or methods allowed when accessing the resource. This is used in response to a preflight request."
 						},
 						{
+							"name": "connection",
 							"key": "connection",
 							"value": "keep-alive",
-							"name": "connection",
 							"description": "Options that are desired for the connection"
 						},
 						{
+							"name": "content-encoding",
 							"key": "content-encoding",
 							"value": "gzip",
-							"name": "content-encoding",
 							"description": "The type of encoding used on the data."
 						},
 						{
+							"name": "content-length",
 							"key": "content-length",
 							"value": "491",
-							"name": "content-length",
 							"description": "The length of the response body in octets (8-bit bytes)"
 						},
 						{
+							"name": "content-type",
 							"key": "content-type",
 							"value": "application/json; charset=utf-8",
-							"name": "content-type",
 							"description": "The mime type of this content"
 						},
 						{
+							"name": "date",
 							"key": "date",
 							"value": "Thu, 02 Nov 2017 04:28:20 GMT",
-							"name": "date",
 							"description": "The date and time that the message was sent"
 						},
 						{
+							"name": "etag",
 							"key": "etag",
 							"value": "W/\"3a6-4pbtTNq19Shn10rc0k+HRsoAyMw\"",
-							"name": "etag",
 							"description": "An identifier for a specific version of a resource, often a message digest"
 						},
 						{
+							"name": "server",
 							"key": "server",
 							"value": "nginx/1.9.7",
-							"name": "server",
 							"description": "A name for the server"
 						},
 						{
+							"name": "x-powered-by",
 							"key": "x-powered-by",
 							"value": "Express",
-							"name": "x-powered-by",
 							"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
 						},
 						{
+							"name": "x-request-id",
 							"key": "x-request-id",
 							"value": "95744bd2-2830-4014-8885-7182a6225953",
-							"name": "x-request-id",
 							"description": "Custom header"
 						}
 					],
 					"cookies": [],
-					"request": "e323baef-7406-4665-9bbe-3f64ce4a427c",
-					"collection": "8fe3fe1d-744f-4c0e-ac34-e2029e6308e9"
+					"request": "cb2299a5-dac7-4c40-80c4-7b1694138354",
+					"collectionId": "3f30c4e3-3b7a-491b-bdb2-6629d081a452"
 				}
 			],
+			"rawModeData": "",
 			"headers": "Content-Type: application/json\nauthorization: Bearer {{TC_ADMIN_TOKEN}}\n",
+			"pathVariables": {}
+		},
+		{
+			"id": "cbc03cb1-6dfe-43fd-8e99-8c56923c2978",
+			"name": "markAsRead - not found",
+			"url": "{{URL}}/1111111/read",
+			"description": "",
+			"collectionId": "3f30c4e3-3b7a-491b-bdb2-6629d081a452",
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": false
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{TOKEN}}",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"method": "PUT",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": null,
+			"folder": "dbebd550-6c33-4778-b467-d56decf16c91",
+			"rawModeData": "",
+			"headers": "//Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
+			"pathVariables": {}
+		},
+		{
+			"id": "d293d2c5-230d-4f34-8c97-1adc1f2f89b4",
+			"name": "listNotifications - invalid limit",
+			"collectionId": "3f30c4e3-3b7a-491b-bdb2-6629d081a452",
+			"url": "{{URL}}/list?offset=0&limit=abc&type=notifications.connect.project.updated",
+			"description": "",
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{TOKEN}}",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"method": "GET",
+			"pathVariableData": [],
+			"queryParams": [
+				{
+					"key": "offset",
+					"value": "0",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "limit",
+					"value": "abc",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "type",
+					"value": "notifications.connect.project.updated",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "read",
+					"value": "false",
+					"equals": true,
+					"description": "",
+					"enabled": false
+				}
+			],
+			"auth": null,
+			"events": null,
+			"folder": "dbebd550-6c33-4778-b467-d56decf16c91",
+			"rawModeData": "",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
+			"pathVariables": {}
+		},
+		{
+			"id": "d57ba947-a5e7-410a-b978-76882f33c86e",
+			"name": "updateSettings",
+			"url": "{{URL}}/settings",
+			"collectionId": "3f30c4e3-3b7a-491b-bdb2-6629d081a452",
+			"description": "",
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{TOKEN}}",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"method": "PUT",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": null,
+			"folder": null,
+			"rawModeData": "{\n    \"notifications\": {\n        \"notifications.connect.project.active\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.updated\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.member.left\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.paused\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.approved\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.fileUploaded\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.canceled\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.topic.created\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.member.copilotJoined\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.post.deleted\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.created\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.member.assignedAsOwner\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.completed\": {\n            \"web\": {\n                \"enabled\": \"yes\"\n            },\n            \"email\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.topic.deleted\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.post.created\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.member.joined\": {\n            \"web\": {\n                \"enabled\": \"yes\"\n            },\n            \"email\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.member.removed\": {\n            \"web\": {\n                \"enabled\": \"yes\"\n            },\n            \"email\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.specificationModified\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.member.managerJoined\": {\n            \"web\": {\n                \"enabled\": \"yes\"\n            },\n            \"email\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.submittedForReview\": {\n            \"web\": {\n                \"enabled\": \"yes\"\n            },\n            \"email\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.linkCreated\": {\n            \"email\": {\n                \"enabled\": \"yes\"\n            },\n            \"web\": {\n                \"enabled\": \"yes\"\n            }\n        },\n        \"notifications.connect.project.post.edited\": {\n            \"web\": {\n                \"enabled\": \"yes\"\n            },\n            \"email\": {\n                \"enabled\": \"yes\"\n            }\n        }\n    },\n    \"services\": {\n        \"email\": {\n            \"bundlePeriod\": \"every10minutes\"\n        }\n    }\n}",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
+			"pathVariables": {}
+		},
+		{
+			"id": "da23d550-55b3-4f7d-9131-735956d62f6d",
+			"name": "markAllRead - missing token",
+			"collectionId": "3f30c4e3-3b7a-491b-bdb2-6629d081a452",
+			"url": "{{URL}}/read",
+			"description": "",
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": false
+				}
+			],
+			"method": "PUT",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": null,
+			"folder": "dbebd550-6c33-4778-b467-d56decf16c91",
+			"rawModeData": "",
+			"headers": "//Content-Type: application/json\n",
+			"pathVariables": {}
+		},
+		{
+			"id": "f2246cf7-7aae-4ea0-9d92-1d932d340302",
+			"collectionId": "3f30c4e3-3b7a-491b-bdb2-6629d081a452",
+			"name": "updateSettings - invalid body",
+			"url": "{{URL}}/settings",
+			"description": "",
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{TOKEN}}",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"method": "PUT",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": null,
+			"folder": "dbebd550-6c33-4778-b467-d56decf16c91",
+			"rawModeData": "[\n\t{\n\t\t\"wrong\": \"notifications.connect.project.created\",\n\t\t\"deliveryMethod\": 123,\n\t\t\"value\": \"on\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.project.created\",\n\t\t\"deliveryMethod\": \"sms\",\n\t\t\"value\": \"off\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.project.created\",\n\t\t\"deliveryMethod\": \"web\",\n\t\t\"value\": \"off\"\n\t},\n\t{\n\t\t\"topic\": \"notifications.connect.message.posted\",\n\t\t\"deliveryMethod\": \"email\",\n\t\t\"value\": \"off\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.message.posted\",\n\t\t\"deliveryMethod\": \"sms\",\n\t\t\"value\": \"on\"\n\t}, {\n\t\t\"topic\": \"notifications.connect.message.posted\",\n\t\t\"deliveryMethod\": \"web\",\n\t\t\"value\": \"on\"\n\t}\n]",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
+			"pathVariables": {}
+		},
+		{
+			"id": "f3f3a847-46f6-4059-b167-b436078fb112",
+			"name": "listNotifications - invalid offset",
+			"collectionId": "3f30c4e3-3b7a-491b-bdb2-6629d081a452",
+			"url": "{{URL}}/list?offset=-1&limit=20&type=notifications.connect.project.updated",
+			"description": "",
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{TOKEN}}",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"method": "GET",
+			"pathVariableData": [],
+			"queryParams": [
+				{
+					"key": "offset",
+					"value": "-1",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "limit",
+					"value": "20",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "type",
+					"value": "notifications.connect.project.updated",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "read",
+					"value": "false",
+					"equals": true,
+					"description": "",
+					"enabled": false
+				}
+			],
+			"auth": null,
+			"events": null,
+			"folder": "dbebd550-6c33-4778-b467-d56decf16c91",
+			"rawModeData": "",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
+			"pathVariables": {}
+		},
+		{
+			"id": "fce69847-5bf8-4b07-bcaf-6352db4ba923",
+			"collectionId": "3f30c4e3-3b7a-491b-bdb2-6629d081a452",
+			"name": "listNotifications",
+			"url": "{{URL}}/list?offset=0&limit=20",
+			"description": "",
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer {{TOKEN}}",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"method": "GET",
+			"pathVariableData": [],
+			"queryParams": [
+				{
+					"key": "offset",
+					"value": "0",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "limit",
+					"value": "20",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "type",
+					"value": "notifications.connect.project.updated",
+					"equals": true,
+					"description": "",
+					"enabled": false
+				},
+				{
+					"key": "read",
+					"value": "false",
+					"equals": true,
+					"description": "",
+					"enabled": false
+				}
+			],
+			"auth": null,
+			"events": null,
+			"folder": null,
+			"rawModeData": "",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer {{TOKEN}}\n",
 			"pathVariables": {}
 		}
 	]
