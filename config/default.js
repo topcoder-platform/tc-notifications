@@ -32,7 +32,6 @@ module.exports = {
   TC_API_V4_BASE_URL: process.env.TC_API_V4_BASE_URL || '',
   TC_API_V5_BASE_URL: process.env.TC_API_V5_BASE_URL || '',
   API_CONTEXT_PATH: process.env.API_CONTEXT_PATH || '/v5/notifications',
-  API_BASE_URL: process.env.API_BASE_URL || 'http://api.topcoder-dev.com',
 
   // Configuration for generating machine to machine auth0 token.
   // The token will be used for calling another internal API.
