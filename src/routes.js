@@ -7,6 +7,16 @@ module.exports = {
       method: 'listNotifications',
     },
   },
+  '/:id': {
+    patch: {
+      controller: 'NotificationController',
+      method: 'updateNotification',
+    },
+    post: {
+      controller: 'NotificationController',
+      method: 'updateNotification',
+    },
+  },
   '/:id/read': {
     put: {
       controller: 'NotificationController',

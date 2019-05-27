@@ -2,6 +2,7 @@
  * Contains generic helper methods for TC API
  */
 const _ = require('lodash');
+const URI = require('urijs');
 const config = require('config');
 const request = require('superagent');
 const m2mAuth = require('tc-core-library-js').auth.m2m;
@@ -318,6 +319,54 @@ function* modifyNotificationNode(ruleSet, data) {
   return notification;
 }
 
+/**
+ * generate header based on v5 specification
+ * @param {String} url the api url to fetch
+ * @param {Number} perPage the number served in one page
+ * @param {Number} currentPage the current page number
+ * @param {Number} total the total number of rows/entities
+ *
+ * @returns {Object} the header response
+ */
+function generateV5Header({ url, perPage, currentPage, total }) {
+  const links = [];
+  const fullUrl = `${config.API_BASE_URL}${url}`;
+  const generateUrl = (url_, page, rel) => {
+    const newUrl = new URI(url_);
+    newUrl.setQuery({
+      page,
+    });
+    links.push(`<${newUrl.toString()}>; rel="${rel}"`);
+  };
+
+  const totalPages = perPage ? Math.ceil(total / perPage) : 1;
+  const headers = {
+    'X-Page': currentPage || 1,
+    'X-Total': total,
+    'X-Total-Pages': totalPages || 1,
+  };
+  if (perPage) {
+    headers['X-Per-Page'] = perPage;
+  }
+
+  if (currentPage > 1) {
+    headers['X-Prev-Page'] = currentPage - 1;
+    generateUrl(fullUrl, currentPage - 1, 'prev');
+    generateUrl(fullUrl, 1, 'first');
+  }
+
+  if (currentPage < totalPages) {
+    headers['X-Next-Page'] = currentPage + 1;
+
+    generateUrl(fullUrl, currentPage + 1, 'next');
+    generateUrl(fullUrl, totalPages, 'last');
+  }
+
+  headers.Link = links.join(',');
+
+  return headers;
+}
+
 module.exports = {
   getM2MToken,
   getUsersBySkills,
@@ -329,4 +378,5 @@ module.exports = {
   getUsersInfoFromChallenge,
   filterChallengeUsers,
   modifyNotificationNode,
+  generateV5Header,
 };
