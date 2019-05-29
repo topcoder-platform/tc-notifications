@@ -4,6 +4,7 @@
 'use strict';
 
 const NotificationService = require('../services/NotificationService');
+const tcApiHelper = require('../common/tcApiHelper');
 
 /**
  * List notifications.
@@ -11,7 +12,26 @@ const NotificationService = require('../services/NotificationService');
  * @param res the response
  */
 function* listNotifications(req, res) {
-  res.json(yield NotificationService.listNotifications(req.query, req.user.userId));
+  const {
+    items,
+    perPage,
+    currentPage,
+    total,
+  } = yield NotificationService.listNotifications(req.query, req.user.userId);
+
+  const headers = tcApiHelper.generateV5Header({
+    url: req.originalUrl,
+    perPage,
+    currentPage,
+    total,
+  });
+
+  res.set(headers);
+  res.json(items);
+}
+
+function* updateNotification(req, res) {
+  res.json(yield NotificationService.updateNotification(req.user.userId, req.params.id, req.body));
 }
 
 /**
@@ -71,4 +91,5 @@ module.exports = {
   markAsSeen,
   getSettings,
   updateSettings,
+  updateNotification,
 };
