@@ -27,7 +27,20 @@ function* listNotifications(req, res) {
   });
 
   res.set(headers);
-  res.json(items);
+
+  /**
+   * disabling v5 API feature temporarily for connect-app (backward compatibility)
+   */
+
+  //res.json(items);
+
+  // TODO disable this and revert to original
+  res.json({
+    items,
+    offset: currentPage,
+    limit: perPage,
+    totalCount: total
+  })
 }
 
 function* updateNotification(req, res) {
