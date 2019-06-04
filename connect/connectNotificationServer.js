@@ -9,6 +9,7 @@ const config = require('./config');
 const notificationServer = require('../index');
 const _ = require('lodash');
 const service = require('./service');
+const helpers = require('./helpers');
 const { BUS_API_EVENT } = require('./constants');
 const EVENTS = require('./events-config').EVENTS;
 const PROJECT_ROLE_RULES = require('./events-config').PROJECT_ROLE_RULES;
@@ -85,27 +86,28 @@ const getNotificationsForMentionedUser = (logger, eventConfig, content) => {
   // only one per userHandle
   notifications = _.uniqBy(notifications, 'userHandle');
 
-  return new Promise((resolve, reject) => { // eslint-disable-line no-unused-vars
-    const handles = _.map(notifications, 'userHandle');
-    if (handles.length > 0) {
-      service.getUsersByHandle(handles).then((users) => {
-        _.forEach(notifications, (notification) => {
-          const mentionedUser = _.find(users, { handle: notification.userHandle });
-          notification.userId = mentionedUser ? mentionedUser.userId.toString() : notification.userHandle;
-        });
-        resolve(notifications);
-      }).catch((error) => {
-        if (logger) {
-          logger.error(error);
-          logger.info('Unable to send notification to mentioned user')
+  const handles = _.map(notifications, 'userHandle');
+  if (handles.length > 0) {
+    return service.getUsersByHandle(handles).then((users) => {
+      _.forEach(notifications, (notification) => {
+        const mentionedUser = _.find(users, { handle: notification.userHandle });
+        notification.userId = mentionedUser ? mentionedUser.userId.toString() : null;
+        if (!notification.userId && logger) {// such notifications would be discarded later after aggregation
+          logger.info(`Unable to find user with handle ${notification.userHandle}`);
         }
-        //resolves with empty notification which essentially means we are unable to send notification to mentioned user
-        resolve([]);
       });
-    } else {
-      resolve([]);
-    }
-  });
+      return Promise.resolve(notifications);
+    }).catch((error) => {
+      if (logger) {
+        logger.error(error);
+        logger.info('Unable to send notification to mentioned user');
+      }
+      //resolves with empty notification which essentially means we are unable to send notification to mentioned user
+      return Promise.resolve([]);
+    });
+  } else {
+    return Promise.resolve([]);
+  }
 };
 
 /**
@@ -150,7 +152,7 @@ const getProjectMembersNotifications = (eventConfig, project) => {
     return Promise.resolve([]);
   }
 
-  return new Promise((resolve) => {
+  return Promise.promisify((callback) => {
     let notifications = [];
     const projectMembers = _.get(project, 'members', []);
 
@@ -185,8 +187,8 @@ const getProjectMembersNotifications = (eventConfig, project) => {
     // only one per userId
     notifications = _.uniqBy(notifications, 'userId');
 
-    resolve(notifications);
-  });
+    callback(null, notifications);
+  })();
 };
 
 /**
@@ -255,6 +257,83 @@ const getNotificationsForTopicStarter = (eventConfig, topicId) => {
 };
 
 /**
+ * Filter members by project roles
+ *
+ * @params {Array} List of project roles
+ * @params {Array} List of project members
+ *
+ * @returns {Array} List of objects with user ids
+ */
+const filterMembersByRoles = (roles, members) => {
+  let result = [];
+
+  roles.forEach(projectRole => {
+    result = result.concat(
+      _.filter(members, PROJECT_ROLE_RULES[projectRole])
+        .map(projectMember => ({
+          userId: projectMember.userId.toString(),
+        }))
+    );
+  });
+
+  return result;
+};
+
+/**
+ * Exclude private posts notification
+ *
+ * @param  {Object} eventConfig event configuration
+ * @param  {Object} project     project details
+ * @param  {Array}  tags        list of message tags
+ *
+ * @return {Promise}            resolves to a list of notifications
+ */
+const getExcludedPrivatePostNotifications = (eventConfig, project, tags) => {
+  // skip if message is not private or exclusion rule is not configured
+  if (!_.includes(tags, 'MESSAGES') || !eventConfig.privatePostsForProjectRoles) {
+    return Promise.resolve([]);
+  }
+
+  const members = _.get(project, 'members', []);
+  const notifications = filterMembersByRoles(eventConfig.privatePostsForProjectRoles, members);
+
+  return Promise.resolve(notifications);
+};
+
+/**
+ * Exclude notifications about posts inside draft phases
+ *
+ * @param  {Object} eventConfig event configuration
+ * @param  {Object} project     project details
+ * @param  {Array}  tags        list of message tags
+ *
+ * @return {Promise}            resolves to a list of notifications
+ */
+const getExcludeDraftPhasesNotifications = (eventConfig, project, tags) => {
+  // skip is no exclusion rule is configured
+  if (!eventConfig.draftPhasesForProjectRoles) {
+    return Promise.resolve([]);
+  }
+
+  const phaseId = helpers.extractPhaseId(tags);
+  // skip if it is not phase notification
+  if (!phaseId) {
+    return Promise.resolve([]);
+  }
+
+  // exclude all user with configured roles if phase is in draft state
+  return service.getPhase(project.id, phaseId)
+    .then((phase) => {
+      if (phase.status === 'draft') {
+        const members = _.get(project, 'members', []);
+        const notifications = filterMembersByRoles(eventConfig.draftPhasesForProjectRoles, members);
+
+        return Promise.resolve(notifications);
+      }
+    });
+};
+
+/**
  * Exclude notifications using exclude rules of the event config
  *
  * @param {Object} logger object used to log in parent thread
@@ -281,12 +360,17 @@ const excludeNotifications = (logger, notifications, eventConfig, message, data)
   // and after filter out such notifications from the notifications list
   // TODO move this promise all together with `_.uniqBy` to one function
   //      and reuse it here and in `handler` function
+  const tags = _.get(message, 'tags', []);
+
   return Promise.all([
     getNotificationsForTopicStarter(excludeEventConfig, message.topicId),
     getNotificationsForUserId(excludeEventConfig, message.userId),
     getNotificationsForMentionedUser(logger, excludeEventConfig, message.postContent),
     getProjectMembersNotifications(excludeEventConfig, project),
     getTopCoderMembersNotifications(excludeEventConfig),
+    // these are special exclude rules which are only working for excluding notifications but not including
+    getExcludedPrivatePostNotifications(excludeEventConfig, project, tags),
+    getExcludeDraftPhasesNotifications(excludeEventConfig, project, tags),
   ]).then((notificationsPerSource) => (
     _.uniqBy(_.flatten(notificationsPerSource), 'userId')
   )).then((excludedNotifications) => {
@@ -332,10 +416,10 @@ const handler = (topic, message, logger, callback) => {
   }
 
   // get project details
-  service.getProject(projectId).then(project => {
+  return service.getProject(projectId).then(project => {
     let allNotifications = [];
 
-    Promise.all([
+    return Promise.all([
       // the order in this list defines the priority of notification for the SAME user
       // upper in this list - higher priority
       // NOTE: always add all handles here, they have to check by themselves:
@@ -357,7 +441,7 @@ const handler = (topic, message, logger, callback) => {
         project,
       })
     )).then((notifications) => {
-      allNotifications = _.filter(notifications, notification => notification.userId !== `${message.initiatorUserId}`);
+      allNotifications = _.filter(notifications, n => n.userId && n.userId !== `${message.initiatorUserId}`);
 
       if (eventConfig.includeUsers && message[eventConfig.includeUsers] &&
           message[eventConfig.includeUsers].length > 0) {

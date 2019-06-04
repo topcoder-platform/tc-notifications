@@ -2,6 +2,7 @@
  * Contains generic helper methods for TC API
  */
 const _ = require('lodash');
+const URI = require('urijs');
 const config = require('config');
 const request = require('superagent');
 const m2mAuth = require('tc-core-library-js').auth.m2m;
@@ -188,8 +189,8 @@ function* notifyUserViaEmail(user, message) {
  */
 function* getChallenge(challengeId) {
   // this is public API, M2M token is not needed
-  const url = `${config.TC_API_V4_BASE_URL}/challenges/${challengeId}`
-  logger.info(`calling public challenge api ${url}`)
+  const url = `${config.TC_API_V4_BASE_URL}/challenges/${challengeId}`;
+  logger.info(`calling public challenge api ${url}`);
   const res = yield request.get(url);
   if (!_.get(res, 'body.result.success')) {
     throw new Error(`Failed to get challenge by id ${challengeId}`);
@@ -214,9 +215,9 @@ function* notifyUsersOfMessage(users, notification) {
   for (let i = 0; i < users.length; i += 1) {
     const user = users[i];
     // construct notification, rest fields are set in consumer.js
-    notifications.push({ userId: user.userId, notification: notification });
+    notifications.push({ userId: user.userId, notification });
 
-    /* TODO  Sachin disabled this code 
+    /* TODO  Sachin disabled this code
     if (config.ENABLE_EMAILS) {
       // notify user by email, ignore error in order not to block rest processing
       try {
@@ -226,9 +227,8 @@ function* notifyUsersOfMessage(users, notification) {
         logger.logFullError(e);
       }
     } */
-
   }
-  logger.info(`Total ${notifications.length} users would be notified.`)
+  logger.info(`Total ${notifications.length} users would be notified.`);
   return notifications;
 }
 
@@ -238,10 +238,10 @@ function* notifyUsersOfMessage(users, notification) {
  * @returns {Array} the associated user's detail object
  */
 function* getUsersInfoFromChallenge(challengeId) {
-  const token = yield getM2MToken()
-  let usersInfo = []
-  const url = `${config.TC_API_V4_BASE_URL}/challenges/${challengeId}/resources`
-  logger.info(`calling challenge api ${url} `)
+  const token = yield getM2MToken();
+  let usersInfo = [];
+  const url = `${config.TC_API_V4_BASE_URL}/challenges/${challengeId}/resources`;
+  logger.info(`calling challenge api ${url} `);
   const res = yield request
     .get(url)
     .set('Authorization', `Bearer ${token}`)
@@ -250,71 +250,121 @@ function* getUsersInfoFromChallenge(challengeId) {
       throw new Error(
         `Error in call challenge api by id ${challengeId}` +
         (errorDetails ? ' Server response: ' + errorDetails : '')
-      )
-    })
+      );
+    });
   if (!_.get(res, 'body.result.success')) {
     throw new Error(`Failed to get challenge by id ${challengeId}`);
   }
   usersInfo = _.get(res, 'body.result.content');
-  logger.info(`Feteched ${usersInfo.length} records from challenge api`)
+  logger.info(`Feteched ${usersInfo.length} records from challenge api`);
   return usersInfo;
 }
 
-/** 
- * Filter associated challenge's user based on criteria 
+/**
+ * Filter associated challenge's user based on criteria
  * @param {Array} usersInfo user object array
  * @param {Array} filterOnRoles on roles
  * @param {Array} filterOnUsers on user's ids
- * 
- * @returns {Array} of user object  
+ *
+ * @returns {Array} of user object
  */
 function filterChallengeUsers(usersInfo, filterOnRoles = [], filterOnUsers = []) {
-  const users = [] // filtered users
-  const rolesAvailable = [] // available roles in challenge api response
+  const users = []; // filtered users
+  const rolesAvailable = []; // available roles in challenge api response
   _.map(usersInfo, (user) => {
-    const userId = parseInt(_.get(user, 'properties.External Reference ID'))
-    const role = _.get(user, 'role')
+    const userId = parseInt(_.get(user, 'properties.External Reference ID'), 10);
+    const role = _.get(user, 'role');
 
-    _.indexOf(rolesAvailable, role) == -1 ? rolesAvailable.push(role) : ''
+    if (_.indexOf(rolesAvailable, role) === -1) {
+      rolesAvailable.push(role);
+    }
 
     if (filterOnRoles.length > 0 && _.indexOf(filterOnRoles, role) >= 0) {
-      users.push({ userId: userId })
+      users.push({ userId });
     } else if (filterOnUsers.length > 0 && _.indexOf(filterOnUsers, userId) >= 0) {
-      users.push({ userId: userId }) /** Submitter only case */
-    } else if (filterOnRoles.length == 0 && filterOnUsers.length == 0) {
-      users.push({ userId: userId })
+      users.push({ userId }); /** Submitter only case */
+    } else if (filterOnRoles.length === 0 && filterOnUsers.length === 0) {
+      users.push({ userId });
     }
-  })
-  logger.info(`Total roles available in this challenge are: ${rolesAvailable.join(',')}`)
-  return users
+  });
+  logger.info(`Total roles available in this challenge are: ${rolesAvailable.join(',')}`);
+  return users;
 }
 
-/** 
- * modify notification template  
+/**
+ * modify notification template
  * @param {Object} ruleSet rule
- * @param {Object} data values to be filled 
- * 
+ * @param {Object} data values to be filled
+ *
  * @returns {Object} notification node
  */
 function* modifyNotificationNode(ruleSet, data) {
-  const notification = _.get(ruleSet, "notification")
-  const id = data.id || data.challengeId || 0
-  const name = _.get(data, "name")
+  const notification = _.get(ruleSet, 'notification');
+  const id = data.id || data.challengeId || 0;
+  const name = _.get(data, 'name');
 
-  notification.id = id
+  notification.id = id;
 
   if (name) {
-    notification.name = name
+    notification.name = name;
   } else {
     try {
-      const challenge = yield getChallenge(id)
-      notification.name = _.get(challenge, "challengeTitle")
+      const challenge = yield getChallenge(id);
+      notification.name = _.get(challenge, 'challengeTitle');
     } catch (error) {
-      notification.name = ''
-      logger.error(`Error in fetching challenge detail : ${error}`)
+      notification.name = '';
+      logger.error(`Error in fetching challenge detail : ${error}`);
     }
   }
-  return notification
+  return notification;
+}
+
+/**
+ * generate header based on v5 specification
+ * @param {String} url the api url to fetch
+ * @param {Number} perPage the number served in one page
+ * @param {Number} currentPage the current page number
+ * @param {Number} total the total number of rows/entities
+ *
+ * @returns {Object} the header response
+ */
+function generateV5Header({ url, perPage, currentPage, total }) {
+  const links = [];
+  const fullUrl = `${config.TC_API_BASE_URL}${url}`;
+  const generateUrl = (url_, page, rel) => {
+    const newUrl = new URI(url_);
+    newUrl.setQuery({
+      page,
+    });
+    links.push(`<${newUrl.toString()}>; rel="${rel}"`);
+  };
+
+  const totalPages = perPage ? Math.ceil(total / perPage) : 1;
+  const headers = {
+    'X-Page': currentPage || 1,
+    'X-Total': total,
+    'X-Total-Pages': totalPages || 1,
+  };
+  if (perPage) {
+    headers['X-Per-Page'] = perPage;
+  }
+
+  if (currentPage > 1) {
+    headers['X-Prev-Page'] = currentPage - 1;
+    generateUrl(fullUrl, currentPage - 1, 'prev');
+    generateUrl(fullUrl, 1, 'first');
+  }
+
+  if (currentPage < totalPages) {
+    headers['X-Next-Page'] = currentPage + 1;
+
+    generateUrl(fullUrl, currentPage + 1, 'next');
+    generateUrl(fullUrl, totalPages, 'last');
+  }
+
+  headers.Link = links.join(',');
+
+  return headers;
 }
 
 module.exports = {
@@ -328,4 +378,5 @@ module.exports = {
   getUsersInfoFromChallenge,
   filterChallengeUsers,
   modifyNotificationNode,
+  generateV5Header,
 };

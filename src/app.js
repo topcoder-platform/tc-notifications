@@ -15,7 +15,25 @@ const logger = require('./common/logger');
 const errors = require('./common/errors');
 const models = require('./models');
 const Kafka = require('no-kafka');
-const healthcheck = require('topcoder-healthcheck-dropin')
+const healthcheck = require('topcoder-healthcheck-dropin');
+
+
+// helps in health checking in case of unhandled rejection of promises
+const unhandledRejections = [];
+process.on('unhandledRejection', (reason, promise) => {
+  console.log('Unhandled Rejection at:', promise, 'reason:', reason);
+  // aborts the process to let the HA of the container to restart the task
+  // process.abort();
+  unhandledRejections.push(promise);
+});
+
+// ideally any unhandled rejection is handled after more than one event loop, it should be removed
+// from the unhandledRejections array. We just remove the first element from the array as we only care
+// about the count every time an unhandled rejection promise is handled
+process.on('rejectionHandled', (promise) => {
+  console.log('Handled Rejection at:', promise);
+  unhandledRejections.shift();
+});
 
 /**
  * Start Kafka consumer for event bus events.
@@ -75,15 +93,39 @@ function startKafkaConsumer(handlers, notificationServiceHandlers) {
       });
   });
 
+  var latestSubscriptions = null;
+
   const check = function () {
-    if (!consumer.client.initialBrokers && !consumer.client.initialBrokers.length) {
-      return false
+    logger.debug("Checking health");
+    if (unhandledRejections && unhandledRejections.length > 0) {
+      logger.error('Found unhandled promises. Application is potentially in stalled state.');
+      return false;
     }
-    let connected = true
+    if (!consumer.client.initialBrokers && !consumer.client.initialBrokers.length) {
+      logger.error('Found unhealthy Kafka Brokers...');
+      return false;
+    }
+    let connected = true;
+    let currentSubscriptions = consumer.subscriptions;
+    for(var sIdx in currentSubscriptions) {
+      // current subscription
+      let sub = currentSubscriptions[sIdx];
+      // previous subscription
+      let prevSub = latestSubscriptions ? latestSubscriptions[sIdx] : null;
+      // levarage the `paused` field (https://github.com/oleksiyk/kafka/blob/master/lib/base_consumer.js#L66) to
+      // determine if there was a possibility of an unhandled exception. If we find paused status for the same
+      // topic in two consecutive health checks, we assume it was stuck because of unhandled error
+      if (prevSub && prevSub.paused && sub.paused) {
+        logger.error(`Found subscription for ${sIdx} in paused state for consecutive health checks`);
+        return false;
+      }
+    }
+    // stores the latest subscription status in global variable
+    latestSubscriptions = consumer.subscriptions;
     consumer.client.initialBrokers.forEach(conn => {
       logger.debug(`url ${conn.server()} - connected=${conn.connected}`)
       connected = conn.connected & connected
-    })
+    });
     return connected
   }
 
@@ -91,8 +133,8 @@ function startKafkaConsumer(handlers, notificationServiceHandlers) {
     .init()
     .then(() => {
       _.each(_.keys(handlers),
-        (topicName) => consumer.subscribe(topicName, dataHandler))
-      healthcheck.init([check])
+        (topicName) => consumer.subscribe(topicName, dataHandler));
+      healthcheck.init([check]);
     })
     .catch((err) => {
       logger.error('Kafka Consumer failed');
