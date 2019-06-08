@@ -111,7 +111,7 @@
                         Manage project team
                     </a>
                 {{else}}
-                  {{#if [isSSO]}}
+                  {{#if notifications.[0].[isSSO]}}
                     <a href="{{@root.accountsAppURL}}/sso-login/?app=connect&retUrl={{@root.connectURL}}/projects/{{notifications.[0].projectId}}">
                         SSO Login
                     </a>
