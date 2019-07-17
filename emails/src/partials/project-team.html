@@ -58,7 +58,11 @@
                             <strong>{{userFullName}}</strong> joined the project
                         {{/if}}
                         {{#if [notifications.connect.project.member.invite.created]}}
+                          {{#if [isSSO]}}
+                            Hi <strong>{{userFullName}}</strong>, you are invited to join the project {{projectName}}. Please use the link below to sign in and join the project.
+                          {{else}}
                             Hi <strong>{{userFullName}}</strong>, you are invited to join the project {{projectName}}. Please click on the button ("View project on Connect") below to join.
+                          {{/if}}
                         {{/if}}
                         {{#if [notifications.connect.project.member.invite.requested]}}
                             You are requested to add <strong>{{userFullName}}</strong> as a copilot
@@ -107,9 +111,15 @@
                         Manage project team
                     </a>
                 {{else}}
+                  {{#if notifications.[0].[isSSO]}}
+                    <a href="{{@root.accountsAppURL}}/sso-login/?app=connect&retUrl={{@root.connectURL}}/projects/{{notifications.[0].projectId}}">
+                        SSO Login
+                    </a>
+                  {{else}}
                     <a href="{{@root.connectURL}}/projects/{{notifications.[0].projectId}}">
                         View project on Connect
                     </a>
+                  {{/if}}
                 {{/if}}
             </td>
             <td class="empty-child-one"></td>
