@@ -265,17 +265,17 @@ function handler(topicName, messageJSON, notification) {
       // phase post
       if (eventMessage.data.phaseId) {
         // eslint-disable-next-line max-len
-        eventMessage.data.postURL = `${config.CONNECT_URL}/projects/${eventMessage.data.projectId}/plan#phase-${eventMessage.data.phaseId}-posts-${eventMessage.data.postId}`;
+        eventMessage.data.postURL = `${config.CONNECT_URL}/projects/${eventMessage.data.projectId}#phase-${eventMessage.data.phaseId}-posts-${eventMessage.data.postId}`;
 
       // dashboard post
       } else if (eventMessage.data.postId) {
         // eslint-disable-next-line max-len
-        eventMessage.data.postURL = `${config.CONNECT_URL}/projects/${eventMessage.data.projectId}#comment-${eventMessage.data.postId}`;
+        eventMessage.data.postURL = `${config.CONNECT_URL}/projects/${eventMessage.data.projectId}/messages/${eventMessage.data.topicId}#comment-${eventMessage.data.postId}`;
 
       // dashboard topic
       } else {
         // eslint-disable-next-line max-len
-        eventMessage.data.postURL = `${config.CONNECT_URL}/projects/${eventMessage.data.projectId}#feed-${eventMessage.data.topicId}`;
+        eventMessage.data.postURL = `${config.CONNECT_URL}/projects/${eventMessage.data.projectId}/messages/${eventMessage.data.topicId}`;
       }
     }
 
