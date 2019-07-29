@@ -17,4 +17,5 @@ module.exports = (sequelize, DataTypes) => sequelize.define('NotificationSetting
   serviceId: { type: DataTypes.STRING, allowNull: false },
   name: { type: DataTypes.STRING, allowNull: false },
   value: { type: DataTypes.STRING, allowNull: false },
+  topicOld: { type: DataTypes.STRING, allowNull: false },
 }, { timestamps: false });
