@@ -68,8 +68,8 @@ module.exports = {
     },
     EMAIL: {
       // TODO: after a proper named email topic is created, this is being used as the email event's topic
-      GENERAL: 'connect.notification.email.connect.project.notifications.generic',
-      BUNDLED: 'connect.notification.email.connect.project.notifications.bundled',
+      GENERAL: 'connect.notification.email.project.notifications.generic',
+      BUNDLED: 'connect.notification.email.project.notifications.bundled',
     },
   },
 };
