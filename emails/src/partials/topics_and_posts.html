@@ -25,7 +25,7 @@
     </tr>
 
     {{#each notifications}}
-        {{#if [notifications.connect.project.post.created]}}
+        {{#if [connect.notification.project.post.created]}}
             <tr class="post-details">
                 <td class="main-td">
                     <table class="main-child">
@@ -47,7 +47,7 @@
                 </td>
             </tr>
         {{/if}}
-        {{#if [notifications.connect.project.topic.created]}}
+        {{#if [connect.notification.project.topic.created]}}
             <tr class="post-details">
                 <td class="main-td">
                     <table class="main-child">
@@ -69,7 +69,7 @@
                 </td>
             </tr>
         {{/if}}
-        {{#if [notifications.connect.project.topic.deleted]}}
+        {{#if [connect.notification.project.topic.deleted]}}
             <tr class="post-details">
                 <td class="main-td">
                     <table class="main-child">
@@ -91,7 +91,7 @@
                 </td>
             </tr>
         {{/if}}
-        {{#if [notifications.connect.project.post.mention]}}
+        {{#if [connect.notification.project.post.mention]}}
             <tr class="post-details">
                 <td class="main-td">
                     <table class="main-child">
@@ -113,7 +113,7 @@
                 </td>
             </tr>
         {{/if}}
-        {{#if [notifications.connect.project.post.edited]}}
+        {{#if [connect.notification.project.post.edited]}}
             <tr class="post-details">
                 <td class="main-td">
                     <table class="main-child">
@@ -135,7 +135,7 @@
                 </td>
             </tr>
         {{/if}}
-        {{#if [notifications.connect.project.post.deleted]}}
+        {{#if [connect.notification.project.post.deleted]}}
             <tr class="post-details">
                 <td class="main-td">
                     <table class="main-child">
