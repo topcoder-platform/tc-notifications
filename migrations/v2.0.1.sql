@@ -2,9 +2,13 @@
   ALTER TABLE "public"."NotificationSettings"
       RENAME COLUMN "topic" TO "topicOld";
 
+  ALTER TABLE "public"."NotificationSettings"
+      ALTER COLUMN "topicOld" DROP NOT NULL;
+
   -- add "topic" column 
   ALTER TABLE "public"."NotificationSettings"
       ADD COLUMN "topic" character varying(255);
+
 
 UPDATE "NotificationSettings" SET topic='connect.notification.project.timeline.milestone.transition.completed' WHERE "topicOld"='connect.action.timeline.milestone.transition.completed'
 UPDATE "NotificationSettings" SET topic='connect.notification.project.product.update.spec' WHERE "topicOld"='connect.action.project.product.update.spec'
