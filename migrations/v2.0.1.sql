@@ -7,7 +7,7 @@
 
   -- add "topic" column 
   ALTER TABLE "public"."NotificationSettings"
-      ADD COLUMN "topic" character varying(255);
+      ADD COLUMN "topic" character varying(255) NOT NULL;
 
 
 UPDATE "NotificationSettings" SET topic='connect.notification.project.timeline.milestone.transition.completed' WHERE "topicOld"='connect.action.timeline.milestone.transition.completed'
