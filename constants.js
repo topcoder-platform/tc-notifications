@@ -7,7 +7,7 @@ module.exports = {
 
   BUS_API_EVENT: {
     EMAIL: {
-      GENERAL: 'notifications.action.email.connect.project.notifications.generic',
+      GENERAL: 'connect.notification.email.project.notifications.generic',
     },
   },
 };

@@ -35,46 +35,46 @@
                     <tr class="row-child-one" height="20">
                         <td class="empty-child-one"></td>
                         <td>
-                        {{#if [notifications.connect.project.member.assignedAsOwner]}}
+                        {{#if [connect.notification.project.member.assignedAsOwner]}}
                             <strong>{{userFullName}}</strong> assigned as project owner
                         {{/if}}
-                        {{#if [notifications.connect.project.member.copilotJoined]}}
+                        {{#if [connect.notification.project.member.copilotJoined]}}
                             <strong>{{userFullName}}</strong> joined the project as Copilot
                         {{/if}}
-                        {{#if [notifications.connect.project.member.managerJoined]}}
+                        {{#if [connect.notification.project.member.managerJoined]}}
                             <strong>{{userFullName}}</strong> joined the project as Manager
                         {{/if}}
-                        {{#if [notifications.connect.project.member.removed]}}
+                        {{#if [connect.notification.project.member.removed]}}
                             {{#if [emailToAffectedUser]}}
                                 You are removed from the project
                             {{else}}
                                 <strong>{{userFullName}}</strong> left the project
                             {{/if}}
                         {{/if}}
-                        {{#if [notifications.connect.project.member.left]}}
+                        {{#if [connect.notification.project.member.left]}}
                             <strong>{{userFullName}}</strong> left the project
                         {{/if}}
-                        {{#if [notifications.connect.project.member.joined]}}
+                        {{#if [connect.notification.project.member.joined]}}
                             <strong>{{userFullName}}</strong> joined the project
                         {{/if}}
-                        {{#if [notifications.connect.project.member.invite.created]}}
+                        {{#if [connect.notification.project.member.invite.created]}}
                           {{#if [isSSO]}}
                             Hi <strong>{{userFullName}}</strong>, you are invited to join the project {{projectName}}. Please use the link below to sign in and join the project.
                           {{else}}
                             Hi <strong>{{userFullName}}</strong>, you are invited to join the project {{projectName}}. Please click on the button ("View project on Connect") below to join.
                           {{/if}}
                         {{/if}}
-                        {{#if [notifications.connect.project.member.invite.requested]}}
+                        {{#if [connect.notification.project.member.invite.requested]}}
                             You are requested to add <strong>{{userFullName}}</strong> as a copilot
                         {{/if}}
-                        {{#if [notifications.connect.project.member.invite.approved]}}
+                        {{#if [connect.notification.project.member.invite.approved]}}
                             {{#if [originator]}}
                                 Your request to add invite the member was approved
                             {{else}}
                                 Hi <strong>{{userFullName}}</strong>, you are added as a copilot
                             {{/if}}
                         {{/if}}
-                        {{#if [notifications.connect.project.member.invite.rejected]}}
+                        {{#if [connect.notification.project.member.invite.rejected]}}
                             {{#if [originator]}}
                                 Your request to add the member was refused
                             {{else}}
@@ -106,7 +106,7 @@
         <tr>
             <td class="empty-child-one"></td>
             <td class="second-child" align="center">
-                {{#if notifications.[0].[notifications.connect.project.member.invite.requested]}}
+                {{#if notifications.[0].[connect.notification.project.member.invite.requested]}}
                     <a href="{{@root.connectURL}}/projects/{{notifications.[0].projectId}}#manageTopcoderTeam">
                         Manage project team
                     </a>
