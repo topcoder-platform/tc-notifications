@@ -35,40 +35,40 @@
                     <tr class="row-child-one" height="20">
                         <td class="empty-child-one"></td>
                         <td>
-                            {{#if [connect.action.project.plan.ready]}}
+                            {{#if [connect.notification.project.plan.ready]}}
                                 Project plan is ready for your project
                             {{/if}}
-                            {{#if [connect.action.project.plan.updated]}}
+                            {{#if [connect.notification.project.plan.updated]}}
                                 Project plan is modified for your project
                             {{/if}}
-                            {{#if [connect.action.project.updated.progress]}}
+                            {{#if [connect.notification.project.updated.progress]}}
                                 Your project has made some progress
                             {{/if}}
-                            {{#if [notifications.connect.project.phase.transition.active]}}
+                            {{#if [connect.notification.project.phase.transition.active]}}
                                 Phase <strong>{{updatedPhase.name}}</strong> is activated
                             {{/if}}
-                            {{#if [notifications.connect.project.phase.transition.completed]}}
+                            {{#if [connect.notification.project.phase.transition.completed]}}
                                 Phase <strong>{{updatedPhase.name}}</strong> is completed
                             {{/if}}
-                            {{#if [notifications.connect.project.phase.update.payment]}}
+                            {{#if [connect.notification.project.phase.update.payment]}}
                                 Payments updated for phase <strong>{{updatedPhase.name}}</strong>
                             {{/if}}
-                            {{#if [notifications.connect.project.phase.update.progress]}}
+                            {{#if [connect.notification.project.phase.update.progress]}}
                                 Phase <strong>{{updatedPhase.name}}</strong> has made some progress
                             {{/if}}
-                            {{#if [notifications.connect.project.phase.update.scope]}}
+                            {{#if [connect.notification.project.phase.update.scope]}}
                                 Scope of the phase <strong>{{updatedPhase.name}}</strong> updated
                             {{/if}}
-                            {{#if [connect.action.project.product.update.spec]}}
+                            {{#if [connect.notification.project.product.update.spec]}}
                                 Scope of the phase <strong>{{updatedPhase.name}}</strong> updated
                             {{/if}}
-                            {{#if [connect.action.timeline.milestone.transition.active]}}
+                            {{#if [connect.notification.project.timeline.milestone.transition.active]}}
                                 A milestone is activated in phase <strong>{{updatedPhase.name}}</strong>
                             {{/if}}
-                            {{#if [connect.action.timeline.milestone.transition.completed]}}
+                            {{#if [connect.notification.project.timeline.milestone.transition.completed]}}
                                 A milestone is completed in phase <strong>{{updatedPhase.name}}</strong>
                             {{/if}}
-                            {{#if [connect.action.timeline.milestone.waiting.customer]}}
+                            {{#if [connect.notification.project.timeline.milestone.waiting.customer]}}
                                 We are waiting for your input at a milestone in the phase <strong>{{updatedPhase.name}}</strong>
                             {{/if}}
                         </td>
