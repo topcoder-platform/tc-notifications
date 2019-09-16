@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en" class="h-100">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>WebSocket Verification</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <style>
+    .container {
+      margin-bottom: 25px;
+    }
+  </style>
+  </head>
+
+<body class="d-flex flex-column h-100">
+  <main role="main" class="flex-shrink-0">
+    <div class="container">
+      <h1 class="mt-5">WebSocket Verification</h1>
+    </div>
+    <br />
+    <div class="container">
+      <span>
+        <h2>WebSocket Connect Status</h2>
+        <p class="lead" id="ws-status">Not connected</p>
+      </span>
+    </div>
+    <div class="container">
+      <h2>Authorization</h2>
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Token</span>
+        </div>
+        <textarea id="token" class="form-control"
+          aria-label="token">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEyMywiaXNzIjoiYWJjLmNvbSIsImlhdCI6MTU2NzkxOTYxMiwiZXhwIjoxNTcwNTExNjEyfQ.WXnp14PZxB-muQ1Nr-z_0DPztNxL0BzonE71v53TrHg</textarea>
+        <div class="input-group-append">
+          <button type="button" class="btn btn-primary" onclick="sendToken()">Send Token</button>
+        </div>
+      </div>
+      <br />
+      <p id="authorize-message" class="lead">Not authorized</p>
+    </div>
+    <div class="container">
+      <h2>Notifications</h2>
+      <div id="notifications" class="container">
+
+      </div>
+    </div>
+  </main>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+
+  <script>
+    var ws;
+    $('document').ready(function () {
+      ws = new WebSocket("ws://localhost:3000");
+      $('#ws-status').text("Connected");
+
+      ws.onmessage = function (event) {
+        var msg = JSON.parse(event.data);
+
+        switch (msg.type) {
+          case "auth":
+            $('#authorize-message').text(msg.message);
+            break;
+          case "notification":
+            var textMsg = JSON.stringify(msg);
+            var notificationsList = $('#notifications');
+            notificationsList.append('<p>'+textMsg+'</p>');
+            break;
+        }
+      }
+
+    });
+
+    function sendToken() {
+      ws.send('token:' + $('#token').val());
+    }
+
+
+  </script>
+</body>
+
+</html>

@@ -13,7 +13,10 @@ const healthcheck = require('topcoder-healthcheck-dropin');
 const logger = require('./src/common/logger');
 const models = require('./src/models');
 const processors = require('./src/processors');
+const dataStreamWS = require('./src/dataStreamWS');
+const http = require('http');
 
+const express = require('express');
 
 /**
  * Start Kafka consumer
@@ -69,6 +72,7 @@ function startKafkaConsumer() {
 
         try {
           const handler = processors[handlerFuncName];
+          // eslint-disable-next-line no-unused-vars
           const handlerRuleSets = rule[handlerFuncName];
           if (!handler) {
             logger.error(`Handler ${handlerFuncName} is not defined`);
@@ -76,18 +80,36 @@ function startKafkaConsumer() {
           }
           logger.info(`Run handler ${handlerFuncName}`);
           // run handler to get notifications
-          const notifications = yield handler(messageJSON, handlerRuleSets);
+          // const notifications = yield handler(messageJSON, handlerRuleSets);
+          const notifications = [{
+            id: 57248,
+            userId: 40153932,
+            type: 'submission.notification.create',
+            contents: {
+              id: 30055274,
+              name: 'Accessibility Test NDA Challenge',
+              group: 'Submission',
+              title: 'A new submission is uploaded.',
+            },
+          }];
+
           if (notifications && notifications.length > 0) {
             // save notifications in bulk to improve performance
             logger.info(`Going to insert ${notifications.length} notifications in database.`);
-            yield models.Notification.bulkCreate(_.map(notifications, (n) => ({
+            const wsNotifications = yield models.Notification.bulkCreate(_.map(notifications, (n) => ({
               userId: n.userId,
               type: n.type || topic,
               contents: n.contents || n.notification || messageJSON.payload || {},
               read: false,
               seen: false,
               version: n.version || null,
-            })));
+            })), { returing: true });
+            dataStreamWS.sendMessage({
+              type: 'notification',
+              items: wsNotifications,
+              offset: m.offset,
+              totalCount: wsNotifications.length,
+            });
             // logging
             logger.info(`Saved ${notifications.length} notifications`);
             /* logger.info(` for users: ${
@@ -132,12 +154,29 @@ function startKafkaConsumer() {
     }])
     .then(() => {
       logger.info('Kafka consumer initialized successfully');
-      healthcheck.init([check]);
+      // healthcheck.init([check]);  // moved to app middleware
     })
     .catch((err) => {
       logger.error('Kafka consumer failed');
       logger.logFullError(err);
     });
+
+  const app = express();
+  app.set('port', config.PORT);
+  app.use(healthcheck.middleware([check]));
+  app.use('/ws-check', express.static('./docs/ws-check.html'));
+  app.use((req, res) => {
+    res.status(404).json({ error: 'route not found' });
+  });
+  app.use((err, req, res) => {
+    logger.logFullError(err);
+    res.status(400).json({ error: err.message });
+  });
+
+  const server = http.createServer(app);
+  dataStreamWS.setup(server);
+  server.listen(app.get('port'));
+  logger.info(`Express server listening on port ${app.get('port')}`);
 }
 
 startKafkaConsumer();

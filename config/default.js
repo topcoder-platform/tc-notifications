@@ -108,4 +108,7 @@ module.exports = {
   ENABLE_DEV_MODE: process.env.ENABLE_DEV_MODE ? Boolean(process.env.ENABLE_DEV_MODE) : true,
   DEV_MODE_EMAIL: process.env.DEV_MODE_EMAIL,
   DEFAULT_REPLY_EMAIL: process.env.DEFAULT_REPLY_EMAIL,
+
+  // WebSocket related variables
+  MAX_MESSAGE_COUNT: process.env.MAX_MESSAGE_COUNT || 10000,
 };

@@ -5,6 +5,9 @@
 
 const _ = require('lodash');
 const co = require('co');
+const uuid = require('uuid/v4');
+const authVerifier = require('tc-core-library-js').auth.verifier;
+const config = require('config');
 
 /**
  * Wrap generator function to standard express function
@@ -38,7 +41,45 @@ function autoWrapExpress(obj) {
   return obj;
 }
 
+/**
+ * Generate an unique random string.
+ *
+ * @returns {String} the generated string
+ */
+function generateRandomString() {
+  return `${uuid()}-${new Date().getTime()}`;
+}
+
+/**
+ * Check whether JWT token is authorized to access the app.
+ *
+ * @param {String} token the JWT token
+ * @param {Function} callback the callback function
+ */
+function isTokenAuthorized(token, callback) {
+  const secret = _.get(config, 'AUTH_SECRET') || '';
+  const validIssuers = JSON.parse(_.get(config, 'VALID_ISSUERS') || '[]');
+  const jwtKeyCacheTime = _.get(config, 'TOKEN_CACHE_TIME', '24h');
+  if (!secret) {
+    return callback(new Error('Auth secret not provided'));
+  }
+  if (!validIssuers || validIssuers.length === 0) {
+    return callback(new Error('JWT Issuers not configured'));
+  }
+
+  const verifier = authVerifier(validIssuers, jwtKeyCacheTime);
+  verifier.validateToken(token, secret, (err) => {
+    if (err) {
+      return callback(err);
+    }
+    // addition role based check can be added here
+    return callback(null, true);
+  });
+}
+
 module.exports = {
   wrapExpress,
   autoWrapExpress,
+  generateRandomString,
+  isTokenAuthorized,
 };
