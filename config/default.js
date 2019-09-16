@@ -16,6 +16,30 @@ module.exports = {
       idle: 10000,
     },
   },
+  // Websocket configurations
+  WS_OPTIONS: {
+    MAX_MESSAGE_COUNT: process.env.WS_MAX_MESSAGE_COUNT || 100,
+    PORT: process.env.WS_PORT || 8081,
+    perMessageDeflate: {
+      zlibDeflateOptions: {
+        // See zlib defaults.
+        chunkSize: process.env.WS_ZLIB_DEFLATE_CHUNK_SIZE || 10 * 1024,
+        memLevel: process.env.WS_ZLIB_DEFLATE_MEM_LEVEL || 7,
+        level: process.env.WS_ZLIB_DEFLATE_MEM_LEVEL || 3,
+      },
+      zlibInflateOptions: {
+        chunkSize: process.env.WS_ZLIB_INFLATE_CHUNK_SIZE || 10 * 1024,
+      },
+      // Other options settable:
+      clientNoContextTakeover: process.env.WS_CLIENT_NO_CONTEXT_TAKEOVER || true,
+      serverNoContextTakeover: process.env.WS_SERVER_NO_CONTEXT_TAKEOVER || true,
+      serverMaxWindowBits: process.env.WS_SERVER_MAX_WINDOW_BITS || 10,
+      // Below options specified as default values.
+      concurrencyLimit: process.env.WS_CONCURRENCY_LIMIT || 10, // Limits zlib concurrency for perf.
+      threshold: process.env.WS_BYTES_THRESHOLD || 1024, // Size (in bytes) below which messages
+      // should not be compressed.
+    },
+  },
 
   AUTH_SECRET: process.env.AUTH_SECRET,
   VALID_ISSUERS: process.env.VALID_ISSUERS ? process.env.VALID_ISSUERS.replace(/\\"/g, '') : null,

@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+
+<html>
+   <head>
+      <div id="messages"></div>
+
+      <script type = "text/javascript">
+         counter = 1;
+         function WebSocketTest() {
+
+            if ("WebSocket" in window) {
+               alert("WebSocket is supported by your Browser!");
+
+               // Let us open a web socket
+               var ws = new WebSocket("ws://localhost:8081/");
+
+               ws.onopen = function() {
+
+                  // Web Socket is connected, send data using send()
+                  ws.send("token:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJUb3Bjb2RlciBVc2VyIiwiYWRtaW5pc3RyYXRvciJdLCJpc3MiOiJhYmMuY29tIiwiaGFuZGxlIjoic2FjaGluIiwidXNlcklkIjoiMTAwIiwiZW1haWwiOiJhYmMuY29tIiwianRpIjoiMTdiYzc1Y2EtNmI2Yi00NzIyLWFlMzMtMzQ2NTg4YzlmZjJhIiwiaWF0IjoxNTY3NjgwNjU2LCJleHAiOjE1NzU0NTY2NTZ9.0Lo-t422h7n-Jmt_8qnTK81lmBiFVRWld8kYR2VeKr8");
+                  alert("Token is sent...");
+                  setTimeout(function(){
+                     ws.send (JSON.stringify({topic:'dummy.topic',count:5}));
+                     alert("Subscribed to topic watch for the messages..");
+                  }, 100);
+               };
+
+               ws.onmessage = function (evt) {
+                  document.getElementById("messages").innerHTML = (document.getElementById("messages").innerHTML + "<br/><b>"+ counter + "</b>" + "-"  + "<small>"  + evt.data + "</small>");
+                  counter++;
+               };
+
+               ws.onclose = function() {
+
+                  // websocket is closed.
+                  alert("Connection is closed...");
+               };
+            } else {
+
+               // The browser doesn't support WebSocket
+               alert("WebSocket NOT supported by your Browser!");
+            }
+         }
+      </script>
+
+   </head>
+
+   <body>
+      <div id = "sse">
+         <a href = "javascript:WebSocketTest()">Run WebSocket</a>
+      </div>
+
+   </body>

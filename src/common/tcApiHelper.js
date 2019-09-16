@@ -84,7 +84,7 @@ function* getUsersByHandles(handles) {
     return [];
   }
   // use 'OR' to link the handle matches
-  const query = _.map(handles, (h) => 'handle:"' + h.trim().replace('"', '\\"')  + '"').join(' OR ');
+  const query = _.map(handles, (h) => 'handle:"' + h.trim().replace('"', '\\"') + '"').join(' OR ');
   return yield searchUsersByQuery(query);
 }
 

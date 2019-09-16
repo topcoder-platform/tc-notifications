@@ -64,6 +64,17 @@ The following parameters can be set in config files or in env variables:
   - `AUTH0_PROXY_SERVER_URL`: auth0 proxy server URL
 - **Consumer handlers**
   - `KAFKA_CONSUMER_HANDLERS`: mapping from consumer topic to handlers
+- **Consumer websocket support**
+  - `WS_MAX_MESSAGE_COUNT`: Maximum number of messages kept in memory per topic
+  - `WS_PORT`: Port to expose websocket endpoint
+  - `WS_ZLIB_DEFLATE_CHUNK_SIZE`: Gzip Deflate chunk size
+  - `WS_ZLIB_DEFLATE_MEM_LEVEL`: Gzip and Deflate compression memory level
+  - `WS_ZLIB_INFLATE_CHUNK_SIZE`: Gzip Inflate chunk size
+  - `WS_CLIENT_NO_CONTEXT_TAKEOVER`: Acknowledge disabling of client context takeover.
+  - `WS_SERVER_NO_CONTEXT_TAKEOVER`: Whether to use context takeover or not.
+  - `WS_SERVER_MAX_WINDOW_BITS`: Gzip window bits
+  - `WS_CONCURRENCY_LIMIT`:  The number of concurrent calls to zlib. Calls above this limit will be queued
+  - `WS_BYTES_THRESHOLD`: Payloads smaller than this will not be compressed.
 - **Email notification**
   - `ENV`: used to construct email category
   - `ENABLE_EMAILS`: whether to enable email notifications

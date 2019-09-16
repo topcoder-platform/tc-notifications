@@ -92,7 +92,7 @@ const getNotificationsForMentionedUser = (logger, eventConfig, content) => {
       _.forEach(notifications, (notification) => {
         const mentionedUser = _.find(users, { handle: notification.userHandle });
         notification.userId = mentionedUser ? mentionedUser.userId.toString() : null;
-        if (!notification.userId && logger) {// such notifications would be discarded later after aggregation
+        if (!notification.userId && logger) { // such notifications would be discarded later after aggregation
           logger.info(`Unable to find user with handle ${notification.userHandle}`);
         }
       });
@@ -102,12 +102,11 @@ const getNotificationsForMentionedUser = (logger, eventConfig, content) => {
         logger.error(error);
         logger.info('Unable to send notification to mentioned user');
       }
-      //resolves with empty notification which essentially means we are unable to send notification to mentioned user
+      // resolves with empty notification which essentially means we are unable to send notification to mentioned user
       return Promise.resolve([]);
     });
-  } else {
-    return Promise.resolve([]);
   }
+  return Promise.resolve([]);
 };
 
 /**

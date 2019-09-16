@@ -13,6 +13,7 @@ const healthcheck = require('topcoder-healthcheck-dropin');
 const logger = require('./src/common/logger');
 const models = require('./src/models');
 const processors = require('./src/processors');
+const notificationStreamWS = require('./src/notificationStreamWS');
 
 
 /**
@@ -24,6 +25,9 @@ function startKafkaConsumer() {
     options.ssl = { cert: config.KAFKA_CLIENT_CERT, key: config.KAFKA_CLIENT_CERT_KEY };
   }
   const consumer = new Kafka.GroupConsumer(options);
+  // Setup websocket server
+  logger.debug('Setting ws socket');
+  notificationStreamWS.setup();
 
   // data handler
   const messageHandler = (messageSet, topic, partition) => Promise.each(messageSet, (m) => {
@@ -90,6 +94,10 @@ function startKafkaConsumer() {
             })));
             // logging
             logger.info(`Saved ${notifications.length} notifications`);
+            logger.info(`Going to push ${notifications.length} notifications to websocket.`);
+            // Trigger websocket notifications
+            yield notificationStreamWS.pushNotifications(topic, notifications, handlerRuleSets);
+            logger.info(`Pushed ${notifications.length} notifications to websocket`);
             /* logger.info(` for users: ${
               _.map(notifications, (n) => n.userId).join(', ')
               }`); */

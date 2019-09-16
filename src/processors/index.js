@@ -8,6 +8,7 @@ const ChallengePhaseWarningHandler = require('./challenge/ChallengePhaseWarningH
 const ChallengeHandler = require('./challenge/ChallengeHandler');
 const AutoPilotHandler = require('./challenge/AutoPilotHandler');
 const SubmissionHandler = require('./challenge/SubmissionHandler');
+const DummyHandler = require('./challenge/DummyHandler');
 
 // Exports
 module.exports = {
@@ -16,4 +17,5 @@ module.exports = {
   handleChallenge: ChallengeHandler.handle,
   handleAutoPilot: AutoPilotHandler.handle,
   handleSubmission: SubmissionHandler.handle,
+  handleDummy: DummyHandler.handle,
 };

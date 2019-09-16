@@ -103,6 +103,8 @@ info: Successfully sent notifications.action.email.connect.project.notifications
 error: Failed to send email to user id: 5, handle: handle5
 ...
 info: Saved 8 notifications for users: 1, 2, 3, 4, 5, 6, 7, 8
+info: Going to push 8 notifications to websocket.
+info: Pushed 8 notifications to websocket
 info: Handler handleChallengeCreated was run successfully
 ```
 
@@ -131,6 +133,8 @@ info: Successfully sent notifications.action.email.connect.project.notifications
 error: Failed to send email to user id: 5, handle: handle5
 ...
 info: Saved 8 notifications for users: 1, 2, 3, 4, 5, 6, 7, 8
+info: Going to push 8 notifications to websocket.
+info: Pushed 8 notifications to websocket
 info: Handler handleChallengePhaseWarning was run successfully
 ```
 
