@@ -30,12 +30,17 @@ const PROJECT_ROLE_RULES = {
 };
 
 // TopCoder roles
-// eslint-disable-next-line no-unused-vars
-const ROLE_CONNECT_COPILOT = 'Connect Copilot';
+const ROLE_CONNECT_COPILOT = 'Connect Copilot'; // eslint-disable-line no-unused-vars
 const ROLE_CONNECT_MANAGER = 'Connect Manager';
 const ROLE_CONNECT_COPILOT_MANAGER = 'Connect Copilot Manager';
 const ROLE_CONNECT_ACCOUNT_MANAGER = 'Connect Account Manager';
 const ROLE_ADMINISTRATOR = 'administrator';
+const ROLE_BUSINESS_DEVELOPMENT_REPRESENTATIVE = 'Business Development Representative';
+const ROLE_PRESALES = 'Presales'; // eslint-disable-line no-unused-vars
+const ROLE_ACCOUNT_EXECUTIVE = 'Account Executive'; // eslint-disable-line no-unused-vars
+const ROLE_PROGRAM_MANAGER = 'Program Manager'; // eslint-disable-line no-unused-vars
+const ROLE_SOLUTION_ARCHITECT = 'Solution Architect'; // eslint-disable-line no-unused-vars
+const ROLE_PROJECT_MANAGER = 'Project Manager'; // eslint-disable-line no-unused-vars
 
 /**
  * Supported events configuration
@@ -58,14 +63,19 @@ const EVENTS = [
   {
     type: BUS_API_EVENT.CONNECT.PROJECT.CREATED,
     projectRoles: [PROJECT_ROLE_OWNER],
-    topcoderRoles: [ROLE_CONNECT_ACCOUNT_MANAGER],
+    topcoderRoles: [ROLE_CONNECT_ACCOUNT_MANAGER, ROLE_BUSINESS_DEVELOPMENT_REPRESENTATIVE],
     exclude: {
       topcoderRoles: [ROLE_CONNECT_MANAGER, ROLE_ADMINISTRATOR],
     },
   }, {
     type: BUS_API_EVENT.CONNECT.PROJECT.SUBMITTED_FOR_REVIEW,
     projectRoles: [PROJECT_ROLE_OWNER],
-    topcoderRoles: [ROLE_CONNECT_MANAGER, ROLE_CONNECT_ACCOUNT_MANAGER, ROLE_ADMINISTRATOR],
+    topcoderRoles: [
+      ROLE_CONNECT_MANAGER,
+      ROLE_CONNECT_ACCOUNT_MANAGER,
+      ROLE_BUSINESS_DEVELOPMENT_REPRESENTATIVE,
+      ROLE_ADMINISTRATOR,
+    ],
   }, {
     type: BUS_API_EVENT.CONNECT.PROJECT.APPROVED,
     projectRoles: [
