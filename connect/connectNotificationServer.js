@@ -451,9 +451,13 @@ const handler = (topic, message, logger, callback) => {
       logger.debug('filtered notifications: ', allNotifications);
       // now let's retrieve some additional data
 
+      const ids = [];
+      logger.debug(message.initiatorUserId, 'message.initiatorUserId');
+      if (message.initiatorUserId) {
+        ids.push(message.initiatorUserId);
+      }
       // if message has userId such messages will likely need userHandle and user full name
       // so let's get it
-      const ids = [message.initiatorUserId];
       logger.debug(message.userId, 'message.userId');
       if (message.userId) {
         ids.push(message.userId);
