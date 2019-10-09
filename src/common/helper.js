@@ -69,7 +69,7 @@ function isValid(user) {
 function isTokenAuthorized(token, callback) {
   const secret = _.get(config, 'AUTH_SECRET') || '';
   const validIssuers = JSON.parse(_.get(config, 'VALID_ISSUERS') || '[]');
-  const jwtKeyCacheTime = _.get(config, 'JWT_KEY_CACHE_TIME', '24h');
+
   if (!secret) {
     return callback(new Error('Auth secret not provided'));
   }
@@ -77,13 +77,13 @@ function isTokenAuthorized(token, callback) {
     return callback(new Error('JWT Issuers not configured'));
   }
 
-  const verifier = authVerifier(validIssuers, jwtKeyCacheTime);
+  const verifier = authVerifier(validIssuers); // second argument relevance for m2m token not for user token
   verifier.validateToken(token, secret, (err, decoded) => {
     if (err) {
       return callback(err);
     }
     const authorized = isValid(decoded);
-    return callback(null, authorized, decoded.roles);
+    return callback(null, authorized, decoded);
   });
 }
 module.exports = {

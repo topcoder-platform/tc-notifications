@@ -73,10 +73,11 @@ const setup = () => {
     const id = helper.generateRandomString();
     const clientData = {
       id,
-      topic: null,
+      topic: null, // no need
       ws,
       authorized: false,
       roles: [],
+      userId: null,
     };
     allWS.push(clientData);
 
@@ -88,13 +89,14 @@ const setup = () => {
       if (message.startsWith('token:')) {
         logger.debug(`web socket message: ${message.substring(0, 10)}*********`);
         const token = message.substring('token:'.length);
-        helper.isTokenAuthorized(token, (err, isAuthorized, roles) => {
+        helper.isTokenAuthorized(token, (err, isAuthorized, decoded) => {
           if (err) {
             logger.error('failed to authorize token', err);
           } else if (isAuthorized) {
-            logger.debug(`web socket authorized with roles: ${roles}`);
+            logger.debug(`web socket authorized with roles: ${decoded.roles}`);
             clientData.authorized = true;
-            clientData.roles = roles;
+            clientData.roles = decoded.roles;
+            clientData.userId = decoded.userId;
           }
         });
         return;
@@ -180,9 +182,12 @@ function* pushNotifications(topic, notifications, handlerRuleSets) {
   _.each(allWS, (clientData) => {
     // Check the auth and role for each notification since there are more then one handler
     // Each handler might have different role sets
-    if (topic === clientData.topic && clientData.authorized && hasCommonRole(handlerRuleSets.roles, clientData.roles)) {
-      // the 'full' flag is false, indicating the notifications is to be added to client side
-      sendData(clientData.ws, { full: false, topic, messages: [notifications] });
+    if (clientData.authorized) {
+      _.map(notifications, (n) => {
+        if ( clientData.userId == n.userId ) {
+          sendData(clientData.ws, { full: false, topic, messages: [notifications] });
+        }
+      });
     }
   });
 }
