@@ -24,7 +24,7 @@ function replacePlaceholders(term, data) {
   let ret = term;
   if (placeholders && placeholders.length) {
     _(placeholders).each(p => {
-      const values = _.map(data, p.slice(1, -1));
+      const values = _.uniq(_.map(data, p.slice(1, -1)));
       // TODO remove this code if possible.
       // This code appears to be not in use causing lint errors.
       // For now I'm commenting it, in case it contains some valuable logic.
