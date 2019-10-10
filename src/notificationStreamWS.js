@@ -88,19 +88,6 @@ const setup = (server) => {
         return;
       }
       
-      // the 'full' flag is true, indicating the messages are full latest messages for client side,
-      // client side should clear the existing messages if any for the topic
-      if (clientData.authorized) {
-        const authorizedMessages = [];
-        for (let i = 0; i < messages.length; i++) {
-          // Check the role for each notification since there are more then one handler
-          // Each handler might have different role sets
-          if (hasCommonRole(messages[i].handlerRuleSets.roles, clientData.roles)) {
-            authorizedMessages.push(messages[i].notifications);
-          }
-        }
-        sendData(ws, { full: true, topic: msgJSON.topic, messages: authorizedMessages });
-      }
     });
 
     // terminate web socket
