@@ -14,6 +14,8 @@ const logger = require('./src/common/logger');
 const models = require('./src/models');
 const processors = require('./src/processors');
 const notificationStreamWS = require('./src/notificationStreamWS');
+const http = require('http');
+const express = require('express');
 
 
 /**
@@ -27,7 +29,6 @@ function startKafkaConsumer() {
   const consumer = new Kafka.GroupConsumer(options);
   // Setup websocket server
   logger.debug('Setting ws socket');
-  notificationStreamWS.setup();
 
   // data handler
   const messageHandler = (messageSet, topic, partition) => Promise.each(messageSet, (m) => {
@@ -95,9 +96,11 @@ function startKafkaConsumer() {
             // logging
             logger.info(`Saved ${notifications.length} notifications`);
             logger.info(`Going to push ${notifications.length} notifications to websocket.`);
+
             // Trigger websocket notifications
             yield notificationStreamWS.pushNotifications(topic, notifications, handlerRuleSets);
             logger.info(`Pushed ${notifications.length} notifications to websocket`);
+            
             /* logger.info(` for users: ${
               _.map(notifications, (n) => n.userId).join(', ')
               }`); */
@@ -140,12 +143,30 @@ function startKafkaConsumer() {
     }])
     .then(() => {
       logger.info('Kafka consumer initialized successfully');
-      healthcheck.init([check]);
+      //healthcheck.init([check]); // checking in middleware 
     })
     .catch((err) => {
       logger.error('Kafka consumer failed');
       logger.logFullError(err);
     });
+
+    // setup websocket server
+    const app = express(); 
+    app.set('port', config.PORT);
+    app.use(healthcheck.middleware([check]));
+    //app.use('/ws-check', express.static('./docs/ws-check.html'));
+    app.use((req, res) => {
+      res.status(404).json({ error: 'route not found' });
+    });
+    app.use((err, req, res) => {
+      logger.logFullError(err);
+      res.status(400).json({ error: err.message });
+    });
+  
+    const server = http.createServer(app);
+    notificationStreamWS.setup(server);
+    server.listen(app.get('port'));
+    logger.info(`Websocket server listening on port ${app.get('port')}`);
 }
 
 startKafkaConsumer();

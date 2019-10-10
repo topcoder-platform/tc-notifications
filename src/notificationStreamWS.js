@@ -16,9 +16,6 @@ const allWS = [];
 // all cached messages, key is topic, value is array of messages of the topic with roles associated
 const allMessages = {};
 
-// max cache message count per topic
-const maxMsgCount = Number(config.WS_OPTIONS.MAX_MESSAGE_COUNT);
-
 /**
  * Send object to websocket client
  *
@@ -46,34 +43,15 @@ function hasCommonRole(firstRoles, secondRoles) {
 
 /**
  * Setup web socket.
+ * 
  */
-const setup = () => {
-  const wss = new WebSocketServer({
-    port: config.WS_OPTIONS.PORT,
-    perMessageDeflate: {
-      zlibDeflateOptions: {
-        // See zlib defaults.
-        chunkSize: config.WS_OPTIONS.perMessageDeflate.zlibDeflateOptions.chunkSize,
-        memLevel: config.WS_OPTIONS.perMessageDeflate.zlibDeflateOptions.memLevel,
-        level: config.WS_OPTIONS.perMessageDeflate.zlibDeflateOptions.level,
-      },
-      zlibInflateOptions: {
-        chunkSize: config.WS_OPTIONS.perMessageDeflate.zlibInflateOptions.chunkSize,
-      },
-      // Other options settable:
-      clientNoContextTakeover: config.WS_OPTIONS.perMessageDeflate.clientNoContextTakeover,
-      serverNoContextTakeover: config.WS_OPTIONS.perMessageDeflate.serverNoContextTakeover,
-      serverMaxWindowBits: config.WS_OPTIONS.perMessageDeflate.serverMaxWindowBits,
-      concurrencyLimit: config.WS_OPTIONS.perMessageDeflate.concurrencyLimit,
-      threshold: config.WS_OPTIONS.perMessageDeflate.threshold,
-    },
-  });
+const setup = (server) => {
+  const wss = new WebSocketServer({server});
   wss.on('connection', (ws) => {
     logger.debug('web socket connected');
     const id = helper.generateRandomString();
     const clientData = {
       id,
-      topic: null, // no need
       ws,
       authorized: false,
       roles: [],
@@ -109,12 +87,7 @@ const setup = () => {
         logger.error('invalid message', message, err);
         return;
       }
-      clientData.topic = msgJSON.topic;
-
-      const topicMsgs = allMessages[msgJSON.topic] || [];
-      let startIndex = topicMsgs.length - msgJSON.count;
-      if (startIndex < 0) startIndex = 0;
-      const messages = topicMsgs.slice(startIndex);
+      
       // the 'full' flag is true, indicating the messages are full latest messages for client side,
       // client side should clear the existing messages if any for the topic
       if (clientData.authorized) {
@@ -174,10 +147,6 @@ const setup = () => {
  * @returns {Object} handlerRuleSets ruleset of handler to check roles
  */
 function* pushNotifications(topic, notifications, handlerRuleSets) {
-  // cache notifications
-  if (!allMessages[topic]) allMessages[topic] = [];
-  allMessages[topic].push({ notifications, handlerRuleSets });
-  if (allMessages[topic].length > maxMsgCount) allMessages[topic].shift();
   // send notifications to clients
   _.each(allWS, (clientData) => {
     // Check the auth and role for each notification since there are more then one handler
