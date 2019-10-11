@@ -57,7 +57,7 @@ const setup = (server) => {
       roles: [],
       userId: null,
     };
-    allWS.push(clientData);
+    allWS.push(clientData); //TODO planning to have userid based
 
     // got message from client,
     // the message is 'token:{JWT-token}' or string representation of JSON containing fields: topic and count,
@@ -141,7 +141,7 @@ function* pushNotifications(topic, notifications, handlerRuleSets) {
     if (clientData.authorized) {
       _.map(notifications, (n) => {
         if ( clientData.userId == n.userId ) {
-          sendData(clientData.ws, { full: false, topic, messages: [notifications] });
+          sendData(clientData.ws, { full: false, topic, message: n });
         }
       });
     }

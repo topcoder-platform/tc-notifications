@@ -85,6 +85,7 @@ function startKafkaConsumer() {
           if (notifications && notifications.length > 0) {
             // save notifications in bulk to improve performance
             logger.info(`Going to insert ${notifications.length} notifications in database.`);
+            let wsData = [];
             yield models.Notification.bulkCreate(_.map(notifications, (n) => ({
               userId: n.userId,
               type: n.type || topic,
@@ -92,15 +93,26 @@ function startKafkaConsumer() {
               read: false,
               seen: false,
               version: n.version || null,
-            })));
+            })), { returning: true })
+              .then((result) => {
+                _.each(result, (model) => {
+                  const item = model.toJSON();
+                  wsData.push(item);
+                });
+              })
+              .catch((errors) => {
+                logger.logFullError(errors);
+              })
             // logging
             logger.info(`Saved ${notifications.length} notifications`);
             logger.info(`Going to push ${notifications.length} notifications to websocket.`);
 
             // Trigger websocket notifications
-            yield notificationStreamWS.pushNotifications(topic, notifications, handlerRuleSets);
-            logger.info(`Pushed ${notifications.length} notifications to websocket`);
-            
+            if (wsData.length > 0) {
+              yield notificationStreamWS.pushNotifications(topic, wsData, handlerRuleSets);
+              logger.info(`Pushed ${wsData.length} notifications to websocket`);
+            }
+
             /* logger.info(` for users: ${
               _.map(notifications, (n) => n.userId).join(', ')
               }`); */
@@ -150,23 +162,23 @@ function startKafkaConsumer() {
       logger.logFullError(err);
     });
 
-    // setup websocket server
-    const app = express(); 
-    app.set('port', config.PORT);
-    app.use(healthcheck.middleware([check]));
-    //app.use('/ws-check', express.static('./docs/ws-check.html'));
-    app.use((req, res) => {
-      res.status(404).json({ error: 'route not found' });
-    });
-    app.use((err, req, res) => {
-      logger.logFullError(err);
-      res.status(400).json({ error: err.message });
-    });
-  
-    const server = http.createServer(app);
-    notificationStreamWS.setup(server);
-    server.listen(app.get('port'));
-    logger.info(`Websocket server listening on port ${app.get('port')}`);
+  // setup websocket server
+  const app = express();
+  app.set('port', config.PORT);
+  app.use(healthcheck.middleware([check]));
+  //app.use('/ws-check', express.static('./docs/ws-check.html'));
+  app.use((req, res) => {
+    res.status(404).json({ error: 'route not found' });
+  });
+  app.use((err, req, res) => {
+    logger.logFullError(err);
+    res.status(400).json({ error: err.message });
+  });
+
+  const server = http.createServer(app);
+  notificationStreamWS.setup(server);
+  server.listen(app.get('port'));
+  logger.info(`Websocket server listening on port ${app.get('port')}`);
 }
 
 startKafkaConsumer();
