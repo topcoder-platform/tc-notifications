@@ -148,6 +148,9 @@ table.container, table.footer-container {
     height: 15px;
     background-color: #FFFFFF; }
 
+.empty-child-10 {
+  width: 10px; }
+
 .post-details .main-child {
   background-color: #FFFFFF; }
   .post-details .main-child .empty-child-one {
@@ -220,6 +223,12 @@ table.container, table.footer-container {
         text-align: center;
         color: #FFFFFF;
         font-size: 13px; }
+      .button-row .main-child .second-child.project-team.decline-sec {
+        background-color: #FFFFFF; }
+      .button-row .main-child .second-child.project-team a.decline-btn {
+        color: #555555;
+        border: 1px solid #808080;
+        background-color: #FFFFFF; }
 
 .button-one .main-child .empty-child-one, .button-three .main-child .empty-child-one {
   width: 216px; }
