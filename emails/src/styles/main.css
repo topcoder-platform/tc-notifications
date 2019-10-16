@@ -148,7 +148,7 @@ table.container, table.footer-container {
     height: 15px;
     background-color: #FFFFFF; }
 
-.empty-child-10 {
+.empty-width-10 {
   width: 10px; }
 
 .post-details .main-child {
@@ -210,7 +210,6 @@ table.container, table.footer-container {
     .button-row .main-child .second-child {
       border-radius: 4px;
       vertical-align: middle;
-      background-color: #0681FF;
       height: 30px; }
       .button-row .main-child .second-child a {
         border-radius: 4px;
@@ -218,20 +217,23 @@ table.container, table.footer-container {
         text-decoration: none;
         display: block;
         background-color: #0681FF;
-        padding-top: 6px;
-        padding-bottom: 5px;
+        padding-top: 8px;
+        padding-bottom: 7px;
         text-align: center;
         color: #FFFFFF;
         font-size: 13px; }
-      .button-row .main-child .second-child.project-team.decline-sec {
-        background-color: #FFFFFF; }
-      .button-row .main-child .second-child.project-team a.decline-btn {
+      .button-row .main-child .second-child a.second-btn {
         color: #555555;
         border: 1px solid #808080;
-        background-color: #FFFFFF; }
+        background-color: #FFFFFF;
+        padding-top: 7px;
+        padding-bottom: 6px;
+        width: 165px; }
 
 .button-one .main-child .empty-child-one, .button-three .main-child .empty-child-one {
   width: 216px; }
+  .button-one .main-child .empty-child-one.for-two-buttons, .button-three .main-child .empty-child-one.for-two-buttons {
+    width: 128px; }
 
 .button-one .main-child .second-child, .button-three .main-child .second-child {
   width: 167px; }
