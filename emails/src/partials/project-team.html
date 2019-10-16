@@ -105,23 +105,51 @@
         <table class="main-child">
         <tr>
             <td class="empty-child-one"></td>
-            <td class="second-child" align="center">
-                {{#if notifications.[0].[connect.notification.project.member.invite.requested]}}
-                    <a href="{{@root.connectURL}}/projects/{{notifications.[0].projectId}}#manageTopcoderTeam">
-                        Manage project team
-                    </a>
+            {{#if notifications.[0].[connect.notification.project.member.invite.created]}}
+                {{#if notifications.[0].[isSSO]}}
+                    <td class="second-child project-team" align="center">
+                        <a href="{{@root.accountsAppURL}}/sso-login/?app=connect&retUrl={{@root.connectURL}}/projects/{{notifications.[0].projectId}}%3Finvitation%3Daccept">
+                            Join Project
+                        </a>
+                    </td>
+                    <td class="empty-child-10"></td>
+                    <td class="second-child project-team decline-sec" align="center">
+                        <a class="decline-btn" href="{{@root.accountsAppURL}}/sso-login/?app=connect&retUrl={{@root.connectURL}}/projects/{{notifications.[0].projectId}}%3Finvitation%3Ddecline">
+                            Decline
+                        </a>
+                    </td>
                 {{else}}
-                  {{#if notifications.[0].[isSSO]}}
-                    <a href="{{@root.accountsAppURL}}/sso-login/?app=connect&retUrl={{@root.connectURL}}/projects/{{notifications.[0].projectId}}">
-                        SSO Login
-                    </a>
-                  {{else}}
-                    <a href="{{@root.connectURL}}/projects/{{notifications.[0].projectId}}">
-                        View project on Connect
-                    </a>
-                  {{/if}}
+                    <td class="second-child project-team" align="center">
+                        <a href="{{@root.connectURL}}/projects/{{notifications.[0].projectId}}?invitation=accept">
+                            Join Project
+                        </a>
+                    </td>
+                    <td class="empty-child-10"></td>
+                    <td class="second-child project-team decline-sec" align="center">
+                        <a class="decline-btn" href="{{@root.connectURL}}/projects/{{notifications.[0].projectId}}?invitation=decline">
+                            Decline
+                        </a>
+                    </td>
                 {{/if}}
-            </td>
+            {{else}}
+                <td class="second-child project-team" align="center">
+                    {{#if notifications.[0].[connect.notification.project.member.invite.requested]}}
+                        <a href="{{@root.connectURL}}/projects/{{notifications.[0].projectId}}#manageTopcoderTeam">
+                            Manage project team
+                        </a>
+                    {{else}}
+                        {{#if notifications.[0].[isSSO]}}
+                            <a href="{{@root.accountsAppURL}}/sso-login/?app=connect&retUrl={{@root.connectURL}}/projects/{{notifications.[0].projectId}}">
+                                SSO Login
+                            </a>
+                        {{else}}
+                            <a href="{{@root.connectURL}}/projects/{{notifications.[0].projectId}}">
+                                View project on Connect
+                            </a>
+                        {{/if}}
+                    {{/if}}
+                </td>
+            {{/if}}
             <td class="empty-child-one"></td>
         </tr>
         </table>
