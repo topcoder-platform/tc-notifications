@@ -5,6 +5,10 @@
 
 const _ = require('lodash');
 const co = require('co');
+const uuid = require('uuid/v4');
+const config = require('config');
+const authVerifier = require('tc-core-library-js').auth.verifier;
+
 
 /**
  * Wrap generator function to standard express function
@@ -38,7 +42,53 @@ function autoWrapExpress(obj) {
   return obj;
 }
 
+/**
+ * Generate random uuid with timestamp
+ * @returns {String} uuid with timestamp
+ */
+function generateRandomString() {
+  return `${uuid()}-${new Date().getTime()}`;
+}
+
+/**
+ * Check whether user is valid.
+ *
+ * @param {Object} user the user
+ * @returns {boolean} whether it is valid
+ */
+function isValid(user) {
+  return user !== undefined;
+}
+
+/**
+ * Check whether JWT token is authorized to access the resources.
+ *
+ * @param {String} token the JWT token
+ * @param {Function} callback the callback function
+ */
+function isTokenAuthorized(token, callback) {
+  const secret = _.get(config, 'AUTH_SECRET') || '';
+  const validIssuers = JSON.parse(_.get(config, 'VALID_ISSUERS') || '[]');
+
+  if (!secret) {
+    return callback(new Error('Auth secret not provided'));
+  }
+  if (!validIssuers || validIssuers.length === 0) {
+    return callback(new Error('JWT Issuers not configured'));
+  }
+
+  const verifier = authVerifier(validIssuers); // second argument relevance for m2m token not for user token
+  verifier.validateToken(token, secret, (err, decoded) => {
+    if (err) {
+      return callback(err);
+    }
+    const authorized = isValid(decoded);
+    return callback(null, authorized, decoded);
+  });
+}
 module.exports = {
   wrapExpress,
   autoWrapExpress,
+  generateRandomString,
+  isTokenAuthorized,
 };

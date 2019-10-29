@@ -16,7 +16,6 @@ module.exports = {
       idle: 10000,
     },
   },
-
   AUTH_SECRET: process.env.AUTH_SECRET,
   VALID_ISSUERS: process.env.VALID_ISSUERS ? process.env.VALID_ISSUERS.replace(/\\"/g, '') : null,
   // keep it here for dev purposes, it's only needed by modified version of tc-core-library-js
