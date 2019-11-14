@@ -137,6 +137,7 @@ You may reuse it during review.
 - start local PostgreSQL db, create an empty database, update the config/default.js DATABASE_URL param to point to the db
 - install dependencies `npm i`
 - run code lint check `npm run lint`
+- init DB `npm run reset:db`
 - start connect notification server `npm start`
 - the app is running at `http://localhost:4000`, it also starts Kafka consumer to listen for events and save unroll-ed notifications to db
 
