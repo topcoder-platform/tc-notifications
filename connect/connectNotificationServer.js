@@ -455,7 +455,12 @@ const handler = (topic, message, logger, callback) => {
       const ids = [];
       logger.debug(message.initiatorUserId, 'message.initiatorUserId');
       if (message.initiatorUserId) {
-        ids.push(message.initiatorUserId);
+        // if message is posted by the coder bot, use useId of the predefined system user i.e. tcwebserivce
+        if (botIds.indexOf(message.userId.toString()) !== -1) {
+          ids.push(config.TCWEBSERVICE_ID);
+        } else {
+          ids.push(message.initiatorUserId);
+        }
       }
       // if message has userId such messages will likely need userHandle and user full name
       // so let's get it
