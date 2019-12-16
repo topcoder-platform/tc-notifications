@@ -456,7 +456,7 @@ const handler = (topic, message, logger, callback) => {
       logger.debug(message.initiatorUserId, 'message.initiatorUserId');
       if (message.initiatorUserId) {
         // if message is posted by the coder bot, use useId of the predefined system user i.e. tcwebserivce
-        if (botIds.indexOf(message.userId.toString()) !== -1) {
+        if (botIds.indexOf(message.initiatorUserId.toString()) !== -1) {
           ids.push(config.TCWEBSERVICE_ID);
         } else {
           ids.push(message.initiatorUserId);
@@ -466,7 +466,12 @@ const handler = (topic, message, logger, callback) => {
       // so let's get it
       logger.debug(message.userId, 'message.userId');
       if (message.userId) {
-        ids.push(message.userId);
+        // if message is posted by the coder bot, use useId of the predefined system user i.e. tcwebserivce
+        if (botIds.indexOf(message.userId.toString()) !== -1) {
+          ids.push(config.TCWEBSERVICE_ID);
+        } else {
+          ids.push(message.userId);
+        }
       }
       return service.getUsersById(ids);
       // return [];
