@@ -19,17 +19,17 @@ const getProject = (projectId) => (
   M2m.getMachineToken(config.AUTH0_CLIENT_ID, config.AUTH0_CLIENT_SECRET)
     .then((token) => (
       request
-        .get(`${config.TC_API_V4_BASE_URL}/projects/${projectId}`)
+        .get(`${config.TC_API_V5_BASE_URL}/projects/${projectId}`)
         .set('accept', 'application/json')
         .set('authorization', `Bearer ${token}`)
         .then((res) => {
-          if (!_.get(res, 'body.result.success')) {
+          const project = res.body;
+          if (!project) {
             throw new Error(`Failed to get project details of project id: ${projectId}`);
           }
-          const project = _.get(res, 'body.result.content');
           return project;
         }).catch((err) => {
-          const errorDetails = _.get(err, 'response.body.result.content.message');
+          const errorDetails = _.get(err, 'response.body.message');
           throw new Error(
             `Failed to get project details of project id: ${projectId}.` +
             (errorDetails ? ' Server response: ' + errorDetails : '')
@@ -244,17 +244,17 @@ const getPhase = (projectId, phaseId) => (
   M2m.getMachineToken(config.AUTH0_CLIENT_ID, config.AUTH0_CLIENT_SECRET)
     .then((token) => (
       request
-        .get(`${config.TC_API_V4_BASE_URL}/projects/${projectId}/phases/${phaseId}`)
+        .get(`${config.TC_API_V5_BASE_URL}/projects/${projectId}/phases/${phaseId}`)
         .set('accept', 'application/json')
         .set('authorization', `Bearer ${token}`)
         .then((res) => {
-          if (!_.get(res, 'body.result.success')) {
+          const project = res.body;
+          if (!project) {
             throw new Error(`Failed to get phase details of project id: ${projectId}, phase id: ${phaseId}`);
           }
-          const project = _.get(res, 'body.result.content');
           return project;
         }).catch((err) => {
-          const errorDetails = _.get(err, 'response.body.result.content.message');
+          const errorDetails = _.get(err, 'response.body.message');
           throw new Error(
             `Failed to get phase details of project id: ${projectId}, phase id: ${phaseId}.` +
             (errorDetails ? ' Server response: ' + errorDetails : '')
