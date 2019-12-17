@@ -11,7 +11,8 @@
     "lint:fix": "eslint *.js --fix src config test connect",
     "postinstall": "npm run build",
     "build": "gulp build",
-    "watch": "gulp watch"
+    "watch": "gulp watch",
+    "reset:db": "node tools/resetDb.js"
   },
   "author": "TCSCODER",
   "license": "none",
