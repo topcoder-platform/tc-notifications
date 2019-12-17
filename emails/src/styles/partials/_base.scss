@@ -206,6 +206,10 @@ table.container, table.footer-container {
   }
 }
 
+.empty-width-10 {
+  width: 10px;
+}
+
 // emptys end
 
 // post details
@@ -306,7 +310,6 @@ table.container, table.footer-container {
       // width: 167px;
       border-radius: 4px;
       vertical-align: middle;
-      background-color: $button-color;
       height: 30px;
       a {
         // width: 167px;
@@ -315,11 +318,21 @@ table.container, table.footer-container {
         text-decoration: none;
         display: block;
         background-color: $button-color;
-        padding-top: 6px;
-        padding-bottom: 5px;
+        padding-top: 8px;
+        padding-bottom: 7px;
         text-align: center;
         color: $white-background;
         font-size: 13px;
+      }
+      a {
+        &.second-btn {
+          color: $tc-gray-70;
+          border: 1px solid $grey-hyperlink;
+          background-color: $white-background;
+          padding-top: 7px; // minus 1px border-top
+          padding-bottom: 6px; // minus 1px border-bottom
+          width: 165px; // minus 2px borders
+        }
       }
     }
   }
@@ -332,6 +345,12 @@ table.container, table.footer-container {
   .main-child {
     .empty-child-one {
       width: 216px;
+
+      // if we have two buttons in one row with 10px spacing between:
+      // space=128px + button=167px + space=10px + button=167px + space=128px
+      &.for-two-buttons {
+        width: 128px;
+      }
     }
     .second-child {
       width: 167px;
