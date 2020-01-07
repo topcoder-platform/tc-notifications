@@ -57,8 +57,11 @@ getSettings.schema = {
  * @param {Number} userId the user id
  */
 function* saveNotificationSetting(entry, userId) {
-  const setting = yield models.NotificationSetting.findOne({ where: {
-    userId, topic: entry.topic, serviceId: entry.serviceId, name: entry.name } });
+  const setting = yield models.NotificationSetting.findOne({
+    where: {
+      userId, topic: entry.topic, serviceId: entry.serviceId, name: entry.name
+    }
+  });
   if (setting) {
     setting.value = entry.value;
     yield setting.save();
@@ -79,8 +82,11 @@ function* saveNotificationSetting(entry, userId) {
  * @param {Number} userId the user id
  */
 function* saveServiceSetting(entry, userId) {
-  const setting = yield models.ServiceSettings.findOne({ where: {
-    userId, serviceId: entry.serviceId, name: entry.name } });
+  const setting = yield models.ServiceSettings.findOne({
+    where: {
+      userId, serviceId: entry.serviceId, name: entry.name
+    }
+  });
   if (setting) {
     setting.value = entry.value;
     yield setting.save();
@@ -181,12 +187,21 @@ function* listNotifications(query, userId) {
   const notificationSettings = settings.notifications;
   const limit = query.limit || query.per_page;
   const offset = (query.page - 1) * limit;
-  const filter = { where: {
-    userId,
-  }, offset, limit, order: [['createdAt', 'DESC']] };
-  if (query.platform) {
-    filter.where.type = { $like: `notifications\.${query.platform}\.%` };
+  const filter = {
+    where: {
+      userId,
+    }, offset, limit, order: [['createdAt', 'DESC']]
+  };
+
+  switch (query.platform) {
+    case 'connect':
+      filter.where.type = { $like: 'connect.notification.%' };
+      break;
+    case 'community':
+      filter.where.type = { $notLike: 'connect.notification.%' };
+      break;
   }
+
   if (_.keys(notificationSettings).length > 0) {
     // only filter out notifications types which were explicitly set to 'no' - so we return notification by default
     const notifications = _.keys(notificationSettings).filter((notificationType) =>
