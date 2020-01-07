@@ -195,10 +195,10 @@ function* listNotifications(query, userId) {
 
   switch (query.platform) {
     case 'connect':
-      filter.where.type = { $like: 'notification.connect.%' };
+      filter.where.type = { $like: 'connect.notification.%' };
       break;
     case 'community':
-      filter.where.type = { $notLike: 'notification.connect.%' };
+      filter.where.type = { $notLike: 'connect.notification.%' };
       break;
   }
 
