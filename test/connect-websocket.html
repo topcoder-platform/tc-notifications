@@ -1,0 +1,127 @@
+<!doctype html>
+<html>
+
+<head>
+   <title>WebSocket Verification</title>
+   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+   <style>
+      .container {
+         margin: 25px;
+      }
+   </style>
+</head>
+
+<body>
+   <div class="container">
+      <div class="input-group mb-3">
+         <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon1">Websocket Server URL</span>
+         </div>
+         <input type="text" id="url" class="form-control" placeholder="ws://wss-notify.topcoder-dev.com"
+            value="ws://wss-notify.topcoder-dev.com" aria-label="Username" aria-describedby="basic-addon1">
+      </div>
+      <div class="input-group">
+         <div class="input-group-prepend">
+            <span class="input-group-text">User JWT Token</span>
+         </div>
+         <textarea class="form-control" aria-label="With textarea" id="token"></textarea>
+         <div class="input-group-append">
+            <span class="input-group-text" id="basic-addon2"><button type="button" class="btn btn-secondary" onclick="sendToken()">Connect To WS</button></span>
+         </div>
+      </div>
+
+      <div id="messages"></div>
+      <div id="sse">
+        <!-- <a href="javascript:connect()">Run WebSocket</a> -->
+      </div>
+   </div>
+   <script type="text/javascript">
+      counter = 1;
+      var ws;
+      function connect(token) {
+
+         if ("WebSocket" in window) {
+            console.log("WebSocket is supported by your Browser!");
+
+            // Let us open a web socket
+            var url = document.getElementById("url").value;
+            ws = new WebSocket(url);
+
+            ws.onopen = function () {
+               console.log("connection established with URL:" + url);
+               if (token) {
+                  ws.send("token:" + token);
+                  console.log("re-sent token");
+               }
+            };
+
+            ws.onmessage = function (evt) {
+               document.getElementById("messages").innerHTML = (document.getElementById("messages").innerHTML + "<br/><b>" + counter + "</b>" + "-" + "<small>" + evt.data + "</small>");
+               counter++;
+            };
+
+            ws.onclose = function () {
+
+               // websocket is closed.
+               console.log("Connection is closed...");
+               sendToken();
+            };
+
+
+         } else {
+
+            // The browser doesn't support WebSocket
+            console.log("WebSocket NOT supported by your Browser!");
+         }
+      }
+      function sendToken() {
+         var token = document.getElementById("token").value;
+         const parts = token.split('.')
+
+         if (parts.length !== 3) {
+            console.log('The token is invalid');
+         }
+
+         const decoded = urlBase64Decode(parts[1])
+
+         if (!decoded) {
+            console.log('Cannot decode the token');
+         }
+
+         console.log("decoded....",JSON.parse(decoded));
+
+         if (!ws || ws.readyState != 1) {
+            connect(token);
+         } else {
+            if (token.length > 0) {
+               ws.send("token:" + token);
+               console.log("sent token");
+            } else {
+               console.log("Error : token empty");
+            }
+         }
+      }
+
+      function urlBase64Decode(str) {
+         let output = str.replace(/-/g, '+').replace(/_/g, '/')
+
+         switch (output.length % 4) {
+            case 0:
+               break
+
+            case 2:
+               output += '=='
+               break
+
+            case 3:
+               output += '='
+               break
+
+            default:
+               throw 'Illegal base64url string!'
+         }
+         return decodeURIComponent(escape(atob(output)));
+      }
+   </script>
+</body>
