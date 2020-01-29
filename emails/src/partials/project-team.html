@@ -58,11 +58,7 @@
                             <strong>{{userFullName}}</strong> joined the project
                         {{/if}}
                         {{#if [connect.notification.project.member.invite.created]}}
-                          {{#if [isSSO]}}
-                            Hi <strong>{{userFullName}}</strong>, you are invited to join the project {{projectName}}. Please use the link below to sign in and join the project.
-                          {{else}}
                             Hi <strong>{{userFullName}}</strong>, you are invited to join the project {{projectName}}. Please click on the button ("Join Project") below to join.
-                          {{/if}}
                         {{/if}}
                         {{#if [connect.notification.project.member.invite.requested]}}
                             You are requested to add <strong>{{userFullName}}</strong> as a copilot
