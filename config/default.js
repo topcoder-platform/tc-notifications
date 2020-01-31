@@ -97,6 +97,12 @@ module.exports = {
         },
       },
     ],
+    'test.sachin': [
+      {
+        handleDummy:
+        {}     
+      },
+    ],
     //'notifications.community.challenge.created': ['handleChallengeCreated'],
     //'notifications.community.challenge.phasewarning': ['handleChallengePhaseWarning'],
   },
