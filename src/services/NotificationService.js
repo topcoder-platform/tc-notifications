@@ -9,6 +9,8 @@ const Joi = require('joi');
 const errors = require('../common/errors');
 const logger = require('../common/logger');
 const models = require('../models');
+const config = require('config');
+const hooks = require('../hooks');
 
 const DEFAULT_LIMIT = 10;
 
@@ -200,6 +202,10 @@ function* listNotifications(query, userId) {
     case 'community':
       filter.where.type = { $notLike: 'connect.notification.%' };
       break;
+  }
+
+  if (config.ENABLE_HOOK_BULK_NOTIFICATION){
+     hooks.hookBulkMessage.checkBulkMessageForUser(userId)
   }
 
   if (_.keys(notificationSettings).length > 0) {
