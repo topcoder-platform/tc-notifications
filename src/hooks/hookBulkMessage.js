@@ -11,8 +11,12 @@ const logger = require('../common/logger')
 const models = require('../models')
 const logPrefix = "BulkNotificationHook: "
 
-models.BulkMessages.sync()
-models.BulkMessageUserRefs.sync()
+/**
+ * CREATE NEW TABLES IF NOT EXISTS
+ */
+models.BulkMessages.sync().then((t)=> {
+    models.BulkMessageUserRefs.sync()
+})
 
 /**
  * Main function 
@@ -115,7 +119,7 @@ function createNotificationForUser(userId, bulkMessage) {
         type: bulkMessage.type,
         contents: {
             id: bulkMessage.id, /** broadcast message id  */
-            name: bulkMessage.contents, /** broadcast message */
+            message: bulkMessage.message, /** broadcast message */
             group: 'broadcast',
             title: 'Broadcast Message',
         },

@@ -98,6 +98,10 @@ module.exports = {
         },
       },
     ],
+    'admin.notification.broadcast' : [{
+      handleBulkNotification: {}
+    }
+    ]
     //'notifications.community.challenge.created': ['handleChallengeCreated'],
     //'notifications.community.challenge.phasewarning': ['handleChallengePhaseWarning'],
   },
