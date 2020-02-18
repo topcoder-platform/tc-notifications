@@ -206,7 +206,7 @@ function* listNotifications(query, userId) {
 
   if (config.ENABLE_HOOK_BULK_NOTIFICATION) {
     yield hooks.hookBulkMessage.checkBulkMessageForUser(userId).catch((e) => {
-      logger.info(`Issue in calling bulk notification hook.`, e)
+      logger.error(`Issue in calling bulk notification hook.`, e)
     })
   }
 

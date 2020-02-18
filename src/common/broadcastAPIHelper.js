@@ -50,6 +50,7 @@ async function getMemberInfo(userId) {
 async function checkBroadcastMessageForUser(userId, bulkMessage) {
     return new Promise(function (resolve, reject) {
         const skills = _.get(bulkMessage, 'recipients.skills')
+        logger.info(`Got skills in DB...`, skills)
         if (skills && skills.length > 0) {
             try {
                 getMemberInfo(userId).then((m) => {
@@ -67,7 +68,10 @@ async function checkBroadcastMessageForUser(userId, bulkMessage) {
                             logger.info(`${logPrefix} '${s}' skill matached for user id ${userId}`)
                         }
                     })
-                    resolve(flag)
+                    resolve({
+                        record: bulkMessage,
+                        result: flag
+                    })
                 }).catch((err) => {
                     reject(err)
                 })
