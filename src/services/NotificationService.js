@@ -205,9 +205,11 @@ function* listNotifications(query, userId) {
   }
 
   if (config.ENABLE_HOOK_BULK_NOTIFICATION) {
-    yield hooks.hookBulkMessage.checkBulkMessageForUser(userId).catch((e) => {
-      logger.error(`Issue in calling bulk notification hook.`, e)
-    })
+    try {
+      yield hooks.hookBulkMessage.checkBulkMessageForUser(userId)
+    } catch (e) {
+      logger.error(`Error in calling bulk notification hook: ${e}`)
+    }
   }
 
   if (_.keys(notificationSettings).length > 0) {
