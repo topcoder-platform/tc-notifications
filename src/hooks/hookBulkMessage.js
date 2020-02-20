@@ -37,7 +37,7 @@ async function checkBulkMessageForUser(userId) {
                     let result = true
                     if (tUserRefs < tBulkMessages) {
                         logger.info(`${logPrefix} Need to sync broadcast message for current user ${userId}`)
-                       result = await syncBulkMessageForUser(userId)
+                        result = await syncBulkMessageForUser(userId)
                     }
                     resolve(result)  // resolve here
                 }).catch((e) => {
@@ -102,23 +102,25 @@ async function isBroadCastMessageForUser(userId, bulkMessage) {
 }
 
 /**
- * Helper function 
+ * Helper function - Insert in bulkMessage user reference table
+ * 
  * @param {Integer} userId 
  * @param {Integer} bulkMessageId 
  * @param {Integer} notificationId 
  */
 async function insertUserRefs(userId, bulkMessageId, notificationId) {
-    return new Promise(function (resolve, reject) {
-        models.BulkMessageUserRefs.create({
+    try {
+        const r = await models.BulkMessageUserRefs.create({
             bulk_message_id: bulkMessageId,
             user_id: userId,
             notification_id: notificationId,
-        }).then((b) => {
-            resolve(`${logPrefix} Inserted userRef record ${b.id} for current user ${userId}`)
-        }).catch((e) => {
-            reject(`${logPrefix} Failed to insert userRef record for user: ${userId}, error: ${e}`)
         })
-    })
+        logger.info(`${logPrefix} Inserted userRef record for bulk message id ${r.id} for current user ${userId}`)
+        return r
+    } catch (e) {
+        logger.error(`${logPrefix} Failed to insert userRef record for user: ${userId}, error: ${e}`)
+        return e
+    }
 }
 
 /**
@@ -127,8 +129,8 @@ async function insertUserRefs(userId, bulkMessageId, notificationId) {
  * @param {Object} bulkMessage 
  */
 async function createNotificationForUser(userId, bulkMessage) {
-    return new Promise(function (resolve, reject) {
-        models.Notification.create({
+    try {
+        const n = await models.Notification.create({
             userId: userId,
             type: bulkMessage.type,
             contents: {
@@ -140,14 +142,15 @@ async function createNotificationForUser(userId, bulkMessage) {
             read: false,
             seen: false,
             version: null,
-        }).then(async (n) => {
-            logger.info(`${logPrefix} Inserted notification record ${n.id} for current user ${userId}`)
-            const result = await insertUserRefs(userId, bulkMessage.id, n.id)
-            resolve(result)
-        }).catch((err) => {
-            reject(`${logPrefix} Error in inserting broadcast message: ${err} `)
         })
-    })
+        logger.info(`${logPrefix} Inserted notification record ${n.id} for current user ${userId}`)
+        // TODO need to be in transaction so that rollback will be possible
+        const result = await insertUserRefs(userId, bulkMessage.id, n.id)
+        return result
+    } catch (e) {
+        logger.error(`${logPrefix} Error in inserting broadcast message: ${err} `)
+        return e
+    }
 }
 
 

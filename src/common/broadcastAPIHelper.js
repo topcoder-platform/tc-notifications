@@ -11,6 +11,9 @@ const m2m = m2mAuth(config);
 
 const logPrefix = "BroadcastAPI: "
 
+/**
+ * Helper Function - get m2m token 
+ */
 async function getM2MToken() {
     return m2m.getMachineToken(config.AUTH0_CLIENT_ID, config.AUTH0_CLIENT_SECRET)
 }
@@ -70,27 +73,6 @@ async function getUserGroup(userId) {
     })
 }
 
-async function checkBroadcastMessageForUser(userId, bulkMessage) {
-    return new Promise(function (resolve, reject) {
-        Promise.all([
-            checkUserSkill(userId, bulkMessage),
-            checkUserGroup(userId, bulkMessage),
-        ]).then((results) => {
-            let flag = true // TODO need to be sure about default value  
-            _.map(results, (r) => {
-                flag = !r ? false : flag // TODO recheck condition 
-            })
-            logger.info(`Final condition result is: ${flag}`)
-            resolve({
-                record: bulkMessage,
-                result: flag
-            })
-        }).catch((err) => {
-            reject(`${logPrefix} got issue in checking recipient condition. ${err}`)
-        })
-    }) // promise end
-}
-
 /**
  *  Helper function - check Skill condition
  */
@@ -145,6 +127,33 @@ async function checkUserGroup(userId, bulkMessage) {
             reject(e)
         }
     })
+}
+
+/**
+ * Main Function - check if broadcast message is for current user or not  
+ * 
+ * @param {Integer} userId 
+ * @param {Object} bulkMessage 
+ */
+async function checkBroadcastMessageForUser(userId, bulkMessage) {
+    return new Promise(function (resolve, reject) {
+        Promise.all([
+            checkUserSkill(userId, bulkMessage),
+            checkUserGroup(userId, bulkMessage),
+        ]).then((results) => {
+            let flag = true // TODO need to be sure about default value  
+            _.map(results, (r) => {
+                flag = !r ? false : flag // TODO recheck condition 
+            })
+            logger.info(`Final condition result is: ${flag}`)
+            resolve({
+                record: bulkMessage,
+                result: flag
+            })
+        }).catch((err) => {
+            reject(`${logPrefix} got issue in checking recipient condition. ${err}`)
+        })
+    }) // promise end
 }
 
 module.exports = {
