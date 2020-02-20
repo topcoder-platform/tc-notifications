@@ -147,7 +147,7 @@ async function checkBroadcastMessageForUser(userId, bulkMessage) {
             _.map(results, (r) => {
                 flag = !r ? false : flag // TODO recheck condition 
             })
-            logger.info(`Final condition result is: ${flag}`)
+            logger.info(`BCA: Final recepient condition result is: ${flag} for userId ${userId}`)
             resolve({
                 record: bulkMessage,
                 result: flag
