@@ -110,16 +110,18 @@ async function checkUserGroup(userId, bulkMessage) {
     return new Promise(async function (resolve, reject) {
         try {
             const groups = _.get(bulkMessage, 'recipients.groups')
-            let flag = true // TODO
+            let flag = false // default
+            const userGroupInfo = await getUserGroup(userId)
             if (groups.length > 0) {
-                flag = false
-                const groupInfo = await getUserGroup(userId)
-                _.map(groupInfo, (o) => {
-                    if (_.indexOf(groups, "public") >= 0) {
-                        flag = (_.get(o, "privateGroup")) ? false : flag
-                    } else {
-                        flag = (_.indexOf(groups, _.get(o, "name")) >= 0) ? true : flag
-                    }
+                _.map(userGroupInfo, (o) => {
+                    // particular group only condition
+                    flag = (_.indexOf(groups, _.get(o, "name")) >= 0) ? true : flag
+                })
+            } else { // no group condition means its for `public` no private group
+                flag = true // default allow for all
+                _.map(userGroupInfo, (o) => {
+                    // not allow if user is part of any private group
+                    flag = (_.get(o, "privateGroup")) ? false : flag
                 })
             }
             resolve(flag)
