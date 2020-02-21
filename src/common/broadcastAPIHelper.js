@@ -1,5 +1,5 @@
 /**
- * 
+ *  Broadcast: API calling helper
  */
 
 const _ = require('lodash')
@@ -40,7 +40,8 @@ async function getMemberInfo(userId) {
             logger.info(`BCA Memeber API: Feteched ${memberInfo.length} record(s) from member api`)
             resolve(memberInfo)
         } catch (err) {
-            reject(new Error(`BCA Memeber API: Failed to get member api detail for user id ${userId}, ${err}`))
+            reject(new Error(`BCA Memeber API: Failed to get member ` +
+                `api detail for user id ${userId}, ${err}`))
         }
 
     })
@@ -51,26 +52,53 @@ async function getMemberInfo(userId) {
  * @param {Integer} userId 
  */
 async function getUserGroup(userId) {
-    //TODO need to take care of pagination
-    const url = config.TC_API_V5_BASE_URL +
-        `/groups/?memberId=${userId}` +
-        "&membershipType=user&page=1"
-    let groupInfo = []
-    return new Promise(async (resolve, reject) => {
-        try {
-            const machineToken = await getM2MToken()
-            //logger.info(`BCA Group API: got m2m token of length ${machineToken.length}`)
-            const res = await request.get(url).set('Authorization', `Bearer ${machineToken}`);
-            if (_.get(res, 'res.statusCode') != 200) {
-                reject(new Error(`BCA Group API: Failed to get group detail for user id ${userId}`))
-            }
-            groupInfo = _.get(res, 'body')
-            logger.info(`BCA Group API: Feteched ${groupInfo.length} record(s) from group api`)
-            resolve(groupInfo)
-        } catch (e) {
-            reject(`Calling group api ${e}`)
+    try {
+        const machineToken = await getM2MToken()
+        if (machineToken.length <= 0) {
+            return (new Error(`BCA Group API: fecthing m2m token failed for ${userId}`))
         }
-    })
+        let nextPage
+        let res
+        let url
+        let page = 1
+        let groupInfo = []
+        const perPage = 100
+        do {
+            url = config.TC_API_V5_BASE_URL +
+                `/groups/?memberId=${userId}&membershipType=user` +
+                `&page=${page}&perPage=${perPage}`
+            res = await callApi(url, machineToken)
+            let resStatus = _.get(res, 'res.statusCode')
+            if (resStatus != 200) {
+                throw new Error(`BCA Group API: Failed for user id ${userId},` +
+                    ` response status ${resStatus}`)
+            }
+            let data = _.get(res, 'body')
+            groupInfo = groupInfo.concat(data)
+            nextPage = _.get(res, 'header.x-next-page')
+            page = nextPage
+        } while (nextPage)
+        logger.info(`BCA Group API: Feteched ${groupInfo.length} record(s) from group api`)
+        return groupInfo
+    } catch (e) {
+        logger.error(`BCA: Error calling group api : ${e}`)
+        throw new Error(`getUserGroup() : ${e}`)
+    }
+}
+
+/**
+ * 
+ * @param {String} url 
+ * @param {String} machineToken 
+ */
+async function callApi(url, machineToken) {
+    try {
+        logger.info(`calling api url ${url}`)
+        return request.get(url).set('Authorization', `Bearer ${machineToken}`)
+    } catch (e) {
+        logger.error(`Error in calling URL ${url}, ${e}`)
+        throw new Error(`callApi() : ${e}`)
+    }
 }
 
 /**
@@ -92,7 +120,8 @@ async function checkUserSkill(userId, bulkMessage) {
                 _.map(skills, (s) => {
                     if (_.indexOf(memberSkills, s.toLowerCase()) >= 0) {
                         flag = true
-                        logger.info(`BroadcastMessageId: ${bulkMessage.id}, '${s}' skill matached for user id ${userId}`)
+                        logger.info(`BroadcastMessageId: ${bulkMessage.id},` +
+                            ` '${s}' skill matached for user id ${userId}`)
                     }
                 })
             }
@@ -123,6 +152,8 @@ async function checkUserGroup(userId, bulkMessage) {
                     // not allow if user is part of any private group
                     flag = (_.get(o, "privateGroup")) ? false : flag
                 })
+                logger.info(`public group condition for userId ${userId}` +
+                    ` and BC messageId ${bulkMessage.id}, the result is: ${flag}`)
             }
             resolve(flag)
         } catch (e) {
@@ -147,7 +178,8 @@ async function checkBroadcastMessageForUser(userId, bulkMessage) {
             _.map(results, (r) => {
                 flag = !r ? false : flag // TODO recheck condition 
             })
-            logger.info(`BCA: Final recepient condition result is: ${flag} for userId ${userId}`)
+            logger.info(`BCA: messageId: ${bulkMessage.id} Final recipient` +
+                ` condition result is: ${flag} for userId ${userId}`)
             resolve({
                 record: bulkMessage,
                 result: flag
