@@ -25,8 +25,7 @@ async function getM2MToken() {
 async function getMemberInfo(userId) {
     const url = config.TC_API_V3_BASE_URL +
         "/members/_search/?" +
-        "fields=userId%2Cskills" +
-        `&query=userId%3A${userId}` +
+        `query=userId%3A${userId}` +
         `&limit=1`
     return new Promise(async function (resolve, reject) {
         let memberInfo = []
@@ -102,64 +101,86 @@ async function callApi(url, machineToken) {
 }
 
 /**
- *  Helper function - check Skill condition
+ *  Helper function - check Skills and Tracks condition
  */
-async function checkUserSkill(userId, bulkMessage) {
-    return new Promise(async function (resolve, reject) {
-        try {
-            const skills = _.get(bulkMessage, 'recipients.skills')
-            let flag = true // allow for all
-            if (skills && skills.length > 0) {
-                const m = await getMemberInfo(userId)
-                const ms = _.get(m[0], "skills") // get member skills 
-                const memberSkills = []
-                flag = false
-                _.map(ms, (o) => {
-                    memberSkills.push(_.get(o, 'name').toLowerCase())
-                })
-                _.map(skills, (s) => {
-                    if (_.indexOf(memberSkills, s.toLowerCase()) >= 0) {
-                        flag = true
-                        logger.info(`BroadcastMessageId: ${bulkMessage.id},` +
-                            ` '${s}' skill matached for user id ${userId}`)
-                    }
-                })
-            }
-            resolve(flag)
-        } catch (e) {
-            reject(e)
+async function checkUserSkillsAndTracks(userId, bulkMessage) {
+    try {
+        const skills = _.get(bulkMessage, 'recipients.skills')
+        const tracks = _.get(bulkMessage, 'recipients.tracks')
+        const m = await getMemberInfo(userId)
+        let skillMatch, trackMatch = false // default
+        if (skills && skills.length > 0) {
+            const ms = _.get(m[0], "skills") // get member skills 
+            const memberSkills = []
+            skillMatch = false
+            _.map(ms, (o) => {
+                memberSkills.push(_.get(o, 'name').toLowerCase())
+            })
+            _.map(skills, (s) => {
+                if (_.indexOf(memberSkills, s.toLowerCase()) >= 0) {
+                    skillMatch = true
+                    logger.info(`BroadcastMessageId: ${bulkMessage.id},` +
+                        ` '${s}' skill matached for user id ${userId}`)
+                }
+            })
+        } else {
+            skillMatch = true  // no condition, means allow for all 
         }
-    }) // promise end 
+
+        //
+        if (tracks.length > 0) {
+            trackMatch = false
+            const uDevChallenges = _.get(m[0], "stats[0].DEVELOP.challenges1")
+            const uDesignChallenges = _.get(m[0], "stats[0].DEVELOP.challenges")
+            const uDSChallenges = _.get(m[0], "stats[0].DEVELOP.challenges")
+            _.map(tracks, (t) => {
+                /**
+                 * checking if user participated in specific challenges   
+                 */
+                if (t.equalsIgnoreCase("DEVELOP")) {
+                    trackMatch = uDevChallenges > 0 ? true : trackMatch
+                } else if (t.equalsIgnoreCase("DESIGN")) {
+                    trackMatch = uDesignChallenges > 0 ? true : trackMatch
+                } else if (t.equalsIgnoreCase("DATA_SCIENCE")) {
+                    trackMatch = uDSChallenges > 0 ? true : trackMatch
+                }
+            })
+        } else {
+            trackMatch = true // no condition, means allow for all
+        }
+        const flag = (skillMatch && trackMatch) ? true : false
+        return flag
+    } catch (e) {
+        throw new Error(`checkUserSkillsAndTracks() : ${e}`)
+    }
 }
 
 /**
  * Helper function - check group condition 
  */
 async function checkUserGroup(userId, bulkMessage) {
-    return new Promise(async function (resolve, reject) {
-        try {
-            const groups = _.get(bulkMessage, 'recipients.groups')
-            let flag = false // default
-            const userGroupInfo = await getUserGroup(userId)
-            if (groups.length > 0) {
-                _.map(userGroupInfo, (o) => {
-                    // particular group only condition
-                    flag = (_.indexOf(groups, _.get(o, "name")) >= 0) ? true : flag
-                })
-            } else { // no group condition means its for `public` no private group
-                flag = true // default allow for all
-                _.map(userGroupInfo, (o) => {
-                    // not allow if user is part of any private group
-                    flag = (_.get(o, "privateGroup")) ? false : flag
-                })
-                logger.info(`public group condition for userId ${userId}` +
-                    ` and BC messageId ${bulkMessage.id}, the result is: ${flag}`)
-            }
-            resolve(flag)
-        } catch (e) {
-            reject(e)
+    try {
+        const groups = _.get(bulkMessage, 'recipients.groups')
+        let flag = false // default
+        const userGroupInfo = await getUserGroup(userId)
+        if (groups.length > 0) {
+            _.map(userGroupInfo, (o) => {
+                // particular group only condition
+                flag = (_.indexOf(groups, _.get(o, "name")) >= 0) ? true : flag
+            })
+        } else { // no group condition means its for `public` no private group
+            flag = true // default allow for all
+            _.map(userGroupInfo, (o) => {
+                // not allow if user is part of any private group
+                flag = (_.get(o, "privateGroup")) ? false : flag
+            })
+            logger.info(`public group condition for userId ${userId}` +
+                ` and BC messageId ${bulkMessage.id}, the result is: ${flag}`)
         }
-    })
+        return flag
+    } catch (e) {
+        throw new Error(`checkUserGroup(): ${e}`)
+    }
 }
 
 /**
@@ -171,7 +192,7 @@ async function checkUserGroup(userId, bulkMessage) {
 async function checkBroadcastMessageForUser(userId, bulkMessage) {
     return new Promise(function (resolve, reject) {
         Promise.all([
-            checkUserSkill(userId, bulkMessage),
+            checkUserSkillsAndTracks(userId, bulkMessage),
             checkUserGroup(userId, bulkMessage),
         ]).then((results) => {
             let flag = true // TODO need to be sure about default value  
