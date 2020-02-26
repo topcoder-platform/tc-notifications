@@ -130,18 +130,19 @@ async function checkUserSkillsAndTracks(userId, bulkMessage) {
         //
         if (tracks.length > 0) {
             trackMatch = false
-            const uDevChallenges = _.get(m[0], "stats[0].DEVELOP.challenges1")
-            const uDesignChallenges = _.get(m[0], "stats[0].DEVELOP.challenges")
-            const uDSChallenges = _.get(m[0], "stats[0].DEVELOP.challenges")
+            const uDevChallenges = _.get(m[0], "stats[0].DEVELOP.challenges")
+            const uDesignChallenges = _.get(m[0], "stats[0].DESIGN.challenges")
+            const uDSChallenges = _.get(m[0], "stats[0].DATA_SCIENCE.challenges")
             _.map(tracks, (t) => {
                 /**
                  * checking if user participated in specific challenges   
                  */
-                if (t.equalsIgnoreCase("DEVELOP")) {
+                let key = t.toLowerCase()
+                if (key === "develop") {
                     trackMatch = uDevChallenges > 0 ? true : trackMatch
-                } else if (t.equalsIgnoreCase("DESIGN")) {
+                } else if (key === "design") {
                     trackMatch = uDesignChallenges > 0 ? true : trackMatch
-                } else if (t.equalsIgnoreCase("DATA_SCIENCE")) {
+                } else if (key === "data_science") {
                     trackMatch = uDSChallenges > 0 ? true : trackMatch
                 }
             })
