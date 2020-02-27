@@ -5,8 +5,6 @@
 'use strict'
 
 const _ = require('lodash')
-//const Joi = require('joi')
-//const errors = require('../common/errors')
 const logger = require('../common/logger')
 const models = require('../models')
 const api = require('../common/broadcastAPIHelper')
@@ -119,7 +117,7 @@ async function insertUserRefs(userId, bulkMessageId, notificationId) {
         return r
     } catch (e) {
         logger.error(`${logPrefix} Failed to insert userRef record for user: ${userId}, error: ${e}`)
-        return e
+        throw new Error(`insertUserRefs() : ${e}`)
     }
 }
 
@@ -148,8 +146,8 @@ async function createNotificationForUser(userId, bulkMessage) {
         const result = await insertUserRefs(userId, bulkMessage.id, n.id)
         return result
     } catch (e) {
-        logger.error(`${logPrefix} Error in inserting broadcast message: ${err} `)
-        return e
+        logger.error(`${logPrefix} insert broadcast notification error: ${e} `)
+        throw new Error(`createNotificationForUser() : ${e}`)
     }
 }
 
