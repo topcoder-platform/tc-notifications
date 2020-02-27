@@ -16,17 +16,11 @@ const Notification = require('./Notification')(sequelize, DataTypes);
 const NotificationSetting = require('./NotificationSetting')(sequelize, DataTypes);
 const ServiceSettings = require('./ServiceSettings')(sequelize, DataTypes);
 const ScheduledEvents = require('./ScheduledEvents')(sequelize, DataTypes);
-const BulkMessages = require('./BulkMessages')(sequelize, DataTypes);
-const BulkMessageUserRefs = require('./BulkMessageUserRefs')(sequelize, DataTypes);
-
 
 module.exports = {
   Notification,
   NotificationSetting,
   ServiceSettings,
   ScheduledEvents,
-  BulkMessages,
-  BulkMessageUserRefs,
-  sequelize,
   init: () => sequelize.sync(),
 };

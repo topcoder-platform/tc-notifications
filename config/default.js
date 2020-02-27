@@ -58,7 +58,7 @@ module.exports = {
           {
             id: 0, /** challengeid or projectid  */
             name: '', /** challenge name */
-            group: 'challenge',
+            group: 'Challenge',
             title: 'Challenge specification is modified.',
           },
         },
@@ -75,7 +75,7 @@ module.exports = {
           {
             id: 0, /** challengeid or projectid  */
             name: '', /** challenge name */
-            group: 'challenge',
+            group: 'Challenge',
             title: 'Challenge checkpoint review.',
           },
         },
@@ -92,16 +92,12 @@ module.exports = {
           {
             id: 0, /** challengeid or projectid  */
             name: '', /** challenge name */
-            group: 'submission',
+            group: 'Submission',
             title: 'A new submission is uploaded.',
           },
         },
       },
     ],
-    'admin.notification.broadcast' : [{
-      handleBulkNotification: {}
-    }
-    ]
     //'notifications.community.challenge.created': ['handleChallengeCreated'],
     //'notifications.community.challenge.phasewarning': ['handleChallengePhaseWarning'],
   },
@@ -112,5 +108,4 @@ module.exports = {
   ENABLE_DEV_MODE: process.env.ENABLE_DEV_MODE ? Boolean(process.env.ENABLE_DEV_MODE) : true,
   DEV_MODE_EMAIL: process.env.DEV_MODE_EMAIL,
   DEFAULT_REPLY_EMAIL: process.env.DEFAULT_REPLY_EMAIL,
-  ENABLE_HOOK_BULK_NOTIFICATION : process.env.ENABLE_HOOK_BULK_NOTIFICATION || false,
 };
