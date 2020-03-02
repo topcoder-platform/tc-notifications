@@ -9,6 +9,8 @@ const Joi = require('joi');
 const errors = require('../common/errors');
 const logger = require('../common/logger');
 const models = require('../models');
+const config = require('config');
+const hooks = require('../hooks');
 
 const DEFAULT_LIMIT = 10;
 
@@ -202,11 +204,19 @@ function* listNotifications(query, userId) {
       break;
   }
 
+  if (config.ENABLE_HOOK_BULK_NOTIFICATION) {
+    try {
+      yield hooks.hookBulkMessage.checkBulkMessageForUser(userId)
+    } catch (e) {
+      logger.error(`Error in calling bulk notification hook: ${e}`)
+    }
+  }
+
   if (_.keys(notificationSettings).length > 0) {
     // only filter out notifications types which were explicitly set to 'no' - so we return notification by default
     const notifications = _.keys(notificationSettings).filter((notificationType) =>
-      !notificationSettings[notificationType] &&
-      !notificationSettings[notificationType].web &&
+      notificationSettings[notificationType] &&
+      notificationSettings[notificationType].web &&
       notificationSettings[notificationType].web.enabled === 'no'
     );
     filter.where.type = Object.assign(filter.where.type || {}, { $notIn: notifications });
