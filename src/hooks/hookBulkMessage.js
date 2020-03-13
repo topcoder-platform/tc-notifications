@@ -65,11 +65,13 @@ async function syncBulkMessageForUser(userId) {
             " LEFT OUTER JOIN (SELECT id as refid, bulk_message_id " +
             " FROM bulk_message_user_refs AS bmur WHERE bmur.user_id=$1)" +
             " AS b ON a.id=b.bulk_message_id WHERE b.refid IS NULL"
+        let memberInfo = []
+        let userGroupInfo = []
         models.sequelize.query(q, { bind: [userId] })
             .then(async function (res) {
                 try {
-                const memberInfo = await api.getMemberInfo(userId)
-                const userGroupInfo = await getUserGroup(userId)
+                    memberInfo = await api.getMemberInfo(userId)
+                    userGroupInfo = await api.getUserGroup(userId)
                 } catch(e) {
                     reject(`${logPrefix} Failed to get member/group info: ${e}`)
                 }
