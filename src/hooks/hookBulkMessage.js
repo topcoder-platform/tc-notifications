@@ -66,8 +66,14 @@ async function syncBulkMessageForUser(userId) {
             " FROM bulk_message_user_refs AS bmur WHERE bmur.user_id=$1)" +
             " AS b ON a.id=b.bulk_message_id WHERE b.refid IS NULL"
         models.sequelize.query(q, { bind: [userId] })
-            .then(function (res) {
-                Promise.all(res[0].map((r) => isBroadCastMessageForUser(userId, r)))
+            .then(async function (res) {
+                try {
+                const memberInfo = await api.getMemberInfo(userId)
+                const userGroupInfo = await getUserGroup(userId)
+                } catch(e) {
+                    reject(`${logPrefix} Failed to get member/group info: ${e}`)
+                }
+                Promise.all(res[0].map((r) => isBroadCastMessageForUser(userId, r, memberInfo, userGroupInfo)))
                     .then((results) => {
                         Promise.all(results.map((o) => {
                             if (o.result) {
@@ -94,9 +100,13 @@ async function syncBulkMessageForUser(userId) {
  * Check if current user in broadcast recipent group 
  * @param {Integer} userId 
  * @param {Object} bulkMessage 
+ * @param {Object} memberInfo
+ * @param {Object} userGroupInfo
+ *
+ * @retun promise 
  */
-async function isBroadCastMessageForUser(userId, bulkMessage) {
-    return api.checkBroadcastMessageForUser(userId, bulkMessage)
+async function isBroadCastMessageForUser(userId, bulkMessage, memberInfo, userGroupInfo) {
+    return api.checkBroadcastMessageForUser(userId, bulkMessage, memberInfo, userGroupInfo)
 }
 
 /**

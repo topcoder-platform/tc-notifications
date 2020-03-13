@@ -13,7 +13,7 @@ const m2m = m2mAuth(config)
 const cache = new NodeCache()
 
 const logPrefix = "BroadcastAPI: "
-const cachedTimeInSeconds = 60  //60 seconds 
+const cachedTimeInSeconds = 300  //300 seconds 
 
 /**
  * Helper Function - get m2m token 
@@ -112,12 +112,16 @@ async function callApi(url, machineToken) {
 
 /**
  *  Helper function - check Skills and Tracks condition
+ *  
+ *  @param {Integer} userId 
+ *  @param {Object} bulkMessage 
+ *  @param {Object} m memberInfo
+ * 
  */
-async function checkUserSkillsAndTracks(userId, bulkMessage) {
+async function checkUserSkillsAndTracks(userId, bulkMessage, m) {
     try {
         const skills = _.get(bulkMessage, 'recipients.skills')
         const tracks = _.get(bulkMessage, 'recipients.tracks')
-        const m = await getMemberInfo(userId)
         let skillMatch, trackMatch = false // default
         if (skills && skills.length > 0) {
             const ms = _.get(m[0], "skills") // get member skills 
@@ -169,11 +173,10 @@ async function checkUserSkillsAndTracks(userId, bulkMessage) {
 /**
  * Helper function - check group condition 
  */
-async function checkUserGroup(userId, bulkMessage) {
+async function checkUserGroup(userId, bulkMessage, userGroupInfo) {
     try {
         const groups = _.get(bulkMessage, 'recipients.groups')
         let flag = false // default
-        const userGroupInfo = await getUserGroup(userId)
         if (groups.length > 0) {
             _.map(userGroupInfo, (o) => {
                 // particular group only condition
@@ -199,12 +202,16 @@ async function checkUserGroup(userId, bulkMessage) {
  * 
  * @param {Integer} userId 
  * @param {Object} bulkMessage 
+ * @param {Object} memberInfo
+ * @param {Object} userGroupInfo
+ * 
+ * @return Promise 
  */
-async function checkBroadcastMessageForUser(userId, bulkMessage) {
+async function checkBroadcastMessageForUser(userId, bulkMessage, memberInfo, userGroupInfo) {
     return new Promise(function (resolve, reject) {
         Promise.all([
-            checkUserSkillsAndTracks(userId, bulkMessage),
-            checkUserGroup(userId, bulkMessage),
+            checkUserSkillsAndTracks(userId, bulkMessage, memberInfo),
+            checkUserGroup(userId, bulkMessage, userGroupInfo),
         ]).then((results) => {
             let flag = true // TODO need to be sure about default value  
             _.map(results, (r) => {
@@ -224,4 +231,6 @@ async function checkBroadcastMessageForUser(userId, bulkMessage) {
 
 module.exports = {
     checkBroadcastMessageForUser,
+    getMemberInfo,
+    getUserGroup,
 }
