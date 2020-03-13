@@ -6,10 +6,14 @@ const _ = require('lodash')
 const config = require('config')
 const request = require('superagent')
 const logger = require('./logger')
-const m2mAuth = require('tc-core-library-js').auth.m2m;
-const m2m = m2mAuth(config);
+const m2mAuth = require('tc-core-library-js').auth.m2m
+const NodeCache = require('node-cache')
+
+const m2m = m2mAuth(config)
+const cache = new NodeCache()
 
 const logPrefix = "BroadcastAPI: "
+const cachedTimeInSeconds = 60  //60 seconds 
 
 /**
  * Helper Function - get m2m token 
@@ -27,6 +31,11 @@ async function getMemberInfo(userId) {
         "/members/_search/?" +
         `query=userId%3A${userId}` +
         `&limit=1`
+    if (cachedMemberInfo = cache.get(url)) {
+        return new Promise( (resolve, reject) => {
+            resolve(cachedMemberInfo)
+        })
+    } 
     return new Promise(async function (resolve, reject) {
         let memberInfo = []
         logger.info(`calling member api ${url} `)
@@ -37,6 +46,7 @@ async function getMemberInfo(userId) {
             }
             memberInfo = _.get(res, 'body.result.content')
             logger.info(`BCA Memeber API: Feteched ${memberInfo.length} record(s) from member api`)
+            cache.set(url, memberInfo, cachedTimeInSeconds)
             resolve(memberInfo)
         } catch (err) {
             reject(new Error(`BCA Memeber API: Failed to get member ` +

@@ -102,7 +102,7 @@ workflows:
           context : org-global
           filters:
             branches:
-              only: [dev, 'hotfix/V5-API-Standards', 'v5-upgrade', 'feature/bulk-notification']
+              only: [dev, 'bug/rate-limit']
       - "build-prod":
           context : org-global
           filters:
