@@ -72,7 +72,7 @@ async function syncBulkMessageForUser(userId) {
                 try {
                     memberInfo = await api.getMemberInfo(userId)
                     userGroupInfo = await api.getUserGroup(userId)
-                } catch(e) {
+                } catch (e) {
                     reject(`${logPrefix} Failed to get member/group info: ${e}`)
                 }
                 Promise.all(res[0].map((r) => isBroadCastMessageForUser(userId, r, memberInfo, userGroupInfo)))

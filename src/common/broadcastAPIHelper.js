@@ -32,10 +32,10 @@ async function getMemberInfo(userId) {
         `query=userId%3A${userId}` +
         `&limit=1`
     if (cachedMemberInfo = cache.get(url)) {
-        return new Promise( (resolve, reject) => {
+        return new Promise((resolve, reject) => {
             resolve(cachedMemberInfo)
         })
-    } 
+    }
     return new Promise(async function (resolve, reject) {
         let memberInfo = []
         logger.info(`calling member api ${url} `)
