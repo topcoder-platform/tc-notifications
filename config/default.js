@@ -79,10 +79,7 @@ module.exports = {
             title: 'Checkpoint screening phase is now open. You may now begin screening checkpoint submissions.',
           },
         },
-      },
-    ],
-    'notifications.autopilot.events': [
-      {
+      }, {
         handleAutoPilot:
         {
           phaseTypeName: 'Checkpoint Review',
