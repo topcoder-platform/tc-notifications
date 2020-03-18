@@ -184,9 +184,17 @@ async function checkUserGroup(userId, bulkMessage, userGroupInfo) {
             })
         } else { // no group condition means its for `public` no private group
             flag = true // default allow for all
+            let excludeGroups = []
+            _.map(groups, (g) => {
+                if (_.startWith(g, '!')) {
+                    excludeGroups.push(g)
+                }
+            })
             _.map(userGroupInfo, (o) => {
-                // not allow if user is part of any private group
-                flag = (_.get(o, "privateGroup")) ? false : flag
+                // not allow if user is part of any private group i.e. excludeGroups
+                if (_.indexOf(excludeGroups, _.get(o, "name"))) {
+                    flag = false
+                }
             })
             logger.info(`public group condition for userId ${userId}` +
                 ` and BC messageId ${bulkMessage.id}, the result is: ${flag}`)
