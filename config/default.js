@@ -70,13 +70,30 @@ module.exports = {
         {
           phaseTypeName: 'Checkpoint Screening',
           state: 'START',
-          roles: ['Copilot', 'Reviewer'],
+          roles: ['Primary Screener'],
           notification:
           {
             id: 0, /** challengeid or projectid  */
             name: '', /** challenge name */
             group: 'challenge',
-            title: 'Challenge checkpoint review.',
+            title: 'Checkpoint screening phase is now open. You may now begin screening checkpoint submissions.',
+          },
+        },
+      },
+    ],
+    'notifications.autopilot.events': [
+      {
+        handleAutoPilot:
+        {
+          phaseTypeName: 'Checkpoint Screening',
+          state: 'START',
+          roles: ['Copilot'],
+          notification:
+          {
+            id: 0, /** challengeid or projectid  */
+            name: '', /** challenge name */
+            group: 'challenge',
+            title: 'Checkpoint Review is now open. You may now begin reviewing checkpoint submissions.',
           },
         },
       },
