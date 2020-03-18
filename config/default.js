@@ -76,7 +76,7 @@ module.exports = {
             id: 0, /** challengeid or projectid  */
             name: '', /** challenge name */
             group: 'challenge',
-            title: 'Checkpoint screening phase is now open. You may now begin screening checkpoint submissions.',
+            title: 'Checkpoint Screening phase is now open. You may now begin screening checkpoint submissions.',
           },
         },
       }, {
