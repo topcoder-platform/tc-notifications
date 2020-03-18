@@ -192,7 +192,7 @@ async function checkUserGroup(userId, bulkMessage, userGroupInfo) {
             })
             _.map(userGroupInfo, (o) => {
                 // not allow if user is part of any private group i.e. excludeGroups
-                if (_.indexOf(excludeGroups, _.get(o, "name"))) {
+                if (_.indexOf(excludeGroups, _.get(o, "name")) >= 0) {
                     flag = false
                 }
             })
