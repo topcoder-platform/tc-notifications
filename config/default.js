@@ -85,7 +85,7 @@ module.exports = {
       {
         handleAutoPilot:
         {
-          phaseTypeName: 'Checkpoint Screening',
+          phaseTypeName: 'Checkpoint Review',
           state: 'START',
           roles: ['Copilot'],
           notification:
