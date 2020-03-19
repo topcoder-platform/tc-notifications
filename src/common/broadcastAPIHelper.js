@@ -175,8 +175,10 @@ async function checkUserSkillsAndTracks(userId, bulkMessage, m) {
  */
 async function checkUserGroup(userId, bulkMessage, userGroupInfo) {
     try {
+        const excludeGroupSign = '!'
         const groups = _.get(bulkMessage, 'recipients.groups')
         let flag = false // default
+
         if (groups.length > 0) {
             _.map(userGroupInfo, (o) => {
                 // particular group only condition
@@ -186,13 +188,13 @@ async function checkUserGroup(userId, bulkMessage, userGroupInfo) {
             flag = true // default allow for all
             let excludeGroups = []
             _.map(groups, (g) => {
-                if (_.startWith(g, '!')) {
+                if (_.startWith(g, excludeGroupSign)) {
                     excludeGroups.push(g)
                 }
             })
             _.map(userGroupInfo, (o) => {
                 // not allow if user is part of any private group i.e. excludeGroups
-                if (_.indexOf(excludeGroups, _.get(o, "name")) >= 0) {
+                if (_.indexOf(excludeGroups, (excludeGroupSign + _.get(o, "name"))) >= 0) {
                     flag = false
                 }
             })
