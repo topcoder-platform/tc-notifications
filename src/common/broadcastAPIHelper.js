@@ -177,30 +177,39 @@ async function checkUserGroup(userId, bulkMessage, userGroupInfo) {
     try {
         const excludeGroupSign = '!'
         const groups = _.get(bulkMessage, 'recipients.groups')
-        let flag = false // default
 
-        if (groups.length > 0) {
+        let flag = false // default
+        let excludeGroups = []
+        let includeGroups = []
+
+        _.map(groups, (g) => {
+            if (_.startsWith(g, excludeGroupSign)) {
+                excludeGroups.push(g)
+            } else {
+                includeGroups.push(g)
+            }
+        })
+
+        if (includeGroups.length > 0) {
             _.map(userGroupInfo, (o) => {
                 // particular group only condition
-                flag = (_.indexOf(groups, _.get(o, "name")) >= 0) ? true : flag
+                flag = (_.indexOf(includeGroups, _.get(o, "name")) >= 0) ? true : flag
             })
-        } else { // no group condition means its for `public` no private group
+        }
+        if (excludeGroups.length > 0) {
             flag = true // default allow for all
-            let excludeGroups = []
-            _.map(groups, (g) => {
-                if (_.startWith(g, excludeGroupSign)) {
-                    excludeGroups.push(g)
-                }
-            })
             _.map(userGroupInfo, (o) => {
                 // not allow if user is part of any private group i.e. excludeGroups
-                if (_.indexOf(excludeGroups, (excludeGroupSign + _.get(o, "name"))) >= 0) {
-                    flag = false
-                }
+                flag = (_.indexOf(excludeGroups, (excludeGroupSign + _.get(o, "name"))) >= 0) ? false : flag
             })
             logger.info(`public group condition for userId ${userId}` +
                 ` and BC messageId ${bulkMessage.id}, the result is: ${flag}`)
         }
+
+        if (groups.length === 0) {
+            flag = true  // no restriction
+        }
+
         return flag
     } catch (e) {
         throw new Error(`checkUserGroup(): ${e}`)
