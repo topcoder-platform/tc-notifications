@@ -6,10 +6,14 @@ const _ = require('lodash')
 const config = require('config')
 const request = require('superagent')
 const logger = require('./logger')
-const m2mAuth = require('tc-core-library-js').auth.m2m;
-const m2m = m2mAuth(config);
+const m2mAuth = require('tc-core-library-js').auth.m2m
+const NodeCache = require('node-cache')
+
+const m2m = m2mAuth(config)
+const cache = new NodeCache()
 
 const logPrefix = "BroadcastAPI: "
+const cachedTimeInSeconds = 300  //300 seconds 
 
 /**
  * Helper Function - get m2m token 
@@ -27,6 +31,11 @@ async function getMemberInfo(userId) {
         "/members/_search/?" +
         `query=userId%3A${userId}` +
         `&limit=1`
+    if (cachedMemberInfo = cache.get(url)) {
+        return new Promise((resolve, reject) => {
+            resolve(cachedMemberInfo)
+        })
+    }
     return new Promise(async function (resolve, reject) {
         let memberInfo = []
         logger.info(`calling member api ${url} `)
@@ -37,6 +46,7 @@ async function getMemberInfo(userId) {
             }
             memberInfo = _.get(res, 'body.result.content')
             logger.info(`BCA Memeber API: Feteched ${memberInfo.length} record(s) from member api`)
+            cache.set(url, memberInfo, cachedTimeInSeconds)
             resolve(memberInfo)
         } catch (err) {
             reject(new Error(`BCA Memeber API: Failed to get member ` +
@@ -102,12 +112,16 @@ async function callApi(url, machineToken) {
 
 /**
  *  Helper function - check Skills and Tracks condition
+ *  
+ *  @param {Integer} userId 
+ *  @param {Object} bulkMessage 
+ *  @param {Object} m memberInfo
+ * 
  */
-async function checkUserSkillsAndTracks(userId, bulkMessage) {
+async function checkUserSkillsAndTracks(userId, bulkMessage, m) {
     try {
         const skills = _.get(bulkMessage, 'recipients.skills')
         const tracks = _.get(bulkMessage, 'recipients.tracks')
-        const m = await getMemberInfo(userId)
         let skillMatch, trackMatch = false // default
         if (skills && skills.length > 0) {
             const ms = _.get(m[0], "skills") // get member skills 
@@ -159,25 +173,43 @@ async function checkUserSkillsAndTracks(userId, bulkMessage) {
 /**
  * Helper function - check group condition 
  */
-async function checkUserGroup(userId, bulkMessage) {
+async function checkUserGroup(userId, bulkMessage, userGroupInfo) {
     try {
+        const excludeGroupSign = '!'
         const groups = _.get(bulkMessage, 'recipients.groups')
+
         let flag = false // default
-        const userGroupInfo = await getUserGroup(userId)
-        if (groups.length > 0) {
+        let excludeGroups = []
+        let includeGroups = []
+
+        _.map(groups, (g) => {
+            if (_.startsWith(g, excludeGroupSign)) {
+                excludeGroups.push(g)
+            } else {
+                includeGroups.push(g)
+            }
+        })
+
+        if (includeGroups.length > 0) {
             _.map(userGroupInfo, (o) => {
                 // particular group only condition
-                flag = (_.indexOf(groups, _.get(o, "name")) >= 0) ? true : flag
+                flag = (_.indexOf(includeGroups, _.get(o, "name")) >= 0) ? true : flag
             })
-        } else { // no group condition means its for `public` no private group
+        }
+        if (excludeGroups.length > 0) {
             flag = true // default allow for all
             _.map(userGroupInfo, (o) => {
-                // not allow if user is part of any private group
-                flag = (_.get(o, "privateGroup")) ? false : flag
+                // not allow if user is part of any private group i.e. excludeGroups
+                flag = (_.indexOf(excludeGroups, (excludeGroupSign + _.get(o, "name"))) >= 0) ? false : flag
             })
             logger.info(`public group condition for userId ${userId}` +
                 ` and BC messageId ${bulkMessage.id}, the result is: ${flag}`)
         }
+
+        if (groups.length === 0) {
+            flag = true  // no restriction
+        }
+
         return flag
     } catch (e) {
         throw new Error(`checkUserGroup(): ${e}`)
@@ -189,12 +221,16 @@ async function checkUserGroup(userId, bulkMessage) {
  * 
  * @param {Integer} userId 
  * @param {Object} bulkMessage 
+ * @param {Object} memberInfo
+ * @param {Object} userGroupInfo
+ * 
+ * @return Promise 
  */
-async function checkBroadcastMessageForUser(userId, bulkMessage) {
+async function checkBroadcastMessageForUser(userId, bulkMessage, memberInfo, userGroupInfo) {
     return new Promise(function (resolve, reject) {
         Promise.all([
-            checkUserSkillsAndTracks(userId, bulkMessage),
-            checkUserGroup(userId, bulkMessage),
+            checkUserSkillsAndTracks(userId, bulkMessage, memberInfo),
+            checkUserGroup(userId, bulkMessage, userGroupInfo),
         ]).then((results) => {
             let flag = true // TODO need to be sure about default value  
             _.map(results, (r) => {
@@ -214,4 +250,6 @@ async function checkBroadcastMessageForUser(userId, bulkMessage) {
 
 module.exports = {
     checkBroadcastMessageForUser,
+    getMemberInfo,
+    getUserGroup,
 }

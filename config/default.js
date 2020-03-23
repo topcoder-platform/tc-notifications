@@ -70,35 +70,50 @@ module.exports = {
         {
           phaseTypeName: 'Checkpoint Screening',
           state: 'START',
-          roles: ['Copilot', 'Reviewer'],
+          roles: ['Primary Screener'],
           notification:
           {
             id: 0, /** challengeid or projectid  */
             name: '', /** challenge name */
             group: 'challenge',
-            title: 'Challenge checkpoint review.',
+            title: 'Checkpoint Screening phase is now open. You may now begin screening checkpoint submissions.',
           },
         },
-      },
-    ],
-    'submission.notification.create': [
-      {
-        handleSubmission:
+      }, {
+        handleAutoPilot:
         {
-          resource: 'submission',
-          roles: ['Copilot', 'Reviewer'],
-          selfOnly: true /** Submitter only */,
+          phaseTypeName: 'Checkpoint Review',
+          state: 'START',
+          roles: ['Copilot'],
           notification:
           {
             id: 0, /** challengeid or projectid  */
             name: '', /** challenge name */
-            group: 'submission',
-            title: 'A new submission is uploaded.',
+            group: 'challenge',
+            title: 'Checkpoint Review is now open. You may now begin reviewing checkpoint submissions.',
           },
         },
       },
     ],
-    'admin.notification.broadcast' : [{
+    // /** 'submission.notification.create': [
+    //  {
+    //    handleSubmission:
+    //    {
+    //      resource: 'submission',
+    //      roles: ['Copilot', 'Reviewer'],
+    //      selfOnly: true /** Submitter only */,
+    //      notification:
+    //      {
+    //       id: 0, /** challengeid or projectid  */
+    //        name: '', /** challenge name */
+    //       group: 'submission',
+    //       title: 'A new submission is uploaded.',
+    //      },
+    //    },
+    //  },
+    // ],
+    // */ // issue - https://github.com/topcoder-platform/community-app/issues/4108 
+    'admin.notification.broadcast': [{
       handleBulkNotification: {}
     }
     ]
@@ -112,5 +127,5 @@ module.exports = {
   ENABLE_DEV_MODE: process.env.ENABLE_DEV_MODE ? Boolean(process.env.ENABLE_DEV_MODE) : true,
   DEV_MODE_EMAIL: process.env.DEV_MODE_EMAIL,
   DEFAULT_REPLY_EMAIL: process.env.DEFAULT_REPLY_EMAIL,
-  ENABLE_HOOK_BULK_NOTIFICATION : process.env.ENABLE_HOOK_BULK_NOTIFICATION || false,
+  ENABLE_HOOK_BULK_NOTIFICATION: process.env.ENABLE_HOOK_BULK_NOTIFICATION || false,
 };

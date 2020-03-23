@@ -288,7 +288,7 @@ function filterChallengeUsers(usersInfo, filterOnRoles = [], filterOnUsers = [])
     }
   });
   logger.info(`Total roles available in this challenge are: ${rolesAvailable.join(',')}`);
-  return users;
+  return _.uniqBy(users, 'userId');
 }
 
 /**
