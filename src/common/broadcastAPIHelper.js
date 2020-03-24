@@ -151,7 +151,7 @@ async function checkUserSkillsAndTracks(userId, bulkMessage, m) {
                 /**
                  * checking if user participated in specific challenges   
                  */
-                let key = t.toUpperCase()()
+                let key = t.toUpperCase()
                 if (key === "DEVLOP") {
                     trackMatch = uDevChallenges > 0 ? true : trackMatch
                 } else if (key === "DESIGN") {
