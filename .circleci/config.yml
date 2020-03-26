@@ -102,7 +102,7 @@ workflows:
           context : org-global
           filters:
             branches:
-              only: [dev, 'bug/rate-limit']
+              only: [dev, 'bug/community-notification']
       - "build-prod":
           context : org-global
           filters:
