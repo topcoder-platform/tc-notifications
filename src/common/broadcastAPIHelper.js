@@ -151,15 +151,18 @@ async function checkUserSkillsAndTracks(userId, bulkMessage, m) {
                 /**
                  * checking if user participated in specific challenges   
                  */
-                let key = t.toLowerCase()
-                if (key === "develop") {
+                let key = t.toUpperCase()
+                if (key === "DEVLOP") {
                     trackMatch = uDevChallenges > 0 ? true : trackMatch
-                } else if (key === "design") {
+                } else if (key === "DESIGN") {
                     trackMatch = uDesignChallenges > 0 ? true : trackMatch
-                } else if (key === "data_science") {
+                } else if (key === "DATA_SCIENCE") {
                     trackMatch = uDSChallenges > 0 ? true : trackMatch
                 }
+                // checking bacic member profile track preference
+                trackMatch = (_.indexOf(_.get(m[0], "tracks"), key) >= 0) ? true : trackMatch
             })
+
         } else {
             trackMatch = true // no condition, means allow for all
         }

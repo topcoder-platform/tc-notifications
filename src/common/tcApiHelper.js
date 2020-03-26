@@ -84,7 +84,7 @@ function* getUsersByHandles(handles) {
     return [];
   }
   // use 'OR' to link the handle matches
-  const query = _.map(handles, (h) => 'handle:"' + h.trim().replace('"', '\\"')  + '"').join(' OR ');
+  const query = _.map(handles, (h) => 'handle:"' + h.trim().replace('"', '\\"') + '"').join(' OR ');
   return yield searchUsersByQuery(query);
 }
 
@@ -188,10 +188,20 @@ function* notifyUserViaEmail(user, message) {
  * @returns {Object} the challenge details
  */
 function* getChallenge(challengeId) {
-  // this is public API, M2M token is not needed
+  const token = yield getM2MToken();
+  // this is public API, but some challege is not accessable so using m2m token
   const url = `${config.TC_API_V4_BASE_URL}/challenges/${challengeId}`;
   logger.info(`calling public challenge api ${url}`);
-  const res = yield request.get(url);
+  const res = yield request
+    .get(url)
+    .set('Authorization', `Bearer ${token}`)
+    .catch((err) => {
+      const errorDetails = _.get(err, 'message');
+      throw new Error(
+        `Error in call public challenge api by id ${challengeId}` +
+        (errorDetails ? ' Server response: ' + errorDetails : '')
+      );
+    });
   if (!_.get(res, 'body.result.success')) {
     throw new Error(`Failed to get challenge by id ${challengeId}`);
   }
