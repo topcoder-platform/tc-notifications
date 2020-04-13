@@ -13,6 +13,7 @@ const {
   SCHEDULED_EVENT_PERIOD,
   SETTINGS_EMAIL_SERVICE_ID,
   ACTIVE_USER_STATUSES,
+  EMAIL_USER_PHOTO_SIZE,
 } = require('../constants');
 const { EVENT_BUNDLES } = require('../events-config');
 const helpers = require('../helpers');
@@ -236,7 +237,8 @@ function handler(topicName, messageJSON, notification) {
         projectId: messageJSON.projectId,
         authorHandle: notification.contents.userHandle,
         authorFullName: notification.contents.userFullName,
-        photoURL: notification.contents.photoURL,
+        photoURL: `${config.TC_CDN_URL}/avatar/${encodeURIComponent(notification.contents.photoURL)}`
+          + `?size=${EMAIL_USER_PHOTO_SIZE}`,
         type: notificationType,
         emailToAffectedUser: notification.contents.userEmail === userEmail,
       },

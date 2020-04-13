@@ -34,6 +34,9 @@ module.exports = {
   API_CONTEXT_PATH: process.env.API_CONTEXT_PATH || '/v5/notifications',
   TC_API_BASE_URL: process.env.TC_API_BASE_URL || '',
 
+  // CloudFront CDN URL. It's used to host and resize images like user avatars.
+  TC_CDN_URL: process.env.TC_CDN_URL || '',
+
   // Configuration for generating machine to machine auth0 token.
   // The token will be used for calling another internal API.
   AUTH0_URL: process.env.AUTH0_URL,
