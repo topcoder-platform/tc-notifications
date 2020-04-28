@@ -118,11 +118,13 @@ async function callApi(url, machineToken) {
  *  @param {Object} m memberInfo
  * 
  */
-async function checkUserSkillsAndTracks(userId, bulkMessage, m) {
+async function filterOnMemberCondition(userId, bulkMessage, m) {
     try {
         const skills = _.get(bulkMessage, 'recipients.skills')
         const tracks = _.get(bulkMessage, 'recipients.tracks')
-        let skillMatch, trackMatch = false // default
+        const countryCodes = _.get(bulkMessage, 'recipients.countryCodes')
+
+        let skillMatch, trackMatch, countryCodeMatch = false // default
         if (skills && skills.length > 0) {
             const ms = _.get(m[0], "skills") // get member skills 
             const memberSkills = []
@@ -166,10 +168,23 @@ async function checkUserSkillsAndTracks(userId, bulkMessage, m) {
         } else {
             trackMatch = true // no condition, means allow for all
         }
-        const flag = (skillMatch && trackMatch) ? true : false
+
+        if (countryCodes.length > 0) {
+            const mcc = _.get(m[0], 'competitionCountryCode') // get member country code
+            countryCodeMatch = false
+            if (_.indexOf(countryCodes, mcc) >= 0) {
+                countryCodeMatch = true
+                logger.info(`BroadcastMessageId: ${bulkMessage.id},` +
+                    ` '${mcc}' country code matached for user id ${userId}`)
+            }
+        } else {
+            countryCodeMatch = true // no codition on country code
+        }
+
+        const flag = (skillMatch && trackMatch && countryCodeMatch) ? true : false
         return flag
     } catch (e) {
-        throw new Error(`checkUserSkillsAndTracks() : ${e}`)
+        throw new Error(`filterOnMemberCondition() : ${e}`)
     }
 }
 
@@ -232,7 +247,7 @@ async function checkUserGroup(userId, bulkMessage, userGroupInfo) {
 async function checkBroadcastMessageForUser(userId, bulkMessage, memberInfo, userGroupInfo) {
     return new Promise(function (resolve, reject) {
         Promise.all([
-            checkUserSkillsAndTracks(userId, bulkMessage, memberInfo),
+            filterOnMemberCondition(userId, bulkMessage, memberInfo),
             checkUserGroup(userId, bulkMessage, userGroupInfo),
         ]).then((results) => {
             let flag = true // TODO need to be sure about default value  
