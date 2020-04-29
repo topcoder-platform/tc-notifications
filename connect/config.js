@@ -37,4 +37,5 @@ module.exports = {
 
   CONNECT_URL: process.env.CONNECT_URL || 'https://connect.topcoder-dev.com',
   ACCOUNTS_APP_URL: process.env.ACCOUNTS_APP_URL || "https://accounts.topcoder-dev.com",
+  TC_CDN_URL: process.env.TC_CDN_URL,
 };
