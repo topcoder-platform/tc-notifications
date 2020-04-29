@@ -229,19 +229,7 @@ function handler(topicName, messageJSON, notification) {
     const categories = [`${config.ENV}:${eventType}`.toLowerCase()];
 
     const eventMessage = {
-      data: {
-        name: user.firstName + ' ' + user.lastName,
-        handle: user.handle,
-        date: (new Date()).toISOString(),
-        projectName: notification.contents.projectName,
-        projectId: messageJSON.projectId,
-        authorHandle: notification.contents.userHandle,
-        authorFullName: notification.contents.userFullName,
-        photoURL: `${config.TC_CDN_URL}/avatar/${encodeURIComponent(notification.contents.photoURL)}`
-          + `?size=${EMAIL_USER_PHOTO_SIZE}`,
-        type: notificationType,
-        emailToAffectedUser: notification.contents.userEmail === userEmail,
-      },
+      data: {},
       recipients,
       version: 'v3',
       from: {
@@ -250,8 +238,21 @@ function handler(topicName, messageJSON, notification) {
       },
       categories,
     };
+    // first we put `notification.contents` to the `data`, so we would reassign any values there
+    _.assign(eventMessage.data, notification.contents, {
+      name: user.firstName + ' ' + user.lastName,
+      handle: user.handle,
+      date: (new Date()).toISOString(),
+      projectName: notification.contents.projectName,
+      projectId: messageJSON.projectId,
+      authorHandle: notification.contents.userHandle,
+      authorFullName: notification.contents.userFullName,
+      photoURL: `${config.TC_CDN_URL}/avatar/${encodeURIComponent(notification.contents.photoURL)}`
+        + `?size=${EMAIL_USER_PHOTO_SIZE}`,
+      type: notificationType,
+      emailToAffectedUser: notification.contents.userEmail === userEmail,
+    });
     eventMessage.data[eventMessage.data.type] = true;
-    _.assign(eventMessage.data, notification.contents);
 
     // message service may return tags
     // to understand if post notification is regarding phases or no, we will try to get phaseId from the tags
