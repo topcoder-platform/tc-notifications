@@ -102,7 +102,7 @@ workflows:
           context : org-global
           filters:
             branches:
-              only: [dev, 'bug/community-notification']
+              only: [dev, 'feature/broadcast2']
       - "build-prod":
           context : org-global
           filters:
