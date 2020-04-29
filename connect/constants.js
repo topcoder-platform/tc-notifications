@@ -1,4 +1,7 @@
 module.exports = {
+  // size for user photos in emails
+  EMAIL_USER_PHOTO_SIZE: 80,
+
   // periods of time in cron format (node-cron)
   SCHEDULED_EVENT_PERIOD: {
     every10minutes: '*/10 * * * *',
