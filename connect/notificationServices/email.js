@@ -237,8 +237,6 @@ function handler(topicName, messageJSON, notification) {
         projectId: messageJSON.projectId,
         authorHandle: notification.contents.userHandle,
         authorFullName: notification.contents.userFullName,
-        photoURL: `${config.TC_CDN_URL}/avatar/${encodeURIComponent(notification.contents.photoURL)}`
-          + `?size=${EMAIL_USER_PHOTO_SIZE}`,
         type: notificationType,
         emailToAffectedUser: notification.contents.userEmail === userEmail,
       },
@@ -252,6 +250,9 @@ function handler(topicName, messageJSON, notification) {
     };
     eventMessage.data[eventMessage.data.type] = true;
     _.assign(eventMessage.data, notification.contents);
+    // set `photoURL` after we already applied `notification.contents`, so `photoURL` doesn't get overwritten
+    eventMessage.data.photoURL = `${config.TC_CDN_URL}/avatar/${encodeURIComponent(notification.contents.photoURL)}`
+      + `?size=${EMAIL_USER_PHOTO_SIZE}`;
 
     // message service may return tags
     // to understand if post notification is regarding phases or no, we will try to get phaseId from the tags
