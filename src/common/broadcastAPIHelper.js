@@ -136,7 +136,7 @@ async function filterOnMemberCondition(userId, bulkMessage, m) {
                 if (_.indexOf(memberSkills, s.toLowerCase()) >= 0) {
                     skillMatch = true
                     logger.info(`BroadcastMessageId: ${bulkMessage.id},` +
-                        ` '${s}' skill matached for user id ${userId}`)
+                        ` '${s}' skill matched for user id ${userId}`)
                 }
             })
         } else {
@@ -169,13 +169,13 @@ async function filterOnMemberCondition(userId, bulkMessage, m) {
             trackMatch = true // no condition, means allow for all
         }
 
-        if (countryCodes.length > 0) {
+        if (countryCodes && (countryCodes.length > 0)) {
             const mcc = _.get(m[0], 'competitionCountryCode') // get member country code
             countryCodeMatch = false
             if (_.indexOf(countryCodes, mcc) >= 0) {
                 countryCodeMatch = true
                 logger.info(`BroadcastMessageId: ${bulkMessage.id},` +
-                    ` '${mcc}' country code matached for user id ${userId}`)
+                    ` '${mcc}' country code matched for user id ${userId}`)
             }
         } else {
             countryCodeMatch = true // no codition on country code
