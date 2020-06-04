@@ -27,3 +27,11 @@ AND type = 'admin.notification.broadcast';
 
 -- make unique column to avoid duplicate insert 
 ALTER TABLE bulk_message_user_refs ADD UNIQUE (bulk_message_id, user_id);
+
+-- get duplicate broadcast rows
+SELECT * FROM "Notifications" AS a
+   LEFT JOIN "bulk_message_user_refs" AS b
+   ON a.id=b.notification_id
+   WHERE a.type='admin.notification.broadcast'
+   AND b.id IS NULL;
+

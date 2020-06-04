@@ -136,7 +136,7 @@ async function insertUserRefs(userId, bulkMessageId, notificationObj) {
         if (notificationId && notificationObj) {
              try {
                  await notificationObj.destroy()
-                 logger.info(`Deleted duplicate/ref-transaction failed, broadcast notification ${notificationId} for user: ${userid}`)
+                 logger.info(`Deleted/reverted duplicate/ref-transaction failed, broadcast notification ${notificationId} for user: ${userId}`)
              } catch (error) {
                  logger.error(`Error in deleting duplicate notification record, ${error}`)
              }
