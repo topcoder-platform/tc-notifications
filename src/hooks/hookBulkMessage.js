@@ -116,9 +116,13 @@ async function isBroadCastMessageForUser(userId, bulkMessage, memberInfo, userGr
  * 
  * @param {Integer} userId 
  * @param {Integer} bulkMessageId 
- * @param {Integer} notificationId 
+ * @param {Object} notificationObj
  */
-async function insertUserRefs(userId, bulkMessageId, notificationId) {
+async function insertUserRefs(userId, bulkMessageId, notificationObj) {
+    let notificationId = null
+    if (notificationObj) {
+        notificationId = notificationObj.id
+    }
     try {
         const r = await models.BulkMessageUserRefs.create({
             bulk_message_id: bulkMessageId,
@@ -129,6 +133,15 @@ async function insertUserRefs(userId, bulkMessageId, notificationId) {
         return r
     } catch (e) {
         logger.error(`${logPrefix} Failed to insert userRef record for user: ${userId}, error: ${e}`)
+        if (notificationId && notificationObj) {
+             try {
+                 await notificationObj.destroy()
+                 logger.info(`Deleted/reverted duplicate/ref-transaction failed, broadcast notification ${notificationId} for user: ${userId}`)
+             } catch (error) {
+                 logger.error(`Error in deleting duplicate notification record, ${error}`)
+             }
+
+        }
         throw new Error(`insertUserRefs() : ${e}`)
     }
 }
@@ -155,7 +168,7 @@ async function createNotificationForUser(userId, bulkMessage) {
         })
         logger.info(`${logPrefix} Inserted notification record ${n.id} for current user ${userId}`)
         // TODO need to be in transaction so that rollback will be possible
-        const result = await insertUserRefs(userId, bulkMessage.id, n.id)
+        const result = await insertUserRefs(userId, bulkMessage.id, n)
         return result
     } catch (e) {
         logger.error(`${logPrefix} insert broadcast notification error: ${e} `)
