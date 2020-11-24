@@ -1,4 +1,4 @@
-# TOPCODER NOTIFICATIONS
+## TOPCODER NOTIFICATIONS
 
 ## Description
 This repository hosts the API and processors for enabling notifications in various topcoder apps. Currently it is limited to provide this facility to the [Connect](https://github.com/appirio-tech/connect-app) application. Theoretcially, it is a generic framework and application which could be used for sending and consuming notificaitons by any other topcoder app. In very simple words to send notifications using this application:
