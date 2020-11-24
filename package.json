@@ -51,7 +51,7 @@
     "node-cron": "^1.2.1",
     "pg": "^7.3.0",
     "remarkable": "^1.7.1",
-    "sequelize": "^4.21.0",
+    "sequelize": "^5.15.1",
     "superagent": "^3.8.0",
     "tc-core-library-js": "appirio-tech/tc-core-library-js.git#v2.6.2",
     "topcoder-healthcheck-dropin": "^1.0.3",
