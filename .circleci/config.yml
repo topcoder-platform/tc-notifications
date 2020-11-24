@@ -42,9 +42,7 @@ jobs:
       - setup_remote_docker
       - run: *install_dependency
       - run: *install_deploysuite
-      - restore_cache: *restore_cache_settings_for_build
       - run: *run_build
-      - save_cache: *save_cache_settings
       - deploy:
           name: Running Masterscript - deploy tc-notifications-api service
           command: |    
@@ -71,9 +69,7 @@ jobs:
       - setup_remote_docker
       - run: *install_dependency
       - run: *install_deploysuite
-      - restore_cache: *restore_cache_settings_for_build
       - run: *run_build
-      - save_cache: *save_cache_settings
       - deploy:
           name: Running Masterscript - prod deploy tc-notifications-api service
           command: |
@@ -102,7 +98,7 @@ workflows:
           context : org-global
           filters:
             branches:
-              only: [dev, 'feature/broadcast2']
+              only: [dev, 'feature/update_registration_url']
       - "build-prod":
           context : org-global
           filters:
