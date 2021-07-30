@@ -1,3 +1,3 @@
-const bulkhook = require("../src/hooks/hookBulkMessage")
+const bulkhook = require('../src/hooks/hookBulkMessage');
 
-bulkhook.checkBulkMessageForUser(123)
+bulkhook.checkBulkMessageForUser(123);

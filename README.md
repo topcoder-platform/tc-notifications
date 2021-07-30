@@ -103,6 +103,10 @@ The following parameters can be set in config files or in env variables:
   - `REPLY_EMAIL_PREFIX`: prefix of the genereated reply email address
   - `REPLY_EMAIL_DOMAIN`: email domain
   - `DEFAULT_REPLY_EMAIL`: default reply to email address, for example no-reply@topcoder.com
+- **Slack api**
+  - `SLACK_URL`: slack api url to post messages
+  - `SLACK_BOT_TOKEN`: slack bot user OAuth token
+  - `SLACK_NOTIFY`: slack notification switch, set to 'true' to enable slack notifications.
 
 Note that the above two configuration are separate because the common notification server config
 will be deployed to a NPM package, the connect notification server will use that NPM package,

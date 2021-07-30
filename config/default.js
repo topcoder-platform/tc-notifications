@@ -47,7 +47,12 @@ module.exports = {
   AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID,
   AUTH0_CLIENT_SECRET: process.env.AUTH0_CLIENT_SECRET,
   AUTH0_PROXY_SERVER_URL: process.env.AUTH0_PROXY_SERVER_URL,
-
+  // Slack configuration.
+  SLACK: {
+    URL: process.env.SLACK_URL || 'https://slack.com/api/chat.postMessage',
+    BOT_TOKEN: process.env.SLACK_BOT_TOKEN,
+    NOTIFY: process.env.SLACK_NOTIFY === 'true',
+  },
   KAFKA_CONSUMER_RULESETS: {
     // key is Kafka topic name, value is array of ruleset which have key as
     // handler function name defined in src/processors/index.js
@@ -115,13 +120,16 @@ module.exports = {
     //    },
     //  },
     // ],
-    // */ // issue - https://github.com/topcoder-platform/community-app/issues/4108 
+    // */ // issue - https://github.com/topcoder-platform/community-app/issues/4108
     'admin.notification.broadcast': [{
-      handleBulkNotification: {}
-    }
-    ]
-    //'notifications.community.challenge.created': ['handleChallengeCreated'],
-    //'notifications.community.challenge.phasewarning': ['handleChallengePhaseWarning'],
+      handleBulkNotification: {},
+    },
+    ],
+    'notification.action.create': [{
+      handleUniversalNotification: {},
+    }],
+    // 'notifications.community.challenge.created': ['handleChallengeCreated'],
+    // 'notifications.community.challenge.phasewarning': ['handleChallengePhaseWarning'],
   },
 
   // email notification service related variables

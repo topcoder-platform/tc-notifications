@@ -9,6 +9,7 @@ const ChallengeHandler = require('./challenge/ChallengeHandler');
 const AutoPilotHandler = require('./challenge/AutoPilotHandler');
 const SubmissionHandler = require('./challenge/SubmissionHandler');
 const BulkNotificationHandler = require('./broadcast/bulkNotificationHandler');
+const UniversalNotificationHandler = require('./universal/universalNotificationHandler');
 
 // Exports
 module.exports = {
@@ -18,4 +19,5 @@ module.exports = {
   handleAutoPilot: AutoPilotHandler.handle,
   handleSubmission: SubmissionHandler.handle,
   handleBulkNotification: BulkNotificationHandler.handle,
+  handleUniversalNotification: UniversalNotificationHandler.handle,
 };
