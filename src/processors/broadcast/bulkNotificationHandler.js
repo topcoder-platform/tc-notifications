@@ -1,10 +1,10 @@
 /**
  * Bulk notification handler.
  */
-const joi = require('joi')
-const co = require('co')
-const models = require('../../models')
-const logger = require('../../common/logger')
+const joi = require('joi');
+const co = require('co');
+const models = require('../../models');
+const logger = require('../../common/logger');
 
 /**
  * Handle Kafka JSON message of broadcast.
@@ -14,22 +14,23 @@ const logger = require('../../common/logger')
  *
  * @return {Promise} promise resolved to notifications
  */
+// eslint-disable-next-line no-unused-vars
 const handle = (message, ruleSets) => co(function* () {
   try {
     const bm = yield models.BulkMessages.create({
       type: message.topic,
       message: message.payload.message,
       recipients: message.payload.recipients,
-    })
-    logger.info("Broadcast message recieved and inserted in db with id:", bm.id)
+    });
+    logger.info('Broadcast message recieved and inserted in db with id:', bm.id);
   } catch (e) {
-    logger.error(`Broadcast processor failed in db operation. Error: ${e}`)
+    logger.error(`Broadcast processor failed in db operation. Error: ${e}`);
   }
-  return [] // this point of time, send empty notification object        
+  return []; // this point of time, send empty notification object
 });
 
 /**
- * validate kafka payload 
+ * validate kafka payload
  */
 handle.schema = {
   message: joi.object().keys({

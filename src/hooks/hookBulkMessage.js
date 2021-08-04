@@ -2,182 +2,180 @@
  * Hook to insert broadcast notification into database for a user.
  */
 
-'use strict'
+'use strict';
 
-const _ = require('lodash')
-const logger = require('../common/logger')
-const models = require('../models')
-const api = require('../common/broadcastAPIHelper')
+const _ = require('lodash');
+const logger = require('../common/logger');
+const models = require('../models');
+const api = require('../common/broadcastAPIHelper');
 
-const logPrefix = "BulkNotificationHook: "
+const logPrefix = 'BulkNotificationHook: ';
 
 /**
  * CREATE NEW TABLES IF NOT EXISTS
  */
 models.BulkMessages.sync().then((t) => {
-    models.BulkMessageUserRefs.sync()
-})
+  models.BulkMessageUserRefs.sync();
+});
 
 /**
- * Main function 
- * @param {Integer} userId 
+ * Main function
+ * @param {Integer} userId
  */
 async function checkBulkMessageForUser(userId) {
-    return new Promise(function (resolve, reject) {
-        models.BulkMessages.count().then(function (tBulkMessages) {
-            if (tBulkMessages > 0) {
+  return new Promise(function (resolve, reject) {
+    models.BulkMessages.count().then(function (tBulkMessages) {
+      if (tBulkMessages > 0) {
                 // the condition can help to optimize the execution
-                models.BulkMessageUserRefs.count({
-                    where: {
-                        user_id: userId
-                    }
-                }).then(async function (tUserRefs) {
-                    let result = true
-                    if (tUserRefs < tBulkMessages) {
-                        logger.info(`${logPrefix} Need to sync broadcast message for current user ${userId}`)
-                        result = await syncBulkMessageForUser(userId)
-                    }
-                    resolve(result)  // resolve here
-                }).catch((e) => {
-                    reject(`${logPrefix} Failed to check total userRefs condition. Error: ${e}`)
-                })
-            } else {
-                resolve(true)
-            }
+        models.BulkMessageUserRefs.count({
+          where: {
+            user_id: userId,
+          },
+        }).then(async function (tUserRefs) {
+          let result = true;
+          if (tUserRefs < tBulkMessages) {
+            logger.info(`${logPrefix} Need to sync broadcast message for current user ${userId}`);
+            result = await syncBulkMessageForUser(userId);
+          }
+          resolve(result);  // resolve here
         }).catch((e) => {
-            logger.error(`${logPrefix} Failed to check total broadcast message condition. Error: `, e)
-            reject(e)
-        })
-    })
+          reject(`${logPrefix} Failed to check total userRefs condition. Error: ${e}`);
+        });
+      } else {
+        resolve(true);
+      }
+    }).catch((e) => {
+      logger.error(`${logPrefix} Failed to check total broadcast message condition. Error: `, e);
+      reject(e);
+    });
+  });
 }
 
 /**
- * Helper function 
- * @param {Integer} userId 
+ * Helper function
+ * @param {Integer} userId
  */
 async function syncBulkMessageForUser(userId) {
-
-    return new Promise(function (resolve, reject) {
+  return new Promise(function (resolve, reject) {
         /**
          * Check if all bulk mesaages processed for current user or not
          */
-        let q = "SELECT a.* FROM bulk_messages AS a " +
-            " LEFT OUTER JOIN (SELECT id as refid, bulk_message_id " +
-            " FROM bulk_message_user_refs AS bmur WHERE bmur.user_id=$1)" +
-            " AS b ON a.id=b.bulk_message_id WHERE b.refid IS NULL"
-        let memberInfo = []
-        let userGroupInfo = []
-        models.sequelize.query(q, { bind: [userId] })
+    let q = 'SELECT a.* FROM bulk_messages AS a ' +
+            ' LEFT OUTER JOIN (SELECT id as refid, bulk_message_id ' +
+            ' FROM bulk_message_user_refs AS bmur WHERE bmur.user_id=$1)' +
+            ' AS b ON a.id=b.bulk_message_id WHERE b.refid IS NULL';
+    let memberInfo = [];
+    let userGroupInfo = [];
+    models.sequelize.query(q, { bind: [userId] })
             .then(async function (res) {
-                try {
-                    memberInfo = await api.getMemberInfo(userId)
-                    userGroupInfo = await api.getUserGroup(userId)
-                } catch (e) {
-                    reject(`${logPrefix} Failed to get member/group info: ${e}`)
-                }
-                Promise.all(res[0].map((r) => isBroadCastMessageForUser(userId, r, memberInfo, userGroupInfo)))
+              try {
+                memberInfo = await api.getMemberInfo(userId);
+                userGroupInfo = await api.getUserGroup(userId);
+              } catch (e) {
+                reject(`${logPrefix} Failed to get member/group info: ${e}`);
+              }
+              Promise.all(res[0].map((r) => isBroadCastMessageForUser(userId, r, memberInfo, userGroupInfo)))
                     .then((results) => {
-                        Promise.all(results.map((o) => {
-                            if (o.result) {
-                                return createNotificationForUser(userId, o.record)
-                            } else {
-                                return insertUserRefs(userId, o.record.id, null)
-                            }
-                        })).then((results) => {
-                            resolve(results)
-                        }).catch((e) => {
-                            reject(e)
-                        })
+                      Promise.all(results.map((o) => {
+                        if (o.result) {
+                          return createNotificationForUser(userId, o.record);
+                        } else {
+                          return insertUserRefs(userId, o.record.id, null);
+                        }
+                      })).then((results) => {
+                        resolve(results);
+                      }).catch((e) => {
+                        reject(e);
+                      });
                     }).catch((e) => {
-                        reject(e)
-                    })
+                      reject(e);
+                    });
             }).catch((e) => {
-                reject(`${logPrefix} Failed to check bulk message condition: error - ${e}`)
-            })
-    })
+              reject(`${logPrefix} Failed to check bulk message condition: error - ${e}`);
+            });
+  });
 }
 
 /**
- * Helper function 
- * Check if current user in broadcast recipent group 
- * @param {Integer} userId 
- * @param {Object} bulkMessage 
+ * Helper function
+ * Check if current user in broadcast recipent group
+ * @param {Integer} userId
+ * @param {Object} bulkMessage
  * @param {Object} memberInfo
  * @param {Object} userGroupInfo
  *
- * @retun promise 
+ * @retun promise
  */
 async function isBroadCastMessageForUser(userId, bulkMessage, memberInfo, userGroupInfo) {
-    return api.checkBroadcastMessageForUser(userId, bulkMessage, memberInfo, userGroupInfo)
+  return api.checkBroadcastMessageForUser(userId, bulkMessage, memberInfo, userGroupInfo);
 }
 
 /**
  * Helper function - Insert in bulkMessage user reference table
- * 
- * @param {Integer} userId 
- * @param {Integer} bulkMessageId 
+ *
+ * @param {Integer} userId
+ * @param {Integer} bulkMessageId
  * @param {Object} notificationObj
  */
 async function insertUserRefs(userId, bulkMessageId, notificationObj) {
-    let notificationId = null
-    if (notificationObj) {
-        notificationId = notificationObj.id
+  let notificationId = null;
+  if (notificationObj) {
+    notificationId = notificationObj.id;
+  }
+  try {
+    const r = await models.BulkMessageUserRefs.create({
+      bulk_message_id: bulkMessageId,
+      user_id: userId,
+      notification_id: notificationId,
+    });
+    logger.info(`${logPrefix} Inserted userRef record for bulk message id ${r.id} for current user ${userId}`);
+    return r;
+  } catch (e) {
+    logger.error(`${logPrefix} Failed to insert userRef record for user: ${userId}, error: ${e}`);
+    if (notificationId && notificationObj) {
+      try {
+        await notificationObj.destroy();
+        logger.info(`Deleted/reverted duplicate/ref-transaction failed, broadcast notification ${notificationId} for user: ${userId}`);
+      } catch (error) {
+        logger.error(`Error in deleting duplicate notification record, ${error}`);
+      }
     }
-    try {
-        const r = await models.BulkMessageUserRefs.create({
-            bulk_message_id: bulkMessageId,
-            user_id: userId,
-            notification_id: notificationId,
-        })
-        logger.info(`${logPrefix} Inserted userRef record for bulk message id ${r.id} for current user ${userId}`)
-        return r
-    } catch (e) {
-        logger.error(`${logPrefix} Failed to insert userRef record for user: ${userId}, error: ${e}`)
-        if (notificationId && notificationObj) {
-             try {
-                 await notificationObj.destroy()
-                 logger.info(`Deleted/reverted duplicate/ref-transaction failed, broadcast notification ${notificationId} for user: ${userId}`)
-             } catch (error) {
-                 logger.error(`Error in deleting duplicate notification record, ${error}`)
-             }
-
-        }
-        throw new Error(`insertUserRefs() : ${e}`)
-    }
+    throw new Error(`insertUserRefs() : ${e}`);
+  }
 }
 
 /**
- * Helper function 
- * @param {Integer} userId 
- * @param {Object} bulkMessage 
+ * Helper function
+ * @param {Integer} userId
+ * @param {Object} bulkMessage
  */
 async function createNotificationForUser(userId, bulkMessage) {
-    try {
-        const n = await models.Notification.create({
-            userId: userId,
-            type: bulkMessage.type,
-            contents: {
-                id: bulkMessage.id, /** broadcast message id  */
-                message: bulkMessage.message, /** broadcast message */
-                group: 'broadcast',
-                title: 'Broadcast Message',
-            },
-            read: false,
-            seen: false,
-            version: null,
-        })
-        logger.info(`${logPrefix} Inserted notification record ${n.id} for current user ${userId}`)
+  try {
+    const n = await models.Notification.create({
+      userId,
+      type: bulkMessage.type,
+      contents: {
+        id: bulkMessage.id, /** broadcast message id  */
+        message: bulkMessage.message, /** broadcast message */
+        group: 'broadcast',
+        title: 'Broadcast Message',
+      },
+      read: false,
+      seen: false,
+      version: null,
+    });
+    logger.info(`${logPrefix} Inserted notification record ${n.id} for current user ${userId}`);
         // TODO need to be in transaction so that rollback will be possible
-        const result = await insertUserRefs(userId, bulkMessage.id, n)
-        return result
-    } catch (e) {
-        logger.error(`${logPrefix} insert broadcast notification error: ${e} `)
-        throw new Error(`createNotificationForUser() : ${e}`)
-    }
+    const result = await insertUserRefs(userId, bulkMessage.id, n);
+    return result;
+  } catch (e) {
+    logger.error(`${logPrefix} insert broadcast notification error: ${e} `);
+    throw new Error(`createNotificationForUser() : ${e}`);
+  }
 }
 
 
 // Exports
 module.exports = {
-    checkBulkMessageForUser,
+  checkBulkMessageForUser,
 };

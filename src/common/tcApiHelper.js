@@ -109,11 +109,126 @@ function* sendMessageToBus(data) {
 }
 
 /**
+ * Notify slack channel.
+ * @param {string} channel the slack channel name
+ * @param {string} text the message
+ */
+function* notifySlackChannel(channel, text) {
+  if (config.SLACK.NOTIFY) {
+    const token = config.SLACK.BOT_TOKEN;
+    const url = config.SLACK.URL;
+    const res = yield request
+      .post(url)
+      .set('Content-Type', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ channel, text })
+      .catch((err) => {
+        const errorDetails = _.get(err, 'message');
+        throw new Error(
+          'Error posting message to Slack API.' +
+          (errorDetails ? ' Server response: ' + errorDetails : '')
+        );
+      });
+    if (res.body.ok) {
+      logger.info(`Message posted successfully to channel: ${channel}`);
+    } else {
+      logger.error(`Error posting message to Slack API: ${JSON.stringify(res.body, null, 4)}`);
+    }
+  } else {
+    logger.info(`Slack message won't be sent to channel: ${channel}`);
+  }
+}
+
+/**
+ * Check if notification is explicitly disabled for given notification type.
+ * @param {number} userId the user id
+ * @param {string} notificationType the notification type
+ * @param {string} serviceId the service id
+ * @returns {boolean} is notification enabled?
+ */
+function* checkNotificationSetting(userId, notificationType, serviceId) {
+  const settings = yield NotificationService.getSettings(userId);
+  if (settings.notifications[notificationType]
+    && settings.notifications[notificationType][serviceId]
+    && settings.notifications[notificationType][serviceId].enabled === 'no'
+  ) {
+    return false;
+  }
+  return true;
+}
+
+/**
  * Notify user via email.
+ * @param {Object} message the Kafka message payload
+ * @return {Object} notification details.
+ */
+function* notifyUserViaWeb(message) {
+  const notificationType = message.type;
+  const userId = message.details.userId;
+  // if web notification is explicitly disabled for current notification type do nothing
+  const allowed = yield checkNotificationSetting(userId, notificationType, constants.SETTINGS_WEB_SERVICE_ID);
+  if (!allowed) {
+    logger.verbose(`Notification '${notificationType}' won't be sent by '${constants.SETTINGS_WEB_SERVICE_ID}'`
+    + ` service to the userId '${userId}' due to his notification settings.`);
+    return;
+  }
+  return message.details;
+}
+
+/**
+ * Notify user via email.
+ * @param {Object} message the Kafka message payload
+ */
+function* notifyUserViaEmail(message) {
+  const notificationType = message.type;
+  const topic = constants.BUS_API_EVENT.EMAIL.UNIVERSAL;
+  for (const recipient of message.details.recipients) {
+    const userId = recipient.userId;
+    // if email notification is explicitly disabled for current notification type do nothing
+    const allowed = yield checkNotificationSetting(userId, notificationType, constants.SETTINGS_EMAIL_SERVICE_ID);
+    if (!allowed) {
+      logger.verbose(`Notification '${notificationType}' won't be sent by '${constants.SETTINGS_EMAIL_SERVICE_ID}'`
+      + ` service to the userId '${userId}' due to his notification settings.`);
+      continue;
+    }
+    let userEmail;
+    // if dev mode for email is enabled then replace recipient email
+    if (config.ENABLE_DEV_MODE) {
+      userEmail = config.DEV_MODE_EMAIL;
+    } else {
+      userEmail = recipient.email;
+      if (!userEmail) {
+        logger.error(`Email not received for user: ${userId}`);
+        continue;
+      }
+    }
+    const recipients = [userEmail];
+    const payload = {
+      from: message.details.from,
+      recipients,
+      cc: message.details.cc || [],
+      data: message.details.data || {},
+      sendgrid_template_id: message.details.sendgridTemplateId,
+      version: message.details.version,
+    };
+    // send email message to bus api.
+    yield sendMessageToBus({
+      topic,
+      originator: 'tc-notifications',
+      timestamp: (new Date()).toISOString(),
+      'mime-type': 'application/json',
+      payload,
+    });
+    logger.info(`Successfully sent ${topic} event with body ${JSON.stringify(payload, null, 4)} to bus api`);
+  }
+}
+
+/**
+ * Notify challenge user via email.
  * @param {Object} user the user
  * @param {Object} message the Kafka message JSON
  */
-function* notifyUserViaEmail(user, message) {
+function* notifyChallengeUserViaEmail(user, message) {
   const notificationType = message.topic;
   const eventType = constants.BUS_API_EVENT.EMAIL.GENERAL;
 
@@ -382,7 +497,11 @@ module.exports = {
   getUsersBySkills,
   getUsersByHandles,
   sendMessageToBus,
+  notifySlackChannel,
+  checkNotificationSetting,
+  notifyUserViaWeb,
   notifyUserViaEmail,
+  notifyChallengeUserViaEmail,
   getChallenge,
   notifyUsersOfMessage,
   getUsersInfoFromChallenge,

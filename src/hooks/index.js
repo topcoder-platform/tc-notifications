@@ -3,13 +3,13 @@
  */
 
 /**
- * Hook implementation 
+ * Hook implementation
  *
  * @author      TCSCODER
  * @version     1.0
  */
 
-const hookBulkMessage = require("./hookBulkMessage")
+const hookBulkMessage = require('./hookBulkMessage');
 
 
 module.exports = {
