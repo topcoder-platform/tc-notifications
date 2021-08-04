@@ -61,8 +61,8 @@ getSettings.schema = {
 function* saveNotificationSetting(entry, userId) {
   const setting = yield models.NotificationSetting.findOne({
     where: {
-      userId, topic: entry.topic, serviceId: entry.serviceId, name: entry.name
-    }
+      userId, topic: entry.topic, serviceId: entry.serviceId, name: entry.name,
+    },
   });
   if (setting) {
     setting.value = entry.value;
@@ -86,8 +86,8 @@ function* saveNotificationSetting(entry, userId) {
 function* saveServiceSetting(entry, userId) {
   const setting = yield models.ServiceSettings.findOne({
     where: {
-      userId, serviceId: entry.serviceId, name: entry.name
-    }
+      userId, serviceId: entry.serviceId, name: entry.name,
+    },
   });
   if (setting) {
     setting.value = entry.value;
@@ -192,9 +192,10 @@ function* listNotifications(query, userId) {
   const filter = {
     where: {
       userId,
-    }, offset, limit, order: [['createdAt', 'DESC']]
+    }, offset, limit, order: [['createdAt', 'DESC']],
   };
 
+  // eslint-disable-next-line default-case
   switch (query.platform) {
     case 'connect':
       filter.where.type = { $like: 'connect.notification.%' };
@@ -206,9 +207,9 @@ function* listNotifications(query, userId) {
 
   if (config.ENABLE_HOOK_BULK_NOTIFICATION) {
     try {
-      yield hooks.hookBulkMessage.checkBulkMessageForUser(userId)
+      yield hooks.hookBulkMessage.checkBulkMessageForUser(userId);
     } catch (e) {
-      logger.error(`Error in calling bulk notification hook: ${e}`)
+      logger.error(`Error in calling bulk notification hook: ${e}`);
     }
   }
 
