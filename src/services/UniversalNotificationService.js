@@ -28,7 +28,7 @@ const emailSchema = joi.object().keys({
         userUUID: joi.string().uuid(),
         email: joi.string().email(),
         handle: joi.string(),
-      }).min(1).required()
+      }).min(1)
     ),
     data: joi.object().keys({
       subject: joi.string(),
@@ -74,6 +74,15 @@ function validator(data, schema) {
   return true;
 }
 
+
+/**
+ * Complete missing user fields of given payload details
+ * This function mutates the given details object.
+ * @param {Object} details the object which has recipients array
+ * @param {Boolean} findEmail true if emails are needed
+ * @param {Boolean} findUserId true if userIds are needed
+ * @returns {undefined}
+ */
 function* completeMissingFields(details, findEmail, findUserId) {
   const getFieldsByUserId = [];
   const getFieldsByHandle = [];
@@ -127,20 +136,26 @@ function* completeMissingFields(details, findEmail, findUserId) {
       }
     }
   }
-  const foundUsersByUUID = yield tcApiHelper.getUsersByUserUUIDs(getFieldsByUserUUID);
+  const foundUsersByUUID = yield tcApiHelper.getUsersByUserUUIDs(getFieldsByUserUUID, true);
   if (!_.isEmpty(foundUsersByUUID)) {
     for (const user of getFieldsByUserUUID) {
       const found = _.find(foundUsersByUUID, ['id', user.userUUID]) || {};
       if (!_.isUndefined(found.externalProfiles) && !_.isEmpty(found.externalProfiles)) {
         _.assign(user, { userId: _.toInteger(_.get(found.externalProfiles[0], 'externalId')) });
       }
+      if (!_.isUndefined(found.handle) && _.isUndefined(user.handle)) {
+        _.assign(user, { handle: found.handle });
+      }
     }
+
     if (findEmail) {
       const usersHaveId = _.filter(getFieldsByUserUUID, u => !_.isUndefined(u.userId));
-      const foundUsersById = yield tcApiHelper.getUsersByHandlesAndUserIds([], usersHaveId);
-      if (!_.isEmpty(foundUsersById)) {
+      const usersHaveHandle = _.filter(getFieldsByUserUUID, u => _.isUndefined(u.userId) && !_.isUndefined(u.handle));
+      const foundUser = yield tcApiHelper.getUsersByHandlesAndUserIds(usersHaveHandle, usersHaveId);
+      if (!_.isEmpty(foundUser)) {
         for (const user of getFieldsByUserUUID) {
-          const found = _.find(foundUsersById, ['userId', user.userId]) || {};
+          const found = _.find(foundUser, !_.isUndefined(user.handle)
+            ? ['handle', user.handle] : ['userId', user.userId]) || {};
           if (!_.isUndefined(found.email)) {
             _.assign(user, { email: found.email });
           }
@@ -162,6 +177,7 @@ function* handle(message) {
       switch (data.serviceId) {
         case constants.SETTINGS_EMAIL_SERVICE_ID:
           if (validator(data, emailSchema)) {
+            // find missing emails and userIds
             yield completeMissingFields(data.details, true, true);
             yield tcApiHelper.notifyUserViaEmail(data);
           }
@@ -173,6 +189,7 @@ function* handle(message) {
           break;
         case constants.SETTINGS_WEB_SERVICE_ID:
           if (validator(data, webSchema)) {
+            // find missing userIds
             yield completeMissingFields(data.details, false, true);
             const _notifications = yield tcApiHelper.notifyUserViaWeb(data);
             if (_notifications) {

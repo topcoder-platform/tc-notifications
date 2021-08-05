@@ -30,8 +30,7 @@ module.exports = {
 
   TC_API_V3_BASE_URL: process.env.TC_API_V3_BASE_URL || 'http://api.topcoder-dev.com/v3',
   TC_API_V4_BASE_URL: process.env.TC_API_V4_BASE_URL || '',
-  TC_API_V5_BASE_URL: process.env.TC_API_V5_BASE_URL || '',
-  TC_API_V5_USERS_URL: process.env.TC_API_V5_USERS_URL || 'https://api.topcoder-dev.com/v5/users',
+  TC_API_V5_BASE_URL: process.env.TC_API_V5_BASE_URL || 'https://api.topcoder-dev.com/v5',
   API_CONTEXT_PATH: process.env.API_CONTEXT_PATH || '/v5/notifications',
   TC_API_BASE_URL: process.env.TC_API_BASE_URL || '',
 

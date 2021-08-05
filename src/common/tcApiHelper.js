@@ -162,7 +162,7 @@ function* getUsersByEmails(emails) {
  * @param {Array<Object>} ids the objects that has user uuids.
  * @returns {Array<Object>} the matched users
  */
-function* getUsersByUserUUIDs(ids) {
+function* getUsersByUserUUIDs(ids, enrich) {
   if (!ids || ids.length === 0) {
     return [];
   }
@@ -171,7 +171,7 @@ function* getUsersByUserUUIDs(ids) {
   try {
     for (const id of ids) {
       const res = yield request
-      .get(`${config.TC_API_V5_USERS_URL}/${id}`)
+      .get(`${config.TC_API_V5_BASE_URL}/users/${id.userUUID}${enrich ? '?enrich=true' : ''}`)
       .set('Authorization', `Bearer ${token}`);
       const user = res.body;
       logger.verbose(`Searched users: ${JSON.stringify(user, null, 4)}`);
@@ -288,6 +288,7 @@ function* notifyUserViaWeb(message) {
 function* notifyUserViaEmail(message) {
   const notificationType = message.type;
   const topic = constants.BUS_API_EVENT.EMAIL.UNIVERSAL;
+  const cc = _.map(_.filter(message.details.cc, c => !_.isUndefined(c.email)), 'email');
   for (const recipient of message.details.recipients) {
     const userId = recipient.userId;
     let userEmail;
@@ -297,7 +298,7 @@ function* notifyUserViaEmail(message) {
     } else {
       userEmail = recipient.email;
       if (!userEmail) {
-        logger.error(`Email not received for user: ${userId}`);
+        logger.error(`Email not received for user: ${JSON.stringify(recipient, null, 4)}`);
         continue;
       }
     }
@@ -315,7 +316,7 @@ function* notifyUserViaEmail(message) {
     const payload = {
       from: message.details.from,
       recipients,
-      cc: message.details.cc || [],
+      cc,
       data: message.details.data || {},
       sendgrid_template_id: message.details.sendgridTemplateId,
       version: message.details.version,
