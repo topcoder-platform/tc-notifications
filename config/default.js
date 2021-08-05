@@ -28,9 +28,10 @@ module.exports = {
   KAFKA_CLIENT_CERT_KEY: process.env.KAFKA_CLIENT_CERT_KEY ?
     process.env.KAFKA_CLIENT_CERT_KEY.replace('\\n', '\n') : null,
 
-  TC_API_V3_BASE_URL: process.env.TC_API_V3_BASE_URL || '',
+  TC_API_V3_BASE_URL: process.env.TC_API_V3_BASE_URL || 'http://api.topcoder-dev.com/v3',
   TC_API_V4_BASE_URL: process.env.TC_API_V4_BASE_URL || '',
   TC_API_V5_BASE_URL: process.env.TC_API_V5_BASE_URL || '',
+  TC_API_V5_USERS_URL: process.env.TC_API_V5_USERS_URL || 'https://api.topcoder-dev.com/v5/users',
   API_CONTEXT_PATH: process.env.API_CONTEXT_PATH || '/v5/notifications',
   TC_API_BASE_URL: process.env.TC_API_BASE_URL || '',
 
@@ -135,7 +136,7 @@ module.exports = {
   // email notification service related variables
   ENV: process.env.ENV,
   ENABLE_EMAILS: process.env.ENABLE_EMAILS ? Boolean(process.env.ENABLE_EMAILS) : false,
-  ENABLE_DEV_MODE: process.env.ENABLE_DEV_MODE ? Boolean(process.env.ENABLE_DEV_MODE) : true,
+  ENABLE_DEV_MODE: process.env.ENABLE_DEV_MODE === 'true',
   DEV_MODE_EMAIL: process.env.DEV_MODE_EMAIL,
   DEFAULT_REPLY_EMAIL: process.env.DEFAULT_REPLY_EMAIL,
   ENABLE_HOOK_BULK_NOTIFICATION: process.env.ENABLE_HOOK_BULK_NOTIFICATION || false,

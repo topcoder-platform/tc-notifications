@@ -3,7 +3,7 @@
  */
 
 'use strict';
-
+const _ = require('lodash');
 const joi = require('joi');
 const logger = require('../common/logger');
 const tcApiHelper = require('../common/tcApiHelper');
@@ -16,15 +16,19 @@ const emailSchema = joi.object().keys({
     from: joi.string().email().required(),
     recipients: joi.array().items(
       joi.object().keys({
-        userId: joi.number().integer().required(),
-        email: joi.string().email().required(),
-      }).required()
+        userId: joi.number().integer(),
+        userUUID: joi.string().uuid(),
+        email: joi.string().email(),
+        handle: joi.string(),
+      }).min(1).required()
     ).min(1).required(),
     cc: joi.array().items(
       joi.object().keys({
         userId: joi.number().integer(),
-        email: joi.string().email().required(),
-      }).required()
+        userUUID: joi.string().uuid(),
+        email: joi.string().email(),
+        handle: joi.string(),
+      }).min(1).required()
     ),
     data: joi.object().keys({
       subject: joi.string(),
@@ -48,7 +52,14 @@ const webSchema = joi.object().keys({
   serviceId: joi.string().valid(constants.SETTINGS_WEB_SERVICE_ID).required(),
   type: joi.string().required(),
   details: joi.object().keys({
-    userId: joi.number().integer().required(),
+    recipients: joi.array().items(
+      joi.object().keys({
+        userId: joi.number().integer(),
+        userUUID: joi.string().uuid(),
+        email: joi.string().email(),
+        handle: joi.string(),
+      }).min(1).required()
+    ).min(1).required(),
     contents: joi.object(),
     version: joi.number().integer().required(),
   }).required(),
@@ -63,6 +74,82 @@ function validator(data, schema) {
   return true;
 }
 
+function* completeMissingFields(details, findEmail, findUserId) {
+  const getFieldsByUserId = [];
+  const getFieldsByHandle = [];
+  const getFieldsByUserUUID = [];
+  const getFieldsByEmail = [];
+  function findMissingFields(data, email, userId) {
+    for (const recipient of data) {
+      if (_.isUndefined(recipient.email) && email) {
+        if (!_.isUndefined(recipient.userId)) {
+          getFieldsByUserId.push(recipient);
+        } else if (!_.isUndefined(recipient.handle)) {
+          getFieldsByHandle.push(recipient);
+        } else {
+          getFieldsByUserUUID.push(recipient);
+        }
+      } else if (_.isUndefined(recipient.userId) && userId) {
+        if (!_.isUndefined(recipient.handle)) {
+          getFieldsByHandle.push(recipient);
+        } else if (!_.isUndefined(recipient.email)) {
+          getFieldsByEmail.push(recipient);
+        } else {
+          getFieldsByUserUUID.push(recipient);
+        }
+      }
+    }
+  }
+
+  findMissingFields(details.recipients, findEmail, findUserId);
+  if (_.isArray(details.cc) && !_.isEmpty(details.cc)) {
+    findMissingFields(details.cc, findEmail, false);
+  }
+  const foundUsersByHandleOrId = yield tcApiHelper.getUsersByHandlesAndUserIds(getFieldsByHandle, getFieldsByUserId);
+  if (!_.isEmpty(foundUsersByHandleOrId)) {
+    for (const user of [...getFieldsByUserId, ...getFieldsByHandle]) {
+      const found = _.find(foundUsersByHandleOrId, !_.isUndefined(user.handle)
+        ? ['handle', user.handle] : ['userId', user.userId]) || {};
+      if (!_.isUndefined(found.email) && _.isUndefined(user.email)) {
+        _.assign(user, { email: found.email });
+      }
+      if (!_.isUndefined(found.userId) && _.isUndefined(user.userId)) {
+        _.assign(user, { userId: found.userId });
+      }
+    }
+  }
+  const foundUsersByEmail = yield tcApiHelper.getUsersByEmails(getFieldsByEmail);
+  if (!_.isEmpty(foundUsersByEmail)) {
+    for (const user of getFieldsByEmail) {
+      const found = _.find(foundUsersByEmail, ['email', user.email]) || {};
+      if (!_.isUndefined(found.id)) {
+        _.assign(user, { userId: found.id });
+      }
+    }
+  }
+  const foundUsersByUUID = yield tcApiHelper.getUsersByUserUUIDs(getFieldsByUserUUID);
+  if (!_.isEmpty(foundUsersByUUID)) {
+    for (const user of getFieldsByUserUUID) {
+      const found = _.find(foundUsersByUUID, ['id', user.userUUID]) || {};
+      if (!_.isUndefined(found.externalProfiles) && !_.isEmpty(found.externalProfiles)) {
+        _.assign(user, { userId: _.toInteger(_.get(found.externalProfiles[0], 'externalId')) });
+      }
+    }
+    if (findEmail) {
+      const usersHaveId = _.filter(getFieldsByUserUUID, u => !_.isUndefined(u.userId));
+      const foundUsersById = yield tcApiHelper.getUsersByHandlesAndUserIds([], usersHaveId);
+      if (!_.isEmpty(foundUsersById)) {
+        for (const user of getFieldsByUserUUID) {
+          const found = _.find(foundUsersById, ['userId', user.userId]) || {};
+          if (!_.isUndefined(found.email)) {
+            _.assign(user, { email: found.email });
+          }
+        }
+      }
+    }
+  }
+}
+
 /**
  * Handle notification message
  * @param {Object} message the Kafka message
@@ -70,11 +157,12 @@ function validator(data, schema) {
  */
 function* handle(message) {
   const notifications = [];
-  for (const data of message.payload) {
+  for (const data of message.payload.notifications) {
     try {
       switch (data.serviceId) {
         case constants.SETTINGS_EMAIL_SERVICE_ID:
           if (validator(data, emailSchema)) {
+            yield completeMissingFields(data.details, true, true);
             yield tcApiHelper.notifyUserViaEmail(data);
           }
           break;
@@ -85,9 +173,10 @@ function* handle(message) {
           break;
         case constants.SETTINGS_WEB_SERVICE_ID:
           if (validator(data, webSchema)) {
-            const notification = yield tcApiHelper.notifyUserViaWeb(data);
-            if (notification) {
-              notifications.push(notification);
+            yield completeMissingFields(data.details, false, true);
+            const _notifications = yield tcApiHelper.notifyUserViaWeb(data);
+            if (_notifications) {
+              notifications.push(..._notifications);
             }
           }
           break;
@@ -107,14 +196,16 @@ handle.schema = {
     originator: joi.string().required(),
     timestamp: joi.date().required(),
     'mime-type': joi.string().required(),
-    payload: joi.array().items(
-      joi.object().keys({
-        serviceId: joi.string().valid(
-          constants.SETTINGS_EMAIL_SERVICE_ID,
-          constants.SETTINGS_SLACK_SERVICE_ID,
-          constants.SETTINGS_WEB_SERVICE_ID).required(),
-      }).unknown()
-    ).min(1).required(),
+    payload: joi.object().keys({
+      notifications: joi.array().items(
+        joi.object().keys({
+          serviceId: joi.string().valid(
+            constants.SETTINGS_EMAIL_SERVICE_ID,
+            constants.SETTINGS_SLACK_SERVICE_ID,
+            constants.SETTINGS_WEB_SERVICE_ID).required(),
+        }).unknown()
+      ).min(1).required(),
+    }).required(),
   }).required(),
 };
 
