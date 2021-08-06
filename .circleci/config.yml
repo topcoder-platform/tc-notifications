@@ -98,7 +98,7 @@ workflows:
           context : org-global
           filters:
             branches:
-              only: [dev, 'feature/update_registration_url']
+              only: [dev, 'feature/update_registration_url', 'feature/before-universal-notifications']
       - "build-prod":
           context : org-global
           filters:
