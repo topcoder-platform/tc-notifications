@@ -125,7 +125,7 @@ module.exports = {
       handleBulkNotification: {},
     },
     ],
-    'notification.action.create': [{
+    'notifications.action.create': [{
       handleUniversalNotification: {},
     }],
     // 'notifications.community.challenge.created': ['handleChallengeCreated'],
