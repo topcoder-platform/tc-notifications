@@ -31,8 +31,9 @@ const emailSchema = joi.object().keys({
       }).min(1)
     ),
     data: joi.object().keys({
-      subject: joi.string(),
-      body: joi.string(),
+      subject: joi.string().allow(''),
+      body: joi.string().allow(''),
+      // any other fields are allowed inside `data` too
     }).unknown(),
     sendgridTemplateId: joi.string().required(),
     version: joi.string().required(),
