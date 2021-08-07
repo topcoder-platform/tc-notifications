@@ -179,7 +179,7 @@ function* getUsersByUserUUIDs(ids, enrich) {
     }
     return users;
   } catch (err) {
-    const error = new Error(err.response.text);
+    const error = new Error(_.get(err, 'response.text', err.toString()));
     error.status = err.status;
     throw error;
   }
