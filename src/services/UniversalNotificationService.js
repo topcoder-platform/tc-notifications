@@ -46,6 +46,7 @@ const slackSchema = joi.object().keys({
   details: joi.object().keys({
     channel: joi.string().required(),
     text: joi.string().required(),
+    blocks: joi.array().items(joi.object()),
   }).required(),
 }).required();
 
