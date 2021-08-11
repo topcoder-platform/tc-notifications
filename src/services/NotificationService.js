@@ -200,8 +200,16 @@ function* listNotifications(query, userId) {
     case 'connect':
       filter.where.type = { $like: 'connect.notification.%' };
       break;
+    case 'taas':
+      filter.where.type = { $like: 'taas.notification.%' };
+      break;
     case 'community':
-      filter.where.type = { $notLike: 'connect.notification.%' };
+      filter.where.type = {
+        $and: [
+          { $notLike: 'connect.notification.%' },
+          { $notLike: 'taas.notification.%' },
+        ],
+      };
       break;
   }
 
