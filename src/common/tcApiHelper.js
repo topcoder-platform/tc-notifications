@@ -275,7 +275,14 @@ function* notifyUserViaWeb(message) {
     + ` service to the userId '${userId}' due to his notification settings.`);
       continue;
     }
-    notifications.push(_.assign({}, _.pick(message.details, ['contents', 'version']), { userId }));
+    notifications.push(_.assign(
+      {},
+      _.pick(message.details, ['contents', 'version']),
+      {
+        userId,
+        type: message.type,
+      }
+    ));
   }
 
   return notifications;
