@@ -186,7 +186,7 @@ function* handle(message) {
           break;
         case constants.SETTINGS_SLACK_SERVICE_ID:
           if (validator(data, slackSchema)) {
-            yield tcApiHelper.notifySlackChannel(data.details.channel, data.details.text);
+            yield tcApiHelper.notifySlackChannel(data.details.channel, data.details.text, data.details.blocks);
           }
           break;
         case constants.SETTINGS_WEB_SERVICE_ID:

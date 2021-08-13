@@ -208,9 +208,10 @@ function* sendMessageToBus(data) {
 /**
  * Notify slack channel.
  * @param {string} channel the slack channel name
- * @param {string} text the message
+ * @param {string} text    the message
+ * @param {string} blocks  rich formatted message as per https://api.slack.com/block-kit
  */
-function* notifySlackChannel(channel, text) {
+function* notifySlackChannel(channel, text, blocks) {
   if (config.SLACK.NOTIFY) {
     const token = config.SLACK.BOT_TOKEN;
     const url = config.SLACK.URL;
@@ -218,7 +219,7 @@ function* notifySlackChannel(channel, text) {
       .post(url)
       .set('Content-Type', 'application/json')
       .set('Authorization', `Bearer ${token}`)
-      .send({ channel, text })
+      .send({ channel, text, blocks })
       .catch((err) => {
         const errorDetails = _.get(err, 'message');
         throw new Error(
