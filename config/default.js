@@ -11,10 +11,10 @@ module.exports = {
       ssl: process.env.DATABASE_SSL != null,
     },
     pool: {
-      max: 5,
-      min: 0,
-      idle: 20000,
-      acquire: 50000,
+      max: process.env.DATABASE_POOL_MAX || 5,
+      min: process.env.DATABASE_POOL_MIN || 0,
+      idle: process.env.DATABASE_POOL_IDLE || 20000,
+      acquire: process.env.DATABASE_POOL_ACQUIRE || 50000,
     },
   },
 
