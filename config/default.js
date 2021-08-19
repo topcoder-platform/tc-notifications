@@ -28,9 +28,9 @@ module.exports = {
   KAFKA_CLIENT_CERT_KEY: process.env.KAFKA_CLIENT_CERT_KEY ?
     process.env.KAFKA_CLIENT_CERT_KEY.replace('\\n', '\n') : null,
 
-  TC_API_V3_BASE_URL: process.env.TC_API_V3_BASE_URL || '',
+  TC_API_V3_BASE_URL: process.env.TC_API_V3_BASE_URL || 'http://api.topcoder-dev.com/v3',
   TC_API_V4_BASE_URL: process.env.TC_API_V4_BASE_URL || '',
-  TC_API_V5_BASE_URL: process.env.TC_API_V5_BASE_URL || '',
+  TC_API_V5_BASE_URL: process.env.TC_API_V5_BASE_URL || 'https://api.topcoder-dev.com/v5',
   API_CONTEXT_PATH: process.env.API_CONTEXT_PATH || '/v5/notifications',
   TC_API_BASE_URL: process.env.TC_API_BASE_URL || '',
 
@@ -47,7 +47,12 @@ module.exports = {
   AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID,
   AUTH0_CLIENT_SECRET: process.env.AUTH0_CLIENT_SECRET,
   AUTH0_PROXY_SERVER_URL: process.env.AUTH0_PROXY_SERVER_URL,
-
+  // Slack configuration.
+  SLACK: {
+    URL: process.env.SLACK_URL || 'https://slack.com/api/chat.postMessage',
+    BOT_TOKEN: process.env.SLACK_BOT_TOKEN,
+    NOTIFY: process.env.SLACK_NOTIFY === 'true',
+  },
   KAFKA_CONSUMER_RULESETS: {
     // key is Kafka topic name, value is array of ruleset which have key as
     // handler function name defined in src/processors/index.js
@@ -115,19 +120,22 @@ module.exports = {
     //    },
     //  },
     // ],
-    // */ // issue - https://github.com/topcoder-platform/community-app/issues/4108 
+    // */ // issue - https://github.com/topcoder-platform/community-app/issues/4108
     'admin.notification.broadcast': [{
-      handleBulkNotification: {}
-    }
-    ]
-    //'notifications.community.challenge.created': ['handleChallengeCreated'],
-    //'notifications.community.challenge.phasewarning': ['handleChallengePhaseWarning'],
+      handleBulkNotification: {},
+    },
+    ],
+    'notifications.action.create': [{
+      handleUniversalNotification: {},
+    }],
+    // 'notifications.community.challenge.created': ['handleChallengeCreated'],
+    // 'notifications.community.challenge.phasewarning': ['handleChallengePhaseWarning'],
   },
 
   // email notification service related variables
   ENV: process.env.ENV,
   ENABLE_EMAILS: process.env.ENABLE_EMAILS ? Boolean(process.env.ENABLE_EMAILS) : false,
-  ENABLE_DEV_MODE: process.env.ENABLE_DEV_MODE ? Boolean(process.env.ENABLE_DEV_MODE) : true,
+  ENABLE_DEV_MODE: process.env.ENABLE_DEV_MODE === 'true',
   DEV_MODE_EMAIL: process.env.DEV_MODE_EMAIL,
   DEFAULT_REPLY_EMAIL: process.env.DEFAULT_REPLY_EMAIL,
   ENABLE_HOOK_BULK_NOTIFICATION: process.env.ENABLE_HOOK_BULK_NOTIFICATION || false,

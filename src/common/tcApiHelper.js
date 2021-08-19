@@ -89,6 +89,103 @@ function* getUsersByHandles(handles) {
 }
 
 /**
+ * Get users by handles or userIds.
+ * @param {Array<Object>} handles the objects that has user handles.
+ * @param {Array<Object>} userIds the objects that has userIds.
+ * @returns {Array<Object>} the matched users
+ */
+function* getUsersByHandlesAndUserIds(handles, userIds) {
+  if ((!handles || handles.length === 0) && (!userIds || userIds.length === 0)) {
+    return [];
+  }
+  const handlesQuery = _.map(handles, h => `handleLower:${h.handle.toLowerCase()}`);
+  const userIdsQuery = _.map(userIds, u => `userId:${u.userId}`);
+  const query = _.concat(handlesQuery, userIdsQuery).join(URI.encodeQuery(' OR ', 'utf8'));
+  try {
+    return yield searchUsersByQuery(query);
+  } catch (err) {
+    const error = new Error(err.response.text);
+    error.status = err.status;
+    throw error;
+  }
+}
+
+/**
+ * Search users by query string.
+ * @param {String} query the query string
+ * @returns {Array} the matched users
+ */
+function* searchUsersByEmailQuery(query) {
+  const token = yield getM2MToken();
+  const res = yield request
+      .get(`${
+        config.TC_API_V3_BASE_URL
+        }/users?filter=${
+        query
+        }&fields=id,email,handle`)
+      .set('Authorization', `Bearer ${token}`);
+  if (!_.get(res, 'body.result.success')) {
+    throw new Error(`Failed to search users by query: ${query}`);
+  }
+  const records = _.get(res, 'body.result.content') || [];
+
+  logger.verbose(`Searched users: ${JSON.stringify(records, null, 4)}`);
+  return records;
+}
+
+/**
+ * Get users by emails.
+ * @param {Array<Object>} emails the objects that has user emails.
+ * @returns {Array<Object>} the matched users
+ */
+function* getUsersByEmails(emails) {
+  if (!emails || emails.length === 0) {
+    return [];
+  }
+  const users = [];
+  try {
+    for (const email of emails) {
+      const query = `email%3D${email.email}`;
+      const result = yield searchUsersByEmailQuery(query);
+      users.push(...result);
+    }
+    return users;
+  } catch (err) {
+    const error = new Error(err.response.text);
+    error.status = err.status;
+    throw error;
+  }
+}
+
+/**
+ * Get users by uuid.
+ * @param {Array<Object>} ids the objects that has user uuids.
+ * @returns {Array<Object>} the matched users
+ */
+function* getUsersByUserUUIDs(ids, enrich) {
+  if (!ids || ids.length === 0) {
+    return [];
+  }
+  const users = [];
+  const token = yield getM2MToken();
+  try {
+    for (const id of ids) {
+      const res = yield request
+      .get(`${config.TC_API_V5_BASE_URL}/users/${id.userUUID}${enrich ? '?enrich=true' : ''}`)
+      .set('Authorization', `Bearer ${token}`);
+      const user = res.body;
+      logger.verbose(`Searched users: ${JSON.stringify(user, null, 4)}`);
+      users.push(user);
+    }
+    return users;
+  } catch (err) {
+    const error = new Error(_.get(err, 'response.text', err.toString()));
+    error.status = err.status;
+    throw error;
+  }
+}
+
+/**
  * Send message to bus.
  * @param {Object} data the data to send
  */
@@ -109,11 +206,147 @@ function* sendMessageToBus(data) {
 }
 
 /**
+ * Notify slack channel.
+ * @param {string} channel the slack channel name
+ * @param {string} text    the message
+ * @param {string} blocks  rich formatted message as per https://api.slack.com/block-kit
+ */
+function* notifySlackChannel(channel, text, blocks) {
+  if (config.SLACK.NOTIFY) {
+    const token = config.SLACK.BOT_TOKEN;
+    const url = config.SLACK.URL;
+    const res = yield request
+      .post(url)
+      .set('Content-Type', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ channel, text, blocks })
+      .catch((err) => {
+        const errorDetails = _.get(err, 'message');
+        throw new Error(
+          'Error posting message to Slack API.' +
+          (errorDetails ? ' Server response: ' + errorDetails : '')
+        );
+      });
+    if (res.body.ok) {
+      logger.info(`Message posted successfully to channel: ${channel}`);
+    } else {
+      logger.error(`Error posting message to Slack API: ${JSON.stringify(res.body, null, 4)}`);
+    }
+  } else {
+    logger.info(`Slack message won't be sent to channel: ${channel}`);
+  }
+}
+
+/**
+ * Check if notification is explicitly disabled for given notification type.
+ * @param {number} userId the user id
+ * @param {string} notificationType the notification type
+ * @param {string} serviceId the service id
+ * @returns {boolean} is notification enabled?
+ */
+function* checkNotificationSetting(userId, notificationType, serviceId) {
+  const settings = yield NotificationService.getSettings(userId);
+  if (settings.notifications[notificationType]
+    && settings.notifications[notificationType][serviceId]
+    && settings.notifications[notificationType][serviceId].enabled === 'no'
+  ) {
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Notify user via web.
+ * @param {Object} message the Kafka message payload
+ * @return {Array<Object>} notification details.
+ */
+function* notifyUserViaWeb(message) {
+  const notificationType = message.type;
+  const notifications = [];
+  for (const recipient of message.details.recipients) {
+    const userId = recipient.userId;
+    if (_.isUndefined(userId)) {
+      logger.error(`userId not received for user: ${JSON.stringify(recipient, null, 4)}`);
+      continue;
+    }
+    // if web notification is explicitly disabled for current notification type do nothing
+    const allowed = yield checkNotificationSetting(userId, notificationType, constants.SETTINGS_WEB_SERVICE_ID);
+    if (!allowed) {
+      logger.verbose(`Notification '${notificationType}' won't be sent by '${constants.SETTINGS_WEB_SERVICE_ID}'`
+    + ` service to the userId '${userId}' due to his notification settings.`);
+      continue;
+    }
+    notifications.push(_.assign(
+      {},
+      _.pick(message.details, ['contents', 'version']),
+      {
+        userId,
+        type: message.type,
+      }
+    ));
+  }
+
+  return notifications;
+}
+
+/**
  * Notify user via email.
+ * @param {Object} message the Kafka message payload
+ */
+function* notifyUserViaEmail(message) {
+  const notificationType = message.type;
+  const topic = constants.BUS_API_EVENT.EMAIL.UNIVERSAL;
+  const cc = _.map(_.filter(message.details.cc, c => !_.isUndefined(c.email)), 'email');
+  for (const recipient of message.details.recipients) {
+    const userId = recipient.userId;
+    let userEmail;
+    // if dev mode for email is enabled then replace recipient email
+    if (config.ENABLE_DEV_MODE) {
+      userEmail = config.DEV_MODE_EMAIL;
+    } else {
+      userEmail = recipient.email;
+      if (!userEmail) {
+        logger.error(`Email not received for user: ${JSON.stringify(recipient, null, 4)}`);
+        continue;
+      }
+    }
+    // skip checking notification setting if userId is not found.
+    if (!_.isUndefined(userId)) {
+    // if email notification is explicitly disabled for current notification type do nothing
+      const allowed = yield checkNotificationSetting(userId, notificationType, constants.SETTINGS_EMAIL_SERVICE_ID);
+      if (!allowed) {
+        logger.verbose(`Notification '${notificationType}' won't be sent by '${constants.SETTINGS_EMAIL_SERVICE_ID}'`
+      + ` service to the userId '${userId}' due to his notification settings.`);
+        continue;
+      }
+    }
+    const recipients = [userEmail];
+    const payload = {
+      from: message.details.from,
+      recipients,
+      cc,
+      data: message.details.data || {},
+      sendgrid_template_id: message.details.sendgridTemplateId,
+      version: message.details.version,
+    };
+    // send email message to bus api.
+    yield sendMessageToBus({
+      topic,
+      originator: 'tc-notifications',
+      timestamp: (new Date()).toISOString(),
+      'mime-type': 'application/json',
+      payload,
+    });
+    logger.info(`Successfully sent ${topic} event with body ${JSON.stringify(payload, null, 4)} to bus api`);
+  }
+}
+
+/**
+ * Notify challenge user via email.
  * @param {Object} user the user
  * @param {Object} message the Kafka message JSON
  */
-function* notifyUserViaEmail(user, message) {
+function* notifyChallengeUserViaEmail(user, message) {
   const notificationType = message.topic;
   const eventType = constants.BUS_API_EVENT.EMAIL.GENERAL;
 
@@ -381,8 +614,15 @@ module.exports = {
   getM2MToken,
   getUsersBySkills,
   getUsersByHandles,
+  getUsersByHandlesAndUserIds,
+  getUsersByEmails,
+  getUsersByUserUUIDs,
   sendMessageToBus,
+  notifySlackChannel,
+  checkNotificationSetting,
+  notifyUserViaWeb,
   notifyUserViaEmail,
+  notifyChallengeUserViaEmail,
   getChallenge,
   notifyUsersOfMessage,
   getUsersInfoFromChallenge,

@@ -1,0 +1,38 @@
+{
+	"info": {
+		"_postman_id": "ad14efc8-1fed-4914-8273-330754500801",
+		"name": "TC-NOTIFICATIONS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "list notifications",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{TOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{URL}}/list?limit=100",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"list"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "100"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
