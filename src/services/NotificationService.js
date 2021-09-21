@@ -213,7 +213,7 @@ function* listNotifications(query, userId) {
       break;
   }
 
-  if (config.ENABLE_HOOK_BULK_NOTIFICATION) {
+  if (JSON.parse(config.ENABLE_HOOK_BULK_NOTIFICATION)) {
     try {
       yield hooks.hookBulkMessage.checkBulkMessageForUser(userId);
     } catch (e) {
