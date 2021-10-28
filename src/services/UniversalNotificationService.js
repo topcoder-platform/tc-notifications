@@ -180,9 +180,8 @@ function* handle(message) {
         case constants.SETTINGS_EMAIL_SERVICE_ID:
           if (validator(data, emailSchema)) {
             // find missing emails and userIds
-            // temporary disable email notification on PROD until we get good working for email templates
-            // yield completeMissingFields(data.details, true, true);
-            // yield tcApiHelper.notifyUserViaEmail(data);
+            yield completeMissingFields(data.details, true, true);
+            yield tcApiHelper.notifyUserViaEmail(data);
           }
           break;
         case constants.SETTINGS_SLACK_SERVICE_ID:
