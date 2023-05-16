@@ -16,10 +16,12 @@ if (!config.DISABLE_LOGGING) {
     colorize: true,
     level: config.LOG_LEVEL,
   }));
+/*  
   transports.push(new (winston.transports.File)({
     filename: 'log.txt',
     timestamp: true,
   }));
+ */
 }
 const logger = new (winston.Logger)({ transports });
 
