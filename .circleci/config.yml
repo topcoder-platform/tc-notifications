@@ -31,7 +31,31 @@ save_cache_settings: &save_cache_settings
 run_build: &run_build
           name: Build of Docker image
           command: ./build.sh
-
+          
+builddeploy_steps: &builddeploy_steps          
+      - checkout
+      - setup_remote_docker
+      - run: *install_dependency
+      - run: *install_deploysuite
+      - run: *run_build
+      - deploy:
+          name: Running Masterscript - deploy tc-notifications-api service
+          command: |    
+            ./awsconfiguration.sh $DEPLOY_ENV
+            source awsenvconf
+            ./buildenv.sh -e $DEPLOY_ENV -b ${LOGICAL_ENV}-${APPNAME}-deployvar
+            source buildenvvar
+            ./master_deploy.sh -d ECS -e $DEPLOY_ENV -t latest -s ${LOGICAL_ENV}-global-appvar,${LOGICAL_ENV}-${APPNAME}-appvar -i ${APPNAME}  
+            echo "Running Masterscript - deploy tc-notifications-consumers service"
+            if [ -e ${LOGICAL_ENV}-${APPNAME}-deployvar.json ]; then  sudo rm -vf ${LOGICAL_ENV}-${APPNAME}-deployvar.json; fi
+            ./buildenv.sh -e $DEPLOY_ENV -b ${LOGICAL_ENV}-${CONSUMERNAME}-deployvar
+            source buildenvvar
+            ./master_deploy.sh -d ECS -e $DEPLOY_ENV -t latest -s ${LOGICAL_ENV}-global-appvar,${LOGICAL_ENV}-${APPNAME}-appvar -i ${APPNAME} 
+            echo "Running Masterscript - deploy tc-notifications-general-processor service"
+            if [ -e ${LOGICAL_ENV}-${CONSUMERNAME}-deployvar.json ]; then  sudo rm -vf ${LOGICAL_ENV}-${CONSUMERNAME}-deployvar.json; fi
+            ./buildenv.sh -e $DEPLOY_ENV -b ${LOGICAL_ENV}-${PROCESSORNAME}-deployvar
+            source buildenvvar
+            ./master_deploy.sh -d ECS -e $DEPLOY_ENV -t latest -s ${LOGICAL_ENV}-global-appvar,${LOGICAL_ENV}-${APPNAME}-appvar -i ${APPNAME}  
 
 jobs:
   # Build & Deploy against development backend rer
@@ -61,6 +85,18 @@ jobs:
             ./buildenv.sh -e DEV -b dev-tc-notifications-general-processor-deployvar
             source buildenvvar
             ./master_deploy.sh -d ECS -e DEV -t latest -s dev-global-appvar,dev-tc-notifications-appvar -i tc-notifications     
+
+  "build-qa":
+    <<: *defaults
+    environment:
+      DEPLOY_ENV: "QA"
+      LOGICAL_ENV: "qa"
+      APPNAME: "tc-notifications"
+      CONSUMERNAME: "tc-notifications-consumers"
+      PROCESSORNAME: "tc-notifications-general-processor"
+      CODEARTIFACT_ENV: "PROD"
+    steps: *builddeploy_steps    
+
 
   "build-prod":
     <<: *defaults
@@ -99,6 +135,11 @@ workflows:
           filters:
             branches:
               only: [dev, 'feature/update_registration_url']
+      - "build-qa":
+          context : org-global
+          filters:
+            branches:
+              only: qa              
       - "build-prod":
           context : org-global
           filters:
