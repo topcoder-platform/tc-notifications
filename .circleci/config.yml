@@ -2,15 +2,13 @@
 version: 2
 defaults: &defaults
     docker:
-      - image: cimg/python:3.11.0-browsers
+      - image: cimg/python:3.11.7-browsers
 install_dependency: &install_dependency
           name: Installation of build and deployment dependencies.
           command: |
             sudo apt update
-            sudo apt install jq
-            sudo apt install python3-pip
+            sudo apt install jq python3-pip
             sudo pip3 install awscli --upgrade
-            sudo pip3 install docker-compose
 install_deploysuite: &install_deploysuite
           name: Installation of install_deploysuite.
           #Git Clone -change back to v1.3 or latest once counter var is generalized.
