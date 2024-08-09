@@ -153,7 +153,7 @@ const getUsersById = (ids) => {
         if (res.status!=200) {
           throw new Error(`Failed to get users by ids: ${ids}`);
         }
-        const users = _.get(res, 'text');
+        const users = JSON.parse(_.get(res, 'text'));
         return users;
       }).catch((err) => {
         const errorDetails = `Status code: ${JSON.stringify(err)}`;
