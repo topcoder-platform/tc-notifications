@@ -133,7 +133,7 @@ const getUsersById = (ids) => {
   if (ids.length>1) {
     query = _.map(ids, (id) => 'userIds=' + id).join('&');
   } else if(ids.length==1) {
-    query = 'userId=' + ids[0]
+    query = 'userId=' + ids[0];
   }
 
   console.log(`Calling members API with query: ${query}`)
