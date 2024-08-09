@@ -143,15 +143,13 @@ const getUsersById = (ids) => {
       .set('authorization', `Bearer ${token}`)
       .then((res) => {
         console.log(`Result: ${JSON.stringify(res)}`)
-        if (!_.get(res, 'body.result.success')) {
+        if (res.status!=200) {
           throw new Error(`Failed to get users by ids: ${ids}`);
         }
-
-        const users = _.get(res, 'body.result.content');
+        const users = _.get(res, 'text');
         return users;
       }).catch((err) => {
-        const errorDetails = _.get(err, 'response.body.result.content.message')
-          || `Status code: ${err.response.statusCode}`;
+        const errorDetails = `Status code: ${JSON.stringify(err)}`;
         throw new Error(
           `Failed to get users by ids: ${ids}.` +
           (errorDetails ? ' Server response: ' + errorDetails : '')
