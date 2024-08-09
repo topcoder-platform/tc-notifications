@@ -135,8 +135,6 @@ const getUsersById = (ids) => {
   } else if(ids.length==1) {
     query = 'userId=' + ids[0];
   }
-
-  console.log(`Calling members API with query: ${query}`)
   return M2m.getMachineToken(config.AUTH0_CLIENT_ID, config.AUTH0_CLIENT_SECRET)
     .catch((err) => {
       err.message = 'Error generating m2m token: ' + err.message;
@@ -149,7 +147,6 @@ const getUsersById = (ids) => {
       .set('accept', 'application/json')
       .set('authorization', `Bearer ${token}`)
       .then((res) => {
-        console.log(`Result: ${JSON.stringify(res)}`)
         if (res.status!=200) {
           throw new Error(`Failed to get users by ids: ${ids}`);
         }
