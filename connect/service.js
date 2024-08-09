@@ -128,7 +128,8 @@ const getRoleMembers = (role) => (
  * @return {Promise}   resolves to the list of user details
  */
 const getUsersById = (ids) => {
-  const query = _.map(ids, (id) => 'userId:' + id).join(' OR ');
+  const query = _.map(ids, (id) => 'userIds=' + id).join('&');
+  console.log(`Calling members API with query: ${query}`)
   return M2m.getMachineToken(config.AUTH0_CLIENT_ID, config.AUTH0_CLIENT_SECRET)
     .catch((err) => {
       err.message = 'Error generating m2m token: ' + err.message;
@@ -137,10 +138,11 @@ const getUsersById = (ids) => {
     .then((token) => {
       const fields = 'fields=userId,email,handle,firstName,lastName,photoURL,status';
       return request
-      .get(`${config.TC_API_V3_BASE_URL}/members/_search?${fields}&query=${query}`)
+      .get(`${config.TC_API_V5_BASE_URL}/members/?${fields}&${query}`)
       .set('accept', 'application/json')
       .set('authorization', `Bearer ${token}`)
       .then((res) => {
+        console.log(`Result: ${JSON.stringify(res)}`)
         if (!_.get(res, 'body.result.success')) {
           throw new Error(`Failed to get users by ids: ${ids}`);
         }
