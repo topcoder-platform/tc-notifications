@@ -128,7 +128,14 @@ const getRoleMembers = (role) => (
  * @return {Promise}   resolves to the list of user details
  */
 const getUsersById = (ids) => {
-  const query = _.map(ids, (id) => 'userIds=' + id).join('&');
+
+  let query = ""
+  if (ids.length>1) {
+    query = _.map(ids, (id) => 'userIds=' + id).join('&');
+  } else if(ids.length==1) {
+    query = 'userId=' + ids[0]
+  }
+
   console.log(`Calling members API with query: ${query}`)
   return M2m.getMachineToken(config.AUTH0_CLIENT_ID, config.AUTH0_CLIENT_SECRET)
     .catch((err) => {
