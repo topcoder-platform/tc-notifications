@@ -130,9 +130,9 @@ const getRoleMembers = (role) => (
 const getUsersById = (ids) => {
 
   let query = ""
-  if (ids.length>1) {
+  if (ids.length > 1) {
     query = _.map(ids, (id) => 'userIds=' + id).join('&');
-  } else if(ids.length==1) {
+  } else if(ids.length == 1) {
     query = 'userId=' + ids[0];
   }
   return M2m.getMachineToken(config.AUTH0_CLIENT_ID, config.AUTH0_CLIENT_SECRET)
@@ -147,7 +147,7 @@ const getUsersById = (ids) => {
       .set('accept', 'application/json')
       .set('authorization', `Bearer ${token}`)
       .then((res) => {
-        if (res.status!=200) {
+        if (res.status != 200) {
           throw new Error(`Failed to get users by ids: ${ids}`);
         }
         const users = JSON.parse(_.get(res, 'text'));
