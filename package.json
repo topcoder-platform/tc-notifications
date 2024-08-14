@@ -49,7 +49,7 @@
     "millisecond": "^0.1.2",
     "no-kafka": "^3.2.10",
     "node-cron": "^1.2.1",
-    "pg": "^7.3.0",
+    "pg": "^8.12.0",
     "remarkable": "^1.7.1",
     "sequelize": "^4.21.0",
     "superagent": "^3.8.0",
@@ -60,6 +60,6 @@
     "node-cache": "^5.1.0"
   },
   "engines": {
-    "node": "6.x"
+    "node": "8.x"
   }
 }
