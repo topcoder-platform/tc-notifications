@@ -43,17 +43,17 @@ builddeploy_steps: &builddeploy_steps
             source awsenvconf
             ./buildenv.sh -e $DEPLOY_ENV -b ${LOGICAL_ENV}-${APPNAME}-deployvar
             source buildenvvar
-            ./master_deploy.sh -d ECS -e $DEPLOY_ENV -t latest -s ${LOGICAL_ENV}-global-appvar,${LOGICAL_ENV}-${APPNAME}-appvar -i ${APPNAME}  
+            ./master_deploy.sh -d ECS -e $DEPLOY_ENV -t latest -s ${LOGICAL_ENV}-global-appvar,${LOGICAL_ENV}-${APPNAME}-appvar -i ${APPNAME} -p FARGATE
             echo "Running Masterscript - deploy tc-notifications-consumers service"
             if [ -e ${LOGICAL_ENV}-${APPNAME}-deployvar.json ]; then  sudo rm -vf ${LOGICAL_ENV}-${APPNAME}-deployvar.json; fi
             ./buildenv.sh -e $DEPLOY_ENV -b ${LOGICAL_ENV}-${CONSUMERNAME}-deployvar
             source buildenvvar
-            ./master_deploy.sh -d ECS -e $DEPLOY_ENV -t latest -s ${LOGICAL_ENV}-global-appvar,${LOGICAL_ENV}-${APPNAME}-appvar -i ${APPNAME} 
+            ./master_deploy.sh -d ECS -e $DEPLOY_ENV -t latest -s ${LOGICAL_ENV}-global-appvar,${LOGICAL_ENV}-${APPNAME}-appvar -i ${APPNAME} -p FARGATE
             echo "Running Masterscript - deploy tc-notifications-general-processor service"
             if [ -e ${LOGICAL_ENV}-${CONSUMERNAME}-deployvar.json ]; then  sudo rm -vf ${LOGICAL_ENV}-${CONSUMERNAME}-deployvar.json; fi
             ./buildenv.sh -e $DEPLOY_ENV -b ${LOGICAL_ENV}-${PROCESSORNAME}-deployvar
             source buildenvvar
-            ./master_deploy.sh -d ECS -e $DEPLOY_ENV -t latest -s ${LOGICAL_ENV}-global-appvar,${LOGICAL_ENV}-${APPNAME}-appvar -i ${APPNAME}  
+            ./master_deploy.sh -d ECS -e $DEPLOY_ENV -t latest -s ${LOGICAL_ENV}-global-appvar,${LOGICAL_ENV}-${APPNAME}-appvar -i ${APPNAME} -p FARGATE 
 
 jobs:
   # Build & Deploy against development backend rer
@@ -72,17 +72,17 @@ jobs:
             source awsenvconf
             ./buildenv.sh -e DEV -b dev-tc-notifications-deployvar
             source buildenvvar
-            ./master_deploy.sh -d ECS -e DEV -t latest -s dev-global-appvar,dev-tc-notifications-appvar -i tc-notifications  
+            ./master_deploy.sh -d ECS -e DEV -t latest -s dev-global-appvar,dev-tc-notifications-appvar -i tc-notifications  -p FARGATE
             echo "Running Masterscript - deploy tc-notifications-consumers service"
             if [ -e dev-tc-notifications-deployvar.json ]; then  sudo rm -vf dev-tc-notifications-deployvar.json; fi
             ./buildenv.sh -e DEV -b dev-tc-notifications-consumers-deployvar
             source buildenvvar
-            ./master_deploy.sh -d ECS -e DEV -t latest -s dev-global-appvar,dev-tc-notifications-appvar -i tc-notifications 
+            ./master_deploy.sh -d ECS -e DEV -t latest -s dev-global-appvar,dev-tc-notifications-appvar -i tc-notifications -p FARGATE
             echo "Running Masterscript - deploy tc-notifications-general-processor service"
             if [ -e dev-tc-notifications-consumers-deployvar.json ]; then  sudo rm -vf dev-tc-notifications-consumers-deployvar.json; fi
             ./buildenv.sh -e DEV -b dev-tc-notifications-general-processor-deployvar
             source buildenvvar
-            ./master_deploy.sh -d ECS -e DEV -t latest -s dev-global-appvar,dev-tc-notifications-appvar -i tc-notifications     
+            ./master_deploy.sh -d ECS -e DEV -t latest -s dev-global-appvar,dev-tc-notifications-appvar -i tc-notifications  -p FARGATE   
 
   "build-qa":
     <<: *defaults
@@ -111,17 +111,17 @@ jobs:
             source awsenvconf
             ./buildenv.sh -e PROD -b prod-tc-notifications-deployvar
             source buildenvvar
-            ./master_deploy.sh -d ECS -e PROD -t latest -s prod-global-appvar,prod-tc-notifications-appvar -i tc-notifications  
+            ./master_deploy.sh -d ECS -e PROD -t latest -s prod-global-appvar,prod-tc-notifications-appvar -i tc-notifications  -p FARGATE
             echo "========== Running Masterscript - prod deploy tc-notifications-consumers service ========="
             if [ -e prod-tc-notifications-deployvar.json ]; then  sudo rm -vf prod-tc-notifications-deployvar.json; fi
             ./buildenv.sh -e PROD -b prod-tc-notifications-consumers-deployvar
             source buildenvvar
-            ./master_deploy.sh -d ECS -e PROD -t latest -s prod-global-appvar,prod-tc-notifications-appvar -i tc-notifications
+            ./master_deploy.sh -d ECS -e PROD -t latest -s prod-global-appvar,prod-tc-notifications-appvar -i tc-notifications -p FARGATE
             echo "Running Masterscript - prod deploy tc-notifications-general-processor service"
             if [ -e prod-tc-notifications-consumers-deployvar.json ]; then  sudo rm -vf prod-tc-notifications-consumers-deployvar.json; fi
             ./buildenv.sh -e PROD -b prod-tc-notifications-general-processor-deployvar
             source buildenvvar
-            ./master_deploy.sh -d ECS -e PROD -t latest -s prod-global-appvar,prod-tc-notifications-appvar -i tc-notifications
+            ./master_deploy.sh -d ECS -e PROD -t latest -s prod-global-appvar,prod-tc-notifications-appvar -i tc-notifications -p FARGATE
             
 workflows:
   version: 2
