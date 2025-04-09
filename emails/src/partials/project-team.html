@@ -132,7 +132,7 @@
                 <td class="empty-child-one"></td>
                 <td class="second-child" align="center">
                     {{#if notifications.[0].[connect.notification.project.member.invite.requested]}}
-                        <a href="{{@root.workManagerUrl}}/projects/{{notifications.[0].projectId}}#manageTopcoderTeam">
+                        <a href="{{@root.workManagerUrl}}/users?projectId={{notifications.[0].projectId}}">
                             Manage project team
                         </a>
                     {{else}}
