@@ -7,7 +7,7 @@
     <table class="main-child">
       <tr>
         <td class="empty-child-one"></td>
-        <td class="comment-box"><img src="{{@root.connectURL}}/static/comment.jpg" alt="IMG"></td>
+        <td class="comment-box"><img src="{{@root.workManagerUrl}}/static/comment.jpg" alt="IMG"></td>
         <td class="empty-child-two"></td>
         <td>
             {{title}}
@@ -104,25 +104,25 @@
                 <td class="empty-child-one for-two-buttons"></td>
                 {{#if notifications.[0].[isSSO]}}
                     <td class="second-child" align="center">
-                        <a href="{{@root.accountsAppURL}}/sso-login/?app=connect&retUrl={{@root.connectURL}}/projects/{{notifications.[0].projectId}}%3Finvitation%3Daccept">
+                        <a href="{{@root.accountsAppURL}}/sso-login/?app=connect&retUrl={{@root.workManagerUrl}}/projects/{{notifications.[0].projectId}}/invitation/accepted">
                             Join Project
                         </a>
                     </td>
                     <td class="empty-width-10"></td>
                     <td class="second-child" align="center">
-                        <a class="second-btn" href="{{@root.accountsAppURL}}/sso-login/?app=connect&retUrl={{@root.connectURL}}/projects/{{notifications.[0].projectId}}%3Finvitation%3Ddecline">
+                        <a class="second-btn" href="{{@root.accountsAppURL}}/sso-login/?app=connect&retUrl={{@root.workManagerUrl}}/projects/{{notifications.[0].projectId}}/invitation/refused">
                             Decline
                         </a>
                     </td>
                 {{else}}
                     <td class="second-child" align="center">
-                        <a href="{{@root.connectURL}}/projects/{{notifications.[0].projectId}}?invitation=accept">
+                        <a href="{{@root.workManagerUrl}}/projects/{{notifications.[0].projectId}}/invitation/accepted">
                             Join Project
                         </a>
                     </td>
                     <td class="empty-width-10"></td>
                     <td class="second-child" align="center">
-                        <a class="second-btn" href="{{@root.connectURL}}/projects/{{notifications.[0].projectId}}?invitation=decline">
+                        <a class="second-btn" href="{{@root.workManagerUrl}}/projects/{{notifications.[0].projectId}}/invitation/refused">
                             Decline
                         </a>
                     </td>
@@ -132,17 +132,17 @@
                 <td class="empty-child-one"></td>
                 <td class="second-child" align="center">
                     {{#if notifications.[0].[connect.notification.project.member.invite.requested]}}
-                        <a href="{{@root.connectURL}}/projects/{{notifications.[0].projectId}}#manageTopcoderTeam">
+                        <a href="{{@root.workManagerUrl}}/projects/{{notifications.[0].projectId}}#manageTopcoderTeam">
                             Manage project team
                         </a>
                     {{else}}
                         {{#if notifications.[0].[isSSO]}}
-                            <a href="{{@root.accountsAppURL}}/sso-login/?app=connect&retUrl={{@root.connectURL}}/projects/{{notifications.[0].projectId}}">
+                            <a href="{{@root.accountsAppURL}}/sso-login/?app=connect&retUrl={{@root.workManagerUrl}}/projects/{{notifications.[0].projectId}}">
                                 SSO Login
                             </a>
                         {{else}}
-                            <a href="{{@root.connectURL}}/projects/{{notifications.[0].projectId}}">
-                                View project on Connect
+                            <a href="{{@root.workManagerUrl}}/projects/{{notifications.[0].projectId}}">
+                                View project
                             </a>
                         {{/if}}
                     {{/if}}

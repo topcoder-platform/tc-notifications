@@ -20,7 +20,13 @@
             <td class="main-td">
               <table class="main-child">
                 <tr>
-                  <td class="logo-box"><img src="{{@root.connectURL}}/static/logo.jpg" width="54" height="35" alt="IMG"></td>
+                  <td class="logo-box">
+                    {{#if @root.connectURL}}
+                        <img src="{{@root.connectURL}}/static/logo.jpg" width="54" height="35" alt="IMG">
+                    {{else}}
+                        <img src="{{@root.workManagerUrl}}/static/logo.jpg" width="54" height="35" alt="IMG">
+                    {{/if}}
+                  </td>
                   <td class="main-heading">YOUR TOPCODER PROJECT UPDATES</td>
                   <td class="dummy-head-child"></td>
                 </tr>
@@ -95,7 +101,7 @@
           <tr><td class="html-entities">&#9679;&#9679;&#9679;</td></tr>
           <tr class="empty-10"><td></td></tr>
           <tr>
-            <td>You are receiving this email based on your Connect account preferences. To change which emails you receive from Connect, go to your <a href="{{@root.connectURL}}/settings/notifications">Notification Settings.</a>
+            <td>You are receiving this email based on your Connect account preferences. To change which emails you receive from Connect, go to your <a href="{{@root.workManagerUrl}}/settings/notifications">Notification Settings.</a>
           </tr>
         </table>
       </td>
