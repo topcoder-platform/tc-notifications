@@ -132,7 +132,7 @@ workflows:
           context : org-global
           filters:
             branches:
-              only: [dev, 'feature/update_registration_url']
+              only: [dev, 'PM-973_deprecate-connect']
       - "build-qa":
           context : org-global
           filters:
