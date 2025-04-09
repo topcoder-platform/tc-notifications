@@ -2,7 +2,7 @@
 version: 2
 defaults: &defaults
     docker:
-      - image: cimg/python:3.11.7-browsers
+      - image: cimg/python:3.13.2-browsers
 install_dependency: &install_dependency
           name: Installation of build and deployment dependencies.
           command: |
@@ -132,7 +132,7 @@ workflows:
           context : org-global
           filters:
             branches:
-              only: [dev, 'feature/update_registration_url']
+              only: [dev, 'PM-973_deprecate-connect']
       - "build-qa":
           context : org-global
           filters:
