@@ -36,6 +36,7 @@ module.exports = {
   DEFAULT_REPLY_EMAIL: process.env.DEFAULT_REPLY_EMAIL,
 
   CONNECT_URL: process.env.CONNECT_URL || 'https://connect.topcoder-dev.com',
+  WORK_MANAGER_URL: process.env.WORK_MANAGER_URL || 'https://challenges.topcoder-dev.com',
   ACCOUNTS_APP_URL: process.env.ACCOUNTS_APP_URL || 'https://accounts-auth0.topcoder-dev.com',
   TC_CDN_URL: process.env.TC_CDN_URL,
 };

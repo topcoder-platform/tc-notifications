@@ -99,6 +99,7 @@ function handleScheduledEvents(events, setEventsStatus) {
     const bundleData = {
       subject: 'Your Topcoder project updates',
       connectURL: config.CONNECT_URL,
+      workManagerUrl: config.WORK_MANAGER_URL,
       accountsAppURL: config.ACCOUNTS_APP_URL,
       projects: _.chain(userEvents)
         .groupBy('data.data.projectId')
@@ -167,6 +168,7 @@ function wrapIndividualNotification(data) {
   return {
     subject,
     connectURL: config.CONNECT_URL,
+    workManagerUrl: config.WORK_MANAGER_URL,
     accountsAppURL: config.ACCOUNTS_APP_URL,
     projects: [{
       id: data.data.data.projectId,
