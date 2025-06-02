@@ -7,9 +7,13 @@ module.exports = {
   DATABASE_URL: process.env.DATABASE_URL,
   DATABASE_OPTIONS: {
     dialect: 'postgres',
+    searchPath: process.env.DATABASE_SCHEMA,
+    schema: process.env.DATABASE_SCHEMA,
     dialectOptions: {
       ssl: process.env.DATABASE_SSL != null,
+      prependSearchPath: true
     },
+
     pool: {
       max: process.env.DATABASE_POOL_MAX || 5,
       min: process.env.DATABASE_POOL_MIN || 0,
