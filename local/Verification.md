@@ -30,6 +30,7 @@
     export DATABASE_URL='postgres://postgres:postgres@localhost:5432/postgres'
     export PORT=4000
     export TC_API_V5_BASE_URL='http://localhost:8002/v5'
+    export TC_API_V6_BASE_URL='http://localhost:8002/v6'
     export KAFKA_URL='localhost:9092'
     export KAFKA_GROUP_ID='tc-notifications'
     export SLACK_NOTIFY='true'

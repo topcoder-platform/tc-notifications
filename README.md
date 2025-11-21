@@ -53,6 +53,7 @@ The following parameters can be set in config files or in env variables:
   - `TC_API_V3_BASE_URL`: the TopCoder API V3 base URL
   - `TC_API_V4_BASE_URL`: the TopCoder API V4 base URL
   - `TC_API_V5_BASE_URL`: the TopCoder API V5 base URL
+  - `TC_API_V6_BASE_URL`: the TopCoder API V6 base URL
 - **Notifications API**
   - `API_CONTEXT_PATH`: path to serve API on
 - **Machine to machine auth0 token**
@@ -78,6 +79,7 @@ The following parameters can be set in config files or in env variables:
 - **Topcoder API**
   - `TC_API_V3_BASE_URL`: the TopCoder API V3 base URL
   - `TC_API_V4_BASE_URL`: the TopCoder API V4 base URL
+  - `TC_API_V6_BASE_URL`: the TopCoder API V6 base URL
   - `MESSAGE_API_BASE_URL`: the TopCoder message service API base URL
 - **Topcder specific**<br>
     Also it has probably temporary variables of TopCoder role ids for 'Connect Manager', 'Connect Copilot' and 'administrator':
@@ -132,6 +134,7 @@ You may reuse it during review.
   - `PORT=4000` because **connect-app** call this port by default
   - `TC_API_V4_BASE_URL=https://api.topcoder-dev.com/v4`
   - `TC_API_V3_BASE_URL=https://api.topcoder-dev.com/v3`
+  - `TC_API_V6_BASE_URL=https://api.topcoder-dev.com/v6`
   - `KAFKA_URL`, `KAFKA_CLIENT_CERT` and `KAFKA_CLIENT_CERT_KEY` get from [tc-bus-api readme](https://github.com/topcoder-platform/tc-bus-api/tree/dev)
 - if you are willing to use notifications API which is hosted by the notifications server locally, you will need to use some patched `tc-core-library-js` module, which skips verification of user token. Because we don't know Topcoder `AUTH_SECRET` locally. So you can install this fork:
   ```

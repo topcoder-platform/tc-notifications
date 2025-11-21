@@ -7,6 +7,7 @@ module.exports = {
   TC_API_V3_BASE_URL: process.env.TC_API_V3_BASE_URL || 'https://api.topcoder-dev.com/v3',
   TC_API_V4_BASE_URL: process.env.TC_API_V4_BASE_URL || 'https://api.topcoder-dev.com/v4',
   TC_API_V5_BASE_URL: process.env.TC_API_V5_BASE_URL || 'https://api.topcoder-dev.com/v5',
+  TC_API_V6_BASE_URL: process.env.TC_API_V6_BASE_URL || 'https://api.topcoder-dev.com/v6',
   MESSAGE_API_BASE_URL: process.env.MESSAGE_API_BASE_URL || 'https://api.topcoder-dev.com/v5',
 
   // id of the BOT user which creates post with various events in discussions

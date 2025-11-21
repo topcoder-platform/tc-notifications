@@ -27,11 +27,11 @@ async function getM2MToken() {
  * @param {Integer} userId 
  */
 async function getMemberInfo(userId) {
-    const url = config.TC_API_V3_BASE_URL +
-        "/members/_search/?" +
-        `query=userId%3A${userId}` +
-        `&limit=1`
-    if (cachedMemberInfo = cache.get(url)) {
+    const url = config.TC_API_V6_BASE_URL +
+        `/members?userId=${userId}` +
+        `&perPage=1`
+    const cachedMemberInfo = cache.get(url)
+    if (cachedMemberInfo) {
         return new Promise((resolve, reject) => {
             resolve(cachedMemberInfo)
         })
@@ -40,16 +40,17 @@ async function getMemberInfo(userId) {
         let memberInfo = []
         logger.info(`calling member api ${url} `)
         try {
-            const res = await request.get(url)
-            if (!_.get(res, 'body.result.success')) {
-                reject(new Error(`BCA Memeber API: Failed to get member detail for user id ${userId}`))
-            }
-            memberInfo = _.get(res, 'body.result.content')
-            logger.info(`BCA Memeber API: Feteched ${memberInfo.length} record(s) from member api`)
+            const token = await getM2MToken()
+            const res = await request
+              .get(url)
+              .set('Authorization', `Bearer ${token}`)
+            memberInfo = Array.isArray(res.body) ? res.body : []
+            const numberOfRecords = (memberInfo || []).length
+            logger.info(`Member API: Feteched ${numberOfRecords} record(s) from member api`)
             cache.set(url, memberInfo, cachedTimeInSeconds)
             resolve(memberInfo)
         } catch (err) {
-            reject(new Error(`BCA Memeber API: Failed to get member ` +
+            reject(new Error(`Member API: Failed to get member ` +
                 `api detail for user id ${userId}, ${err}`))
         }
 
@@ -64,7 +65,7 @@ async function getUserGroup(userId) {
     try {
         const machineToken = await getM2MToken()
         if (machineToken.length <= 0) {
-            return (new Error(`BCA Group API: fecthing m2m token failed for ${userId}`))
+            return (new Error(`Group API v6: fecthing m2m token failed for ${userId}`))
         }
         let nextPage
         let res
@@ -73,24 +74,29 @@ async function getUserGroup(userId) {
         let groupInfo = []
         const perPage = 100
         do {
-            url = config.TC_API_V5_BASE_URL +
-                `/groups/?memberId=${userId}&membershipType=user` +
+            url = config.TC_API_V6_BASE_URL +
+                `/groups?memberId=${userId}&membershipType=user` +
                 `&page=${page}&perPage=${perPage}`
             res = await callApi(url, machineToken)
             let resStatus = _.get(res, 'res.statusCode')
             if (resStatus != 200) {
-                throw new Error(`BCA Group API: Failed for user id ${userId},` +
+                throw new Error(`Group API v6: Failed for user id ${userId},` +
                     ` response status ${resStatus}`)
             }
-            let data = _.get(res, 'body')
+            const data = res.body || []
             groupInfo = groupInfo.concat(data)
-            nextPage = _.get(res, 'header.x-next-page')
+            const headers = _.get(res, 'headers') || _.get(res, 'header') || {}
+            const nextHeader = typeof headers['x-next-page'] !== 'undefined' ? headers['x-next-page'] : headers['X-Next-Page']
+            nextPage = nextHeader
+            if (nextPage) {
+                logger.debug(`Group API v6: Next page ${nextPage} detected for user id ${userId}`)
+            }
             page = nextPage
         } while (nextPage)
-        logger.info(`BCA Group API: Feteched ${groupInfo.length} record(s) from group api`)
+        logger.info(`Group API v6: Feteched ${groupInfo.length} record(s) from group api`)
         return groupInfo
     } catch (e) {
-        logger.error(`BCA: Error calling group api : ${e}`)
+        logger.error(`BCA: Error calling group api v6 : ${e}`)
         throw new Error(`getUserGroup() : ${e}`)
     }
 }
