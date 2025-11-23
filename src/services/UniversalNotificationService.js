@@ -133,20 +133,23 @@ function* completeMissingFields(details, findEmail, findUserId) {
   if (!_.isEmpty(foundUsersByEmail)) {
     for (const user of getFieldsByEmail) {
       const found = _.find(foundUsersByEmail, ['email', user.email]) || {};
-      if (!_.isUndefined(found.id)) {
-        _.assign(user, { userId: found.id });
+      if (!_.isUndefined(found.userId)) {
+        _.assign(user, { userId: found.userId });
       }
     }
   }
-  const foundUsersByUUID = yield tcApiHelper.getUsersByUserUUIDs(getFieldsByUserUUID, true);
+  const foundUsersByUUID = yield tcApiHelper.getUsersByUserUUIDs(getFieldsByUserUUID);
   if (!_.isEmpty(foundUsersByUUID)) {
     for (const user of getFieldsByUserUUID) {
-      const found = _.find(foundUsersByUUID, ['id', user.userUUID]) || {};
-      if (!_.isUndefined(found.externalProfiles) && !_.isEmpty(found.externalProfiles)) {
-        _.assign(user, { userId: _.toInteger(_.get(found.externalProfiles[0], 'externalId')) });
+      const found = _.find(foundUsersByUUID, ['userUUID', user.userUUID]) || {};
+      if (!_.isUndefined(found.userId) && _.isUndefined(user.userId)) {
+        _.assign(user, { userId: found.userId });
       }
       if (!_.isUndefined(found.handle) && _.isUndefined(user.handle)) {
         _.assign(user, { handle: found.handle });
+      }
+      if (!_.isUndefined(found.email) && _.isUndefined(user.email)) {
+        _.assign(user, { email: found.email });
       }
     }
 

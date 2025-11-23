@@ -59,18 +59,22 @@ const getRoleId = (role) => {
   return M2m.getMachineToken(config.AUTH0_CLIENT_ID, config.AUTH0_CLIENT_SECRET)
     .then((token) => (
       request
-        .get(`${config.TC_API_V3_BASE_URL}/roles`)
+        .get(`${config.TC_API_V6_BASE_URL}/roles`)
         .set('accept', 'application/json')
         .set('authorization', `Bearer ${token}`)
         .then((res) => {
-          if (!_.get(res, 'body.result.success')) {
-            throw new Error('Failed to get roles list');
+          const roles = Array.isArray(res.body) ? res.body : [];
+          if (!roles.length) {
+            throw new Error('Failed to get roles list from v6 identity API');
           }
-          const roles = _.get(res, 'body.result.content');
           rolesCache = roles;
-          return _.find(roles, { roleName: role }).id;
+          const roleEntry = _.find(roles, { roleName: role });
+          if (!roleEntry) {
+            throw new Error(`Failed to find role id for role ${role} in v6 identity API`);
+          }
+          return roleEntry.id;
         }).catch((err) => {
-          const errorDetails = _.get(err, 'response.body.result.content.message');
+          const errorDetails = _.get(err, 'response.text') || `Status code: ${_.get(err, 'status')}`;
           throw new Error(
             `Failed to get role id for role ${role}.` +
             (errorDetails ? ' Server response: ' + errorDetails : '')
@@ -87,8 +91,7 @@ const getRoleId = (role) => {
  * Get role members
  *
  * @param  {String} role role
- *
- * @return {Promise}       promise resolved to role members ids list
+ * @return {Promise<Array<{userId:number}>>} promise resolved to role members with normalized shape
  */
 const getRoleMembers = (role) => (
   M2m.getMachineToken(config.AUTH0_CLIENT_ID, config.AUTH0_CLIENT_SECRET)
@@ -96,17 +99,26 @@ const getRoleMembers = (role) => (
       getRoleId(role)
       .then(roleId => (
         request
-        .get(`${config.TC_API_V3_BASE_URL}/roles/${roleId}?fields=subjects`)
+        .get(`${config.TC_API_V6_BASE_URL}/roles/${roleId}/subjects`)
         .set('accept', 'application/json')
         .set('authorization', `Bearer ${token}`)
         .then((res) => {
-          if (!_.get(res, 'body.result.success')) {
-            throw new Error(`Failed to get role membrs of role id: ${roleId}`);
+          if (!Array.isArray(res.body)) {
+            throw new Error(`Failed to get role membrs of role id: ${roleId} from v6 identity API`);
           }
-          const members = _.get(res, 'body.result.content.subjects');
-          return members;
+          const normalizedMembers = [];
+          res.body.forEach((member) => {
+            const rawUserId = _.get(member, 'userId');
+            const numericUserId = Number(rawUserId);
+            if (_.isNil(rawUserId) || !Number.isFinite(numericUserId)) {
+              console.warn(`Skipping role member without valid userId for role ${roleId}: ${JSON.stringify(member)}`);
+              return;
+            }
+            normalizedMembers.push({ userId: numericUserId });
+          });
+          return normalizedMembers;
         }).catch((err) => {
-          const errorDetails = _.get(err, 'response.body.result.content.message');
+          const errorDetails = _.get(err, 'response.text') || `Status code: ${_.get(err, 'status')}`;
           throw new Error(
             `Failed to get role membrs of role id: ${roleId}.` +
             (errorDetails ? ' Server response: ' + errorDetails : '')
@@ -143,17 +155,14 @@ const getUsersById = (ids) => {
     .then((token) => {
       const fields = 'fields=userId,email,handle,firstName,lastName,photoURL,status';
       return request
-      .get(`${config.TC_API_V5_BASE_URL}/members/?${fields}&${query}`)
+      .get(`${config.TC_API_V6_BASE_URL}/members?${fields}&${query}`)
       .set('accept', 'application/json')
       .set('authorization', `Bearer ${token}`)
       .then((res) => {
-        if (res.status != 200) {
-          throw new Error(`Failed to get users by ids: ${ids}`);
-        }
-        const users = JSON.parse(_.get(res, 'text'));
+        const users = Array.isArray(res.body) ? res.body : [];
         return users;
       }).catch((err) => {
-        const errorDetails = `Status code: ${JSON.stringify(err)}`;
+        const errorDetails = _.get(err, 'response.text') || `Status code: ${_.get(err, 'status')}`;
         throw new Error(
           `Failed to get users by ids: ${ids}.` +
           (errorDetails ? ' Server response: ' + errorDetails : '')
@@ -170,7 +179,6 @@ const getUsersById = (ids) => {
  * @return {Promise}   resolves to the list of user details
  */
 const getUsersByHandle = (handles) => {
-  const query = _.map(handles, (handle) => 'handle:"' + handle.trim().replace('"', '\\"') + '"').join(' OR ');
   return M2m.getMachineToken(config.AUTH0_CLIENT_ID, config.AUTH0_CLIENT_SECRET)
     .catch((err) => {
       err.message = 'Error generating m2m token: ' + err.message;
@@ -178,20 +186,18 @@ const getUsersByHandle = (handles) => {
     })
     .then((token) => {
       const fields = 'fields=userId,handle,firstName,lastName,photoURL';
+      const handlesParams = handles.map((handle) => `handles=${encodeURIComponent(handle.trim())}`).join('&');
       return request
-      .get(`${config.TC_API_V3_BASE_URL}/members/_search?${fields}&query=${query}`)
+      .get(`${config.TC_API_V6_BASE_URL}/members?${fields}&${handlesParams}`)
       .set('accept', 'application/json')
       .set('authorization', `Bearer ${token}`)
       .then((res) => {
-        if (!_.get(res, 'body.result.success')) {
-          throw new Error(`Failed to get users by handle: ${handles}`);
-        }
-        const users = _.get(res, 'body.result.content');
+        const users = Array.isArray(res.body) ? res.body : [];
 
         return users;
       }).catch((err) => {
-        const errorDetails = _.get(err, 'response.body.result.content.message')
-          || `Status code: ${err.response.statusCode}`;
+        const errorDetails = _.get(err, 'response.text')
+          || `Status code: ${_.get(err, 'response.statusCode')}`;
         throw new Error(
           `Failed to get users by handles: ${handles}.` +
           (errorDetails ? ' Server response: ' + errorDetails : '')

@@ -60,6 +60,7 @@ export DEFAULT_REPLY_EMAIL=no-reply@topcoder.com
 export TC_API_V3_BASE_URL=http://localhost:4000/v3
 export TC_API_V4_BASE_URL=http://localhost:4000/v4
 export TC_API_V5_BASE_URL=http://localhost:4000/v5
+export TC_API_V6_BASE_URL=http://localhost:4000/v6
 ```
 
 - set M2M config params:
@@ -218,4 +219,3 @@ error: { Error: Internal Server Error ...
   2 |   294446 | notifications.community.challenge.created      | {"skills": ["dotnet", "xcode"], "userId": 8547899, "challengeId": 30054522, "challengeUrl": "http://www.topcoder.com/123", "challengeTitle": "test", "initiatorUserId": 123}                 | f    | f    |         | 2019-04-01 19:49:08.232+08 | 2019-04-01 19:49:08.232+08
   ...
 ```
-

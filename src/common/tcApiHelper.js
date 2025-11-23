@@ -29,31 +29,31 @@ function* searchUsersByQuery(query) {
   let users = [];
   // there may be multiple pages, search all pages
   let offset = 0;
-  const limit = constants.SEARCH_USERS_PAGE_SIZE;
+  const perPage = constants.SEARCH_USERS_PAGE_SIZE;
   // set initial total to 1 so that at least one search is done,
   // it will be updated from search result
   let total = 1;
   while (offset < total) {
+    const page = Math.floor(offset / perPage) + 1;
     const res = yield request
       .get(`${
-        config.TC_API_V3_BASE_URL
-        }/members/_search?query=${
+        config.TC_API_V6_BASE_URL
+        }/members?${
         query
-        }&offset=${
-        offset
-        }&limit=${
-        limit
+        }&page=${
+        page
+        }&perPage=${
+        perPage
         }&fields=userId,email,handle,firstName,lastName,photoURL,status`)
       .set('Authorization', `Bearer ${token}`);
-    if (!_.get(res, 'body.result.success')) {
-      throw new Error(`Failed to search users by query: ${query}`);
-    }
-    const records = _.get(res, 'body.result.content') || [];
+    const records = Array.isArray(res.body) ? res.body : [];
     // add users
     users = users.concat(records);
 
-    total = _.get(res, 'body.result.metadata.totalCount') || 0;
-    offset += limit;
+    const headers = res.headers || res.header || {};
+    const totalFromHeader = Number(headers['x-total'] || 0);
+    total = Number.isNaN(totalFromHeader) ? 0 : totalFromHeader;
+    offset += perPage;
   }
 
   logger.verbose(`Searched users: ${JSON.stringify(users, null, 4)}`);
@@ -69,9 +69,27 @@ function* getUsersBySkills(skills) {
   if (!skills || skills.length === 0) {
     return [];
   }
-  // use 'OR' to link the skill matches
-  const query = _.map(skills, (skill) => 'profiletrait.skills.name%3D"' + skill.trim() + '"').join(' OR ');
-  return yield searchUsersByQuery(query);
+  const token = yield getM2MToken();
+  let users = [];
+  let offset = 0;
+  const perPage = constants.SEARCH_USERS_PAGE_SIZE;
+  let total = 1;
+  const skillParams = _.map(skills, (skill) => `id=${encodeURIComponent(skill.trim())}`).join('&');
+  while (offset < total) {
+    const page = Math.floor(offset / perPage) + 1;
+    const res = yield request
+      .get(`${config.TC_API_V6_BASE_URL}/members/searchBySkills?${skillParams}&page=${page}&perPage=${perPage}`)
+      .set('Authorization', `Bearer ${token}`);
+    const records = Array.isArray(res.body) ? res.body : [];
+    users = users.concat(records);
+
+    const headers = res.headers || res.header || {};
+    const totalFromHeader = Number(headers['x-total'] || 0);
+    total = Number.isNaN(totalFromHeader) ? 0 : totalFromHeader;
+    offset += perPage;
+  }
+
+  return users;
 }
 
 /**
@@ -83,8 +101,7 @@ function* getUsersByHandles(handles) {
   if (!handles || handles.length === 0) {
     return [];
   }
-  // use 'OR' to link the handle matches
-  const query = _.map(handles, (h) => 'handle:"' + h.trim().replace('"', '\\"') + '"').join(' OR ');
+  const query = _.map(handles, (h) => `handles=${encodeURIComponent(h.trim())}`).join('&');
   return yield searchUsersByQuery(query);
 }
 
@@ -98,9 +115,13 @@ function* getUsersByHandlesAndUserIds(handles, userIds) {
   if ((!handles || handles.length === 0) && (!userIds || userIds.length === 0)) {
     return [];
   }
-  const handlesQuery = _.map(handles, h => `handleLower:${h.handle.toLowerCase()}`);
-  const userIdsQuery = _.map(userIds, u => `userId:${u.userId}`);
-  const query = _.concat(handlesQuery, userIdsQuery).join(URI.encodeQuery(' OR ', 'utf8'));
+  const handleParams = handles && handles.length
+    ? _.map(handles, h => `handles=${encodeURIComponent(h.handle.toLowerCase())}`)
+    : [];
+  const userIdParams = userIds && userIds.length
+    ? _.map(userIds, u => `userIds=${encodeURIComponent(u.userId)}`)
+    : [];
+  const query = [...handleParams, ...userIdParams].join('&');
   try {
     return yield searchUsersByQuery(query);
   } catch (err) {
@@ -117,17 +138,15 @@ function* getUsersByHandlesAndUserIds(handles, userIds) {
  */
 function* searchUsersByEmailQuery(query) {
   const token = yield getM2MToken();
+  const emailValue = query.replace(/^email%3D/i, '').replace(/^email=/i, '');
   const res = yield request
       .get(`${
-        config.TC_API_V3_BASE_URL
-        }/users?filter=${
-        query
-        }&fields=id,email,handle`)
+        config.TC_API_V6_BASE_URL
+        }/members?email=${
+        encodeURIComponent(emailValue)
+        }&fields=userId,email,handle`)
       .set('Authorization', `Bearer ${token}`);
-  if (!_.get(res, 'body.result.success')) {
-    throw new Error(`Failed to search users by query: ${query}`);
-  }
-  const records = _.get(res, 'body.result.content') || [];
+  const records = Array.isArray(res.body) ? res.body : [];
 
   logger.verbose(`Searched users: ${JSON.stringify(records, null, 4)}`);
   return records;
@@ -145,8 +164,7 @@ function* getUsersByEmails(emails) {
   const users = [];
   try {
     for (const email of emails) {
-      const query = `email%3D${email.email}`;
-      const result = yield searchUsersByEmailQuery(query);
+      const result = yield searchUsersByEmailQuery(email.email);
       users.push(...result);
     }
     return users;
@@ -162,21 +180,76 @@ function* getUsersByEmails(emails) {
  * @param {Array<Object>} ids the objects that has user uuids.
  * @returns {Array<Object>} the matched users
  */
-function* getUsersByUserUUIDs(ids, enrich) {
+function* getUsersByUserUUIDs(ids) {
   if (!ids || ids.length === 0) {
     return [];
   }
-  const users = [];
   const token = yield getM2MToken();
+  const userUUIDs = _.uniq(_.filter(_.map(ids, id => id.userUUID), id => !_.isNil(id)));
+  if (userUUIDs.length === 0) {
+    return [];
+  }
   try {
-    for (const id of ids) {
+    const fields = 'userId,handle,email,firstName,lastName,photoURL,status';
+    const uuidMappings = [];
+
+    logger.info(`Using v5 fallback to map ${userUUIDs.length} user UUID(s) to userId.`);
+    for (const userUUID of userUUIDs) {
       const res = yield request
-      .get(`${config.TC_API_V5_BASE_URL}/users/${id.userUUID}${enrich ? '?enrich=true' : ''}`)
-      .set('Authorization', `Bearer ${token}`);
-      const user = res.body;
-      logger.verbose(`Searched users: ${JSON.stringify(user, null, 4)}`);
-      users.push(user);
+        .get(`${config.TC_API_V5_BASE_URL}/users/${encodeURIComponent(userUUID)}?enrich=true`)
+        .set('Authorization', `Bearer ${token}`);
+      const body = res.body || {};
+      const userData = body.result && body.result.content ? body.result.content : (body.result || body);
+      const normalizedUserData = Array.isArray(userData) ? userData[0] : userData;
+      const mappedUserId = normalizedUserData.userId || normalizedUserData.legacyId;
+      if (_.isNil(mappedUserId)) {
+        continue;
+      }
+      uuidMappings.push({
+        userUUID,
+        userId: mappedUserId,
+        handle: normalizedUserData.handle,
+        email: normalizedUserData.email,
+        firstName: normalizedUserData.firstName,
+        lastName: normalizedUserData.lastName,
+        photoURL: normalizedUserData.photoURL,
+        status: normalizedUserData.status
+      });
     }
+
+    if (_.isEmpty(uuidMappings)) {
+      logger.verbose('Searched users: []');
+      return [];
+    }
+
+    const userIds = _.uniq(_.filter(_.map(uuidMappings, 'userId'), id => !_.isNil(id)));
+    let members = [];
+    if (userIds.length) {
+      const userIdParams = _.map(userIds, id => `userIds=${id}`).join('&');
+      const res = yield request
+        .get(`${config.TC_API_V6_BASE_URL}/members?${userIdParams}`)
+        .query({ fields })
+        .set('Authorization', `Bearer ${token}`);
+      members = Array.isArray(res.body) ? res.body : [];
+    }
+
+    const usersById = _.keyBy(members, u => String(u.userId));
+    const users = uuidMappings.map((mapping) => {
+      const userIdKey = _.isNil(mapping.userId) ? undefined : String(mapping.userId);
+      const found = userIdKey ? usersById[userIdKey] : undefined;
+      return {
+        userUUID: mapping.userUUID,
+        id: mapping.userUUID,
+        userId: !_.isUndefined(found) && !_.isNil(found.userId) ? found.userId : mapping.userId,
+        handle: found && found.handle ? found.handle : mapping.handle,
+        email: found && found.email ? found.email : mapping.email,
+        firstName: found && found.firstName ? found.firstName : mapping.firstName,
+        lastName: found && found.lastName ? found.lastName : mapping.lastName,
+        photoURL: found && found.photoURL ? found.photoURL : mapping.photoURL,
+        status: found && found.status ? found.status : mapping.status
+      };
+    });
+    logger.verbose(`Searched users: ${JSON.stringify(users, null, 4)}`);
     return users;
   } catch (err) {
     const error = new Error(_.get(err, 'response.text', err.toString()));
@@ -423,22 +496,23 @@ function* notifyChallengeUserViaEmail(user, message) {
 function* getChallenge(challengeId) {
   const token = yield getM2MToken();
   // this is public API, but some challege is not accessable so using m2m token
-  const url = `${config.TC_API_V4_BASE_URL}/challenges/${challengeId}`;
-  logger.info(`calling public challenge api ${url}`);
+  const url = `${config.TC_API_V6_BASE_URL}/challenges/${challengeId}`;
+  logger.info(`calling public challenge api v6 ${url}`);
   const res = yield request
     .get(url)
     .set('Authorization', `Bearer ${token}`)
     .catch((err) => {
-      const errorDetails = _.get(err, 'message');
+      const errorDetails = _.get(err, 'response.text') || _.get(err, 'message');
       throw new Error(
-        `Error in call public challenge api by id ${challengeId}` +
+        `Error in call public challenge api v6 by id ${challengeId}` +
         (errorDetails ? ' Server response: ' + errorDetails : '')
       );
     });
-  if (!_.get(res, 'body.result.success')) {
-    throw new Error(`Failed to get challenge by id ${challengeId}`);
+  const challenge = res.body;
+  if (!challenge || !challenge.id) {
+    throw new Error(`Failed to get challenge by id ${challengeId} from v6 challenge api`);
   }
-  return _.get(res, 'body.result.content');
+  return challenge;
 }
 
 /**
@@ -483,23 +557,23 @@ function* notifyUsersOfMessage(users, notification) {
 function* getUsersInfoFromChallenge(challengeId) {
   const token = yield getM2MToken();
   let usersInfo = [];
-  const url = `${config.TC_API_V4_BASE_URL}/challenges/${challengeId}/resources`;
-  logger.info(`calling challenge api ${url} `);
+  const url = `${config.TC_API_V6_BASE_URL}/resources?challengeId=${challengeId}`;
+  logger.info(`calling challenge resource api v6 ${url} `);
   const res = yield request
     .get(url)
     .set('Authorization', `Bearer ${token}`)
     .catch((err) => {
-      const errorDetails = _.get(err, 'message');
+      const errorDetails = _.get(err, 'response.text') || _.get(err, 'message');
       throw new Error(
-        `Error in call challenge api by id ${challengeId}` +
+        `Error in call challenge resource api v6 by id ${challengeId}` +
         (errorDetails ? ' Server response: ' + errorDetails : '')
       );
     });
-  if (!_.get(res, 'body.result.success')) {
-    throw new Error(`Failed to get challenge by id ${challengeId}`);
+  if (!Array.isArray(res.body)) {
+    throw new Error(`Failed to get challenge resources for id ${challengeId} from v6 resource api`);
   }
-  usersInfo = _.get(res, 'body.result.content');
-  logger.info(`Feteched ${usersInfo.length} records from challenge api`);
+  usersInfo = res.body;
+  logger.info(`Feteched ${usersInfo.length} records from challenge resource api v6`);
   return usersInfo;
 }
 
@@ -509,14 +583,30 @@ function* getUsersInfoFromChallenge(challengeId) {
  * @param {Array} filterOnRoles on roles
  * @param {Array} filterOnUsers on user's ids
  *
+ * The v6 resource API returns entries shaped like `{ memberId, roleName, memberHandle, ... }`.
+ * We prefer those fields and only fall back to legacy v4 properties such as
+ * `properties.External Reference ID` and `role` when v6 fields are absent.
+ *
  * @returns {Array} of user object
  */
 function filterChallengeUsers(usersInfo, filterOnRoles = [], filterOnUsers = []) {
   const users = []; // filtered users
   const rolesAvailable = []; // available roles in challenge api response
   _.map(usersInfo, (user) => {
-    const userId = parseInt(_.get(user, 'properties.External Reference ID'), 10);
-    const role = _.get(user, 'role');
+    const memberId = _.get(user, 'memberId')
+      || _.get(user, 'userId')
+      || _.get(user, 'properties.External Reference ID');
+    const userId = parseInt(memberId, 10);
+    const role = _.get(user, 'roleName')
+      || _.get(user, 'role.id')
+      || _.get(user, 'role');
+
+    logger.debug(`Processing challenge resource userId=${memberId} role=${role}`);
+
+    if (!memberId || Number.isNaN(userId)) {
+      logger.warn(`Skipping challenge resource entry without valid memberId: ${JSON.stringify(user)}`);
+      return;
+    }
 
     if (_.indexOf(rolesAvailable, role) === -1) {
       rolesAvailable.push(role);
@@ -551,12 +641,17 @@ function* modifyNotificationNode(ruleSet, data) {
   if (name) {
     notification.name = name;
   } else {
+    let challenge;
     try {
-      const challenge = yield getChallenge(id);
-      notification.name = _.get(challenge, 'challengeTitle');
+      challenge = yield getChallenge(id);
+      notification.name = _.get(challenge, 'name') || _.get(challenge, 'challengeTitle');
     } catch (error) {
       notification.name = '';
       logger.error(`Error in fetching challenge detail : ${error}`);
+    }
+    if (!notification.name) {
+      const challengeSnippet = challenge ? JSON.stringify(challenge).slice(0, 500) : 'N/A';
+      logger.warn(`Challenge ${id} returned without a valid name. Payload snippet: ${challengeSnippet}`);
     }
   }
   return notification;
